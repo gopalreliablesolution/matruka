@@ -23,11 +23,35 @@ app.use(
 
 app.use(
   cors({
-    origin: [
-      process.env.CLIENT_URL || 'http://localhost:3000',
-      'http://127.0.0.1:3000',
-      'http://localhost:3001',
-    ],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-side fetch)
+      if (!origin) return callback(null, true);
+
+      const clientUrl = process.env.CLIENT_URL;
+      const configuredOrigins = clientUrl ? clientUrl.split(',').map((u) => u.trim()) : [];
+
+      const allowedOrigins = [
+        ...configuredOrigins,
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:3001',
+        'https://matruka.in',
+        'https://www.matruka.in',
+      ];
+
+      // Match configured origins, any vercel.app preview/production deployment, or matruka domain
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        origin.includes('matruka') ||
+        process.env.NODE_ENV !== 'production'
+      ) {
+        return callback(null, true);
+      }
+
+      // Safe fallback: allow all web clients for public informational website
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
