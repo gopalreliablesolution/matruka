@@ -1,0 +1,24 @@
+{
+  "name": "matruka",
+  "version": "1.0.0",
+  "description": "Production Website & Complete CMS for Matruka — Complete Care for Her",
+  "scripts": {
+    "dev": "node dev.js",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "seed": "npm --prefix backend run seed",
+    "build": "npm --prefix frontend run build"
+  },
+  "keywords": [
+    "matruka",
+    "hospital",
+    "maternity",
+    "gynecology",
+    "cms",
+    "nextjs",
+    "express",
+    "mongodb"
+  ],
+  "author": "Matruka",
+  "license": "ISC"
+}

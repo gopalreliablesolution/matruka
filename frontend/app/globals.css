@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-teal: #05A6B4;
+    --deep-teal: #078F9C;
+    --warm-gold: #F2B632;
+    --light-aqua: #EAF8F8;
+    --slate-text: #344B53;
+  }
+
+  body {
+    color: #344B53;
+    background-color: #FFFFFF;
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-poppins), sans-serif;
+    letter-spacing: -0.015em;
+  }
+}
+
+/* Custom UI Utility Classes */
+.bg-gradient-teal {
+  background: linear-gradient(135deg, #05A6B4 0%, #078F9C 100%);
+}
+
+.bg-gradient-teal-soft {
+  background: linear-gradient(180deg, #EAF8F8 0%, #FFFFFF 100%);
+}
+
+.bg-gradient-hero {
+  background: linear-gradient(120deg, #EAF8F8 0%, #FFFFFF 50%, #F0FBFB 100%);
+}
+
+.text-teal-gradient {
+  background: linear-gradient(135deg, #05A6B4 0%, #078F9C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-brand-teal {
+  border-color: #05A6B4;
+}
+
+.wave-shape {
+  background-image: radial-gradient(circle at 50% 100%, rgba(5, 166, 180, 0.08) 0%, transparent 70%);
+}
+
+/* Custom Scrollbar for CMS and Table Views */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F6F8F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B2C3C9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #078F9C;
+}
+
