@@ -83,27 +83,27 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               {/* Left Content */}
-              <div className="lg:col-span-6 space-y-4 text-center lg:text-left">
+              <div className="lg:col-span-6 space-y-4 text-left">
                 <div className="inline-block">
-                  <span className="text-xs font-semibold tracking-[0.2em] uppercase text-brand-teal-700 font-sans">
+                  <span className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-brand-teal-700 font-sans block">
                     {activeBanner.badgeText || 'MATRUKA — COMPLETE CARE FOR HER'}
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl lg:text-[2.65rem] font-bold font-heading text-brand-slate-900 leading-[1.18] tracking-tight">
+                <h1 className="text-[1.45rem] sm:text-3xl lg:text-[2.65rem] font-bold font-heading text-brand-slate-900 leading-snug tracking-tight text-balance">
                   {activeBanner.title || 'Nurturing Motherhood With Clinical Precision & Love'}
                 </h1>
 
-                <p className="text-sm sm:text-base text-slate-600 max-w-lg mx-auto lg:mx-0 leading-relaxed font-sans">
+                <p className="text-xs sm:text-base text-slate-600 max-w-lg leading-relaxed font-sans">
                   {activeBanner.subtitle ||
                     'Comprehensive maternity, personalized antenatal care, painless delivery, and advanced gynaecological laparoscopy led by Dr. Kairavi Yagnik & Dr. Rut Shah at Solaris Cure, VIP Road, Surat.'}
                 </p>
 
-                {/* Proper Sleek Rounded Buttons (No Clumsy Oversized Pills) */}
-                <div className="pt-1 flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                {/* Proper Sleek Rounded Buttons - Stack on mobile, inline on desktop */}
+                <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-start gap-2.5 sm:gap-3">
                   <a
                     href="tel:7984882273"
-                    className="inline-flex items-center gap-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-medium px-5 py-2.5 rounded-lg shadow-xs hover:shadow-sm transition-all text-sm font-sans"
+                    className="inline-flex items-center justify-center gap-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-medium px-5 py-2.5 rounded-lg shadow-xs hover:shadow-sm transition-all text-sm font-sans"
                   >
                     <PhoneCall className="w-4 h-4" />
                     <span>Call Clinic: 7984882273</span>
@@ -112,7 +112,7 @@ export default async function HomePage() {
                     href="https://wa.me/917984882273?text=Hello%20MatruKa%20Team%2C%20I%20would%20like%20information%20about%20your%20maternity%20and%20gynaecology%20services."
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-white hover:bg-emerald-50 text-emerald-700 font-medium px-4 py-2.5 rounded-lg border border-emerald-300 shadow-2xs hover:shadow-xs transition-all text-sm font-sans"
+                    className="inline-flex items-center justify-center gap-2 bg-white hover:bg-emerald-50 text-emerald-700 font-medium px-4 py-2.5 rounded-lg border border-emerald-300 shadow-2xs hover:shadow-xs transition-all text-sm font-sans"
                   >
                     <MessageSquare className="w-4 h-4 text-emerald-600" />
                     <span>WhatsApp</span>
@@ -121,11 +121,11 @@ export default async function HomePage() {
               </div>
 
               {/* Right Hero Image - Free-standing Cutout with Organic Peach Curve */}
-              <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end">
-                <div className="relative w-full max-w-md lg:max-w-none flex justify-center items-center">
+              <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end mt-4 lg:mt-0">
+                <div className="relative w-full max-w-[280px] sm:max-w-md lg:max-w-none flex justify-center items-center">
                   {/* Organic warm peach backdrop curve shape */}
                   <div
-                    className="absolute -bottom-4 -left-6 sm:-left-2 lg:-left-4 w-60 h-60 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full bg-[#FCEAE6] -z-10 pointer-events-none transform translate-y-4"
+                    className="absolute -bottom-3 -left-3 sm:-left-2 lg:-left-4 w-44 h-44 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full bg-[#FCEAE6] -z-10 pointer-events-none transform translate-y-3"
                     aria-hidden="true"
                   />
 
@@ -133,7 +133,7 @@ export default async function HomePage() {
                   <img
                     src="/images/hero/maternity-cutout.png"
                     alt="Mother tenderly embracing newborn infant - MatruKa Maternity & Gynaecology Care Surat"
-                    className="w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[460px] h-auto object-contain select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_86%,transparent_100%)]"
+                    className="w-full max-w-[260px] sm:max-w-[380px] lg:max-w-[460px] h-auto object-contain select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_86%,transparent_100%)]"
                   />
                 </div>
               </div>
@@ -144,25 +144,25 @@ export default async function HomePage() {
 
       {/* 2. Emergency & Timings Ribbon */}
       {isSectionEnabled('emergency_ribbon') && (
-        <section className="bg-brand-teal-600 text-white py-4 px-4 shadow-inner">
-          <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4 text-xs sm:text-sm">
-            <div className="flex items-center gap-3 flex-wrap">
-              <span className="bg-brand-gold-500 text-brand-slate-900 font-bold px-2.5 py-1 rounded-md uppercase tracking-wider text-xs">
+        <section className="bg-brand-teal-600 text-white py-3 sm:py-4 px-4 shadow-inner">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 text-xs sm:text-sm">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+              <span className="bg-brand-gold-500 text-brand-slate-900 font-bold px-2 py-0.5 rounded text-[11px] sm:text-xs uppercase tracking-wider">
                 Emergency 24x7
               </span>
-              <span className="font-medium">
+              <span className="font-medium text-xs sm:text-sm">
                 Round-the-clock emergency support for obstetric labour & acute gynaecology:
               </span>
               <a
                 href={`tel:${phone}`}
-                className="font-bold underline hover:text-brand-gold-300 text-sm"
+                className="font-bold underline hover:text-brand-gold-300 text-xs sm:text-sm"
               >
                 {phone}
               </a>
             </div>
 
-            <div className="flex items-center gap-2 text-brand-teal-100">
-              <Clock className="w-4 h-4 text-brand-gold-300" />
+            <div className="flex items-center gap-2 text-brand-teal-100 text-xs sm:text-sm">
+              <Clock className="w-4 h-4 text-brand-gold-300 shrink-0" />
               <span>OPD Consultation: 10 AM - 1 PM & 5 PM - 7 PM</span>
             </div>
           </div>
@@ -171,61 +171,61 @@ export default async function HomePage() {
 
       {/* 3. About Matruka Overview */}
       {isSectionEnabled('about_clinic') && (
-        <section className="py-16 sm:py-20 bg-white">
+        <section className="py-10 sm:py-16 lg:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-              <div className="lg:col-span-6 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+              <div className="lg:col-span-6 space-y-5">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
                     About Matruka
                   </span>
-                  <h2 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 mt-2">
+                  <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
                     {getSectionTitle('about_clinic', 'Complete Healthcare for Every Stage of Womanhood')}
                   </h2>
                 </div>
 
-                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-base text-slate-600 leading-relaxed">
                   Matruka — Complete Care for Her is an empathetic, specialized women’s healthcare clinic located in Solaris Cure on VIP Road, Surat. Established with the clinical leadership of Dr. Kairavi Yagnik and Dr. Rut Shah, our mission is to deliver evidence-based, respectful, and joyful care from pre-conception through delivery and beyond.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-teal-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-brand-teal-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-brand-slate-900 text-sm">Obstetrics & Maternity</h4>
-                      <p className="text-xs text-slate-500">Antenatal care, normal and painless deliveries</p>
+                      <h4 className="font-semibold text-brand-slate-900 text-xs sm:text-sm">Obstetrics & Maternity</h4>
+                      <p className="text-[11px] sm:text-xs text-slate-500">Antenatal care, normal and painless deliveries</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-teal-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-brand-teal-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-brand-slate-900 text-sm">Advanced Laparoscopy</h4>
-                      <p className="text-xs text-slate-500">Keyhole surgery for cysts, fibroids, & hysterectomy</p>
+                      <h4 className="font-semibold text-brand-slate-900 text-xs sm:text-sm">Advanced Laparoscopy</h4>
+                      <p className="text-[11px] sm:text-xs text-slate-500">Keyhole surgery for cysts, fibroids, & hysterectomy</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-teal-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-brand-teal-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-brand-slate-900 text-sm">Infertility Care</h4>
-                      <p className="text-xs text-slate-500">Evidence-based workup & follicular monitoring</p>
+                      <h4 className="font-semibold text-brand-slate-900 text-xs sm:text-sm">Infertility Care</h4>
+                      <p className="text-[11px] sm:text-xs text-slate-500">Evidence-based workup & follicular monitoring</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-brand-teal-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-4 h-4 text-brand-teal-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="font-semibold text-brand-slate-900 text-sm">FOGSI Sonography</h4>
-                      <p className="text-xs text-slate-500">In-clinic high-resolution pelvic ultrasound</p>
+                      <h4 className="font-semibold text-brand-slate-900 text-xs sm:text-sm">FOGSI Sonography</h4>
+                      <p className="text-[11px] sm:text-xs text-slate-500">In-clinic high-resolution pelvic ultrasound</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-2">
                   <Link
                     href="/about"
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-brand-teal-700 hover:text-brand-teal-800"
+                    className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-brand-teal-700 hover:text-brand-teal-800"
                   >
                     <span>Read More About Our Care Philosophy</span>
                     <ArrowRight className="w-4 h-4" />
@@ -235,45 +235,45 @@ export default async function HomePage() {
 
               {/* Statistics & Highlights */}
               <div className="lg:col-span-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-brand-teal-50/70 p-6 rounded-2xl border border-brand-teal-100 text-center space-y-1">
-                    <p className="text-3xl sm:text-4xl font-bold text-brand-teal-700 font-heading">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4">
+                  <div className="bg-brand-teal-50/70 p-3.5 sm:p-5 rounded-2xl border border-brand-teal-100 text-center space-y-1">
+                    <p className="text-2xl sm:text-4xl font-bold text-brand-teal-700 font-heading">
                       10+
                     </p>
                     <p className="text-xs sm:text-sm font-semibold text-brand-slate-800">
-                      Years Clinical Experience
+                      Years Experience
                     </p>
-                    <p className="text-[11px] text-slate-500">Dedicated to Obstetrics & Gynaecology</p>
+                    <p className="text-[10px] sm:text-[11px] text-slate-500 leading-tight">Obstetrics & Gynec</p>
                   </div>
 
-                  <div className="bg-brand-gold-50/70 p-6 rounded-2xl border border-brand-gold-200 text-center space-y-1">
-                    <p className="text-3xl sm:text-4xl font-bold text-brand-gold-700 font-heading">
+                  <div className="bg-brand-gold-50/70 p-3.5 sm:p-5 rounded-2xl border border-brand-gold-200 text-center space-y-1">
+                    <p className="text-2xl sm:text-4xl font-bold text-brand-gold-700 font-heading">
                       14
                     </p>
                     <p className="text-xs sm:text-sm font-semibold text-brand-slate-800">
-                      Confirmed Specialities
+                      Specialities
                     </p>
-                    <p className="text-[11px] text-slate-500">From Antenatal to Laparoscopy</p>
+                    <p className="text-[10px] sm:text-[11px] text-slate-500 leading-tight">Antenatal to Surgery</p>
                   </div>
 
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center space-y-1">
-                    <p className="text-3xl sm:text-4xl font-bold text-brand-slate-900 font-heading">
+                  <div className="bg-slate-50 p-3.5 sm:p-5 rounded-2xl border border-slate-200 text-center space-y-1">
+                    <p className="text-2xl sm:text-4xl font-bold text-brand-slate-900 font-heading">
                       24*7
                     </p>
                     <p className="text-xs sm:text-sm font-semibold text-brand-slate-800">
                       Emergency Support
                     </p>
-                    <p className="text-[11px] text-slate-500">Immediate care for maternity onset</p>
+                    <p className="text-[10px] sm:text-[11px] text-slate-500 leading-tight">Obstetric readiness</p>
                   </div>
 
-                  <div className="bg-emerald-50/70 p-6 rounded-2xl border border-emerald-200 text-center space-y-1">
-                    <p className="text-3xl sm:text-4xl font-bold text-emerald-700 font-heading">
+                  <div className="bg-emerald-50/70 p-3.5 sm:p-5 rounded-2xl border border-emerald-200 text-center space-y-1">
+                    <p className="text-2xl sm:text-4xl font-bold text-emerald-700 font-heading">
                       100%
                     </p>
                     <p className="text-xs sm:text-sm font-semibold text-brand-slate-800">
-                      Women-Centric Focus
+                      Women-Centric
                     </p>
-                    <p className="text-[11px] text-slate-500">Respectful, dignified patient care</p>
+                    <p className="text-[10px] sm:text-[11px] text-slate-500 leading-tight">Dignified patient care</p>
                   </div>
                 </div>
               </div>
@@ -284,16 +284,16 @@ export default async function HomePage() {
 
       {/* 4. Confirmed Services & Specialities */}
       {isSectionEnabled('services_specialities') && (
-        <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <section className="py-10 sm:py-16 lg:py-20 bg-slate-50 border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-3 py-1 rounded-md">
                 Clinical Specialities
               </span>
-              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 mt-2">
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
                 {getSectionTitle('services_specialities', 'Comprehensive Healthcare Services at Matruka')}
               </h2>
-              <p className="text-sm text-slate-600 mt-2">
+              <p className="text-xs sm:text-sm text-slate-600 mt-2">
                 {getSectionSubtitle(
                   'services_specialities',
                   'Every service is managed directly by Dr. Kairavi Yagnik & Dr. Rut Shah at Solaris Cure, VIP Road Surat.'
@@ -366,16 +366,16 @@ export default async function HomePage() {
 
       {/* 5. Featured Doctors Section */}
       {isSectionEnabled('featured_doctors') && (
-        <section className="py-16 sm:py-20 bg-white">
+        <section className="py-10 sm:py-16 lg:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
                 Our Specialists
               </span>
-              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 mt-2">
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
                 {getSectionTitle('featured_doctors', 'Meet Dr. Kairavi Yagnik & Dr. Rut Shah')}
               </h2>
-              <p className="text-sm text-slate-600 mt-2">
+              <p className="text-xs sm:text-sm text-slate-600 mt-2">
                 MS Obstetricians, Gynaecologists, and Fellowship-Trained Laparoscopic Surgeons dedicated to compassionate patient healing.
               </p>
             </div>
@@ -456,16 +456,16 @@ export default async function HomePage() {
 
       {/* 6. Facilities & Infrastructure */}
       {isSectionEnabled('facilities_infrastructure') && (
-        <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <section className="py-10 sm:py-16 lg:py-20 bg-slate-50 border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-3 py-1 rounded-md">
                 Hospital Infrastructure
               </span>
-              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 mt-2">
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
                 {getSectionTitle('facilities_infrastructure', 'Modern Facilities for Mother & Baby')}
               </h2>
-              <p className="text-sm text-slate-600 mt-2">
+              <p className="text-xs sm:text-sm text-slate-600 mt-2">
                 Carefully designed for sterile surgical precision, high-resolution diagnostic imaging, and calm, private recovery.
               </p>
             </div>
@@ -513,16 +513,16 @@ export default async function HomePage() {
 
       {/* 7. Patient Testimonials */}
       {isSectionEnabled('testimonials') && testimonials.length > 0 && (
-        <section className="py-16 sm:py-20 bg-white">
+        <section className="py-10 sm:py-16 lg:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
                 Patient Stories
               </span>
-              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 mt-2">
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
                 {getSectionTitle('testimonials', 'Words From Our Mothers and Patients')}
               </h2>
-              <p className="text-sm text-slate-600 mt-2">
+              <p className="text-xs sm:text-sm text-slate-600 mt-2">
                 Genuine feedback from patients who entrusted their pregnancies and gynaecological treatments to Matruka.
               </p>
             </div>
@@ -560,13 +560,13 @@ export default async function HomePage() {
 
       {/* 8. FAQs Section */}
       {isSectionEnabled('faqs') && faqs.length > 0 && (
-        <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <section className="py-10 sm:py-16 lg:py-20 bg-slate-50 border-t border-slate-200">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
+            <div className="text-center mb-10 sm:mb-12">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-3 py-1 rounded-md">
                 Common Inquiries
               </span>
-              <h2 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 mt-2">
+              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
                 {getSectionTitle('faqs', 'Frequently Asked Questions')}
               </h2>
             </div>
@@ -607,15 +607,15 @@ export default async function HomePage() {
 
       {/* 9. Location, OPD Timings & Map */}
       {isSectionEnabled('location_contact') && (
-        <section className="py-16 sm:py-20 bg-white border-t border-slate-200">
+        <section className="py-10 sm:py-16 lg:py-20 bg-white border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-5 space-y-6">
+              <div className="lg:col-span-5 space-y-5">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
                     Visit Our Clinic
                   </span>
-                  <h2 className="text-2xl sm:text-3xl font-bold font-heading text-brand-slate-900 mt-2">
+                  <h2 className="text-xl sm:text-3xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
                     Solaris Cure, VIP Road Surat
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-500 mt-1">

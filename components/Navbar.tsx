@@ -38,16 +38,15 @@ export default function Navbar({ settings }: NavbarProps) {
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-sm transition-all">
       {/* Main Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 min-h-[88px] flex items-center justify-between">
-      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between"> */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group shrink-0">
+        <Link href="/" className="flex items-center gap-2 group shrink-0">
           <Image
             src="/logo.png"
             alt="MatruKa - Complete Care for Her"
-            width={190}
-            height={46}
-            className="h-8.5 sm:h-9 md:h-10 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+            width={180}
+            height={44}
+            className="h-8 sm:h-9 md:h-10 w-auto max-w-[150px] sm:max-w-[190px] object-contain transition-transform group-hover:scale-[1.02]"
             priority
           />
         </Link>
