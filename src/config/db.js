@@ -1,4 +1,12 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Fix for Node.js querySrv ECONNREFUSED on Windows / ISP resolvers with MongoDB Atlas SRV URIs
+try {
+  dns.setServers(['8.8.8.8', '8.8.4.4', '1.1.1.1']);
+} catch (e) {
+  // Fall back gracefully if custom DNS cannot be set
+}
 
 const connectDB = async () => {
   try {
