@@ -21,7 +21,13 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      const res = await login(email, password);
+      if (!res.success) {
+        const errorMsg = res.error || 'Login failed. Please check your credentials.';
+        setError(errorMsg);
+        toast.error(errorMsg);
+        return;
+      }
       toast.success('Signed in successfully');
       router.push('/admin');
     } catch (err: any) {
