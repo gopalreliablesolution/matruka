@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Image as ImageIcon, Plus, Trash2, Loader2, X, FolderPlus } from 'lucide-react';
-import { adminApi, BACKEND_URL } from '@/lib/api';
+import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import toast from 'react-hot-toast';
 
@@ -171,11 +171,7 @@ export default function AdminGalleryPage() {
                 <div className="h-40 overflow-hidden relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={
-                      img.imageUrl.startsWith('/')
-                        ? `${BACKEND_URL}${img.imageUrl}`
-                        : img.imageUrl
-                    }
+                    src={resolveImageUrl(img.imageUrl)}
                     alt={img.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
