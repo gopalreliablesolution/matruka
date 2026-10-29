@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { User, Clock, ArrowLeft, ArrowRight, Share2, Eye } from 'lucide-react';
-import { BACKEND_URL } from '@/lib/api';
+import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
 
 async function getBlogDetail(slug: string) {
   try {
@@ -77,11 +77,7 @@ export default async function BlogDetailPage({
           <div className="rounded-3xl overflow-hidden h-72 sm:h-96 bg-slate-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={
-                blog.featuredImage && blog.featuredImage.startsWith('/')
-                  ? `${BACKEND_URL}${blog.featuredImage}`
-                  : blog.featuredImage || '/images/hero/maternity-cutout.png'
-              }
+              src={resolveImageUrl(blog.featuredImage)}
               alt={blog.title}
               className="w-full h-full object-cover"
             />
