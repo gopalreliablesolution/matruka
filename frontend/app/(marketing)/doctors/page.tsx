@@ -1,11 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { Stethoscope, Clock, Phone, Award, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/api';
 
 async function getDoctorsData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/v1/public/doctors`, {
-    next: { revalidate: 30 },
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/doctors`, {
+      next: { revalidate: 30 },
     });
     if (res.ok) {
       const data = await res.json();

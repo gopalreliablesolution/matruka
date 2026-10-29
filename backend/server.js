@@ -14,6 +14,14 @@ const app = express();
 // Connect to Database
 connectDB();
 
+// Normalize double slashes in URL (e.g. //api/v1 -> /api/v1)
+app.use((req, res, next) => {
+  if (req.url.startsWith('//')) {
+    req.url = req.url.replace(/^\/+/, '/');
+  }
+  next();
+});
+
 // Security & Utility Middleware
 app.use(
   helmet({
@@ -39,10 +47,11 @@ app.use(
         'https://www.matruka.in',
       ];
 
-      // Match configured origins, any vercel.app preview/production deployment, or matruka domain
+      // Match configured origins, any vercel or netlify deployment, or matruka domain
       if (
         allowedOrigins.includes(origin) ||
         origin.endsWith('.vercel.app') ||
+        origin.endsWith('.netlify.app') ||
         origin.includes('matruka') ||
         process.env.NODE_ENV !== 'production'
       ) {

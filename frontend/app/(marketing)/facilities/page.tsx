@@ -1,10 +1,11 @@
 import React from 'react';
 import { Building2, ShieldCheck, CheckCircle2, Phone } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/api';
 
 async function getFacilitiesData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/v1/public/facilities`, {
-    next: { revalidate: 30 },
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/facilities`, {
+      next: { revalidate: 30 },
     });
     if (res.ok) {
       const data = await res.json();

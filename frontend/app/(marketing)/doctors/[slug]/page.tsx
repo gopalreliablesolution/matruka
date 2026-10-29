@@ -2,10 +2,11 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Stethoscope, Clock, Phone, Award, CheckCircle2, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/api';
 
 async function getDoctorDetail(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/v1/public/doctors/${slug}`, {
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/doctors/${slug}`, {
       next: { revalidate: 30 },
     });
     if (res.ok) {

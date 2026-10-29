@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { BACKEND_URL } from '@/lib/api';
 import {
   Phone,
   PhoneCall,
@@ -23,8 +24,8 @@ import {
 
 async function getHomeData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/v1/public/home-data`, {
-    next: { revalidate: 30 },
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/home-data`, {
+      next: { revalidate: 30 },
     });
     if (res.ok) {
       const json = await res.json();

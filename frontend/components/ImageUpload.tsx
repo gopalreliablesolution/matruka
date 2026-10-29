@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Upload, X, Check, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, BACKEND_URL } from '@/lib/api';
 import toast from 'react-hot-toast';
 
 interface ImageUploadProps {
@@ -70,7 +70,7 @@ export default function ImageUpload({
         <div className="relative inline-block border-2 border-slate-200 rounded-xl overflow-hidden group bg-slate-50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={preview.startsWith('/') ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}${preview}` : preview}
+            src={preview.startsWith('/') ? `${BACKEND_URL}${preview}` : preview}
             alt="Preview"
             className="w-48 h-32 object-cover"
           />
