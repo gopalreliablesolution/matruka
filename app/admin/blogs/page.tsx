@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { BookOpen, Plus, Edit2, Trash2, X, Calendar, User, Eye } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import Breadcrumb from '@/components/admin/Breadcrumb';
 import DataTable, { Column } from '@/components/admin/DataTable';
@@ -170,7 +170,7 @@ export default function AdminBlogsPage() {
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0 overflow-hidden">
             {blog.featuredImage ? (
-              <img src={blog.featuredImage} alt={blog.title} className="w-full h-full object-cover" />
+              <img src={resolveImageUrl(blog.featuredImage)} alt={blog.title} className="w-full h-full object-cover" />
             ) : (
               <BookOpen className="w-5 h-5 text-purple-600" />
             )}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { HardDrive, Upload, Trash2, Copy, Check, Search, Loader2, Image as ImageIcon, FileText } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, resolveImageUrl } from '@/lib/api';
 import Breadcrumb from '@/components/admin/Breadcrumb';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
@@ -183,7 +183,7 @@ export default function AdminMediaPage() {
                 <div className="h-32 bg-gray-50 flex items-center justify-center overflow-hidden relative">
                   {isImage ? (
                     <img
-                      src={item.url}
+                      src={resolveImageUrl(item.url)}
                       alt={item.altText || item.originalName}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Sliders, Plus, Edit2, Trash2, Check, X, Loader2 } from 'lucide-react';
-import { adminApi, BACKEND_URL } from '@/lib/api';
+import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import toast from 'react-hot-toast';
 
@@ -175,11 +175,7 @@ export default function AdminBannersPage() {
                 {b.desktopImage ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
-                    src={
-                      b.desktopImage.startsWith('/')
-                        ? `${BACKEND_URL}${b.desktopImage}`
-                        : b.desktopImage
-                    }
+                    src={resolveImageUrl(b.desktopImage)}
                     alt={b.title}
                     className="w-full h-full object-cover"
                   />
