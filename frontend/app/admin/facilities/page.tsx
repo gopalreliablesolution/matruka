@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Building2, Plus, Edit2, Trash2, Check, X, Loader2, Sparkles } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import Breadcrumb from '@/components/admin/Breadcrumb';
 import ConfirmModal from '@/components/admin/ConfirmModal';
@@ -208,7 +208,7 @@ export default function AdminFacilitiesPage() {
 
                 {fac.image && (
                   <div className="w-full h-40 rounded-xl overflow-hidden mb-4 bg-gray-50 border border-gray-100">
-                    <img src={fac.image} alt={fac.name} className="w-full h-full object-cover" />
+                    <img src={resolveImageUrl(fac.image)} alt={fac.name} className="w-full h-full object-cover" />
                   </div>
                 )}
 

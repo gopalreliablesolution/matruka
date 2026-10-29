@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Sparkles, Plus, Edit2, Trash2, X, ToggleLeft, ToggleRight } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import Breadcrumb from '@/components/admin/Breadcrumb';
 import DataTable, { Column } from '@/components/admin/DataTable';
@@ -211,7 +211,7 @@ export default function AdminServicesPage() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 overflow-hidden">
             {srv.featuredImage ? (
-              <img src={srv.featuredImage} alt={srv.name} className="w-full h-full object-cover" />
+              <img src={resolveImageUrl(srv.featuredImage)} alt={srv.name} className="w-full h-full object-cover" />
             ) : (
               <Sparkles className="w-5 h-5 text-primary" />
             )}

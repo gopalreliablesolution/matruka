@@ -16,7 +16,7 @@ import {
   ToggleLeft,
   ToggleRight,
 } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import Breadcrumb from '@/components/admin/Breadcrumb';
 import DataTable, { Column } from '@/components/admin/DataTable';
@@ -225,7 +225,7 @@ export default function AdminDoctorsPage() {
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl bg-teal-50 border border-teal-100 overflow-hidden shrink-0 flex items-center justify-center">
             {doc.profileImage ? (
-              <img src={doc.profileImage} alt={doc.name} className="w-full h-full object-cover" />
+              <img src={resolveImageUrl(doc.profileImage)} alt={doc.name} className="w-full h-full object-cover" />
             ) : (
               <Stethoscope className="w-5 h-5 text-primary" />
             )}
