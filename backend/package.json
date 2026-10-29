@@ -4,8 +4,8 @@
   "description": "Backend API for Matruka - Complete Care for Her",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node init && node server.js",
+    "dev": "node init && nodemon server.js",
     "seed": "node scripts/seed.js"
   },
   "dependencies": {

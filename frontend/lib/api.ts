@@ -26,10 +26,12 @@ export const adminApi = axios.create({
   timeout: 15000,
 });
 
-// Interceptor to automatically attach JWT token from cookies
+// Interceptor to automatically attach JWT token from cookies or localStorage
 adminApi.interceptors.request.use(
   (config) => {
-    const token = Cookies.get('matruka_admin_token');
+    const token =
+      Cookies.get('matruka_admin_token') ||
+      (typeof window !== 'undefined' ? localStorage.getItem('matruka_admin_token') : null);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -32,7 +32,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const checkAuth = async () => {
-    const token = Cookies.get('matruka_admin_token');
+    const token =
+      Cookies.get('matruka_admin_token') ||
+      (typeof window !== 'undefined' ? localStorage.getItem('matruka_admin_token') : null);
     if (!token) {
       setUser(null);
       setLoading(false);
@@ -46,10 +48,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setUser(null);
         Cookies.remove('matruka_admin_token');
+        if (typeof window !== 'undefined') localStorage.removeItem('matruka_admin_token');
       }
     } catch {
       setUser(null);
       Cookies.remove('matruka_admin_token');
+      if (typeof window !== 'undefined') localStorage.removeItem('matruka_admin_token');
     } finally {
       setLoading(false);
     }
@@ -59,7 +63,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const res = await adminApi.post('/auth/login', { email, password });
       if (res.data.success) {
-        Cookies.set('matruka_admin_token', res.data.token, { expires: 7 });
+        const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+        Cookies.set('matruka_admin_token', res.data.token, {
+          expires: 7,
+          sameSite: 'lax',
+          secure: isHttps,
+        });
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('matruka_admin_token', res.data.token);
+        }
         setUser(res.data.user);
         return { success: true };
       }
@@ -67,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (err: any) {
       return {
         success: false,
-        error: err.response?.data?.error || 'Invalid credentials or network error',
+        error: err.response?.data?.error || err.message || 'Invalid credentials or network error',
       };
     }
   };
@@ -79,6 +91,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Logout error:', err);
     } finally {
       Cookies.remove('matruka_admin_token');
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('matruka_admin_token');
+      }
       setUser(null);
       window.location.href = '/admin/login';
     }
