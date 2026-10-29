@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Sliders, Plus, Edit2, Trash2, Check, X, Loader2 } from 'lucide-react';
-import { adminApi } from '@/lib/api';
+import { adminApi, BACKEND_URL } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import toast from 'react-hot-toast';
 
@@ -177,7 +177,7 @@ export default function AdminBannersPage() {
                   <img
                     src={
                       b.desktopImage.startsWith('/')
-                        ? `${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}${b.desktopImage}`
+                        ? `${BACKEND_URL}${b.desktopImage}`
                         : b.desktopImage
                     }
                     alt={b.title}

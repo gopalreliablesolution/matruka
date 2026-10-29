@@ -1,10 +1,11 @@
 import React from 'react';
 import { Image as ImageIcon, Camera } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/api';
 
 async function getGalleryData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/v1/public/gallery`, {
-    next: { revalidate: 30 },
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/gallery`, {
+      next: { revalidate: 30 },
     });
     if (res.ok) {
       const data = await res.json();
@@ -50,7 +51,7 @@ export default async function GalleryPage() {
                   <img
                     src={
                       item.imageUrl && item.imageUrl.startsWith('/')
-                        ? (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000') + item.imageUrl
+                        ? `${BACKEND_URL}${item.imageUrl}`
                         : item.imageUrl || '/images/hero/maternity-cutout.png'
                     }
                     alt={item.title}

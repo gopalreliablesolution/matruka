@@ -1,11 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { BookOpen, User, Calendar, Clock, ArrowRight } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/api';
 
 async function getBlogsData() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/v1/public/blogs`, {
-    next: { revalidate: 30 },
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/blogs`, {
+      next: { revalidate: 30 },
     });
     if (res.ok) {
       const data = await res.json();
@@ -52,7 +53,7 @@ export default async function BlogPage() {
                     <img
                       src={
                         b.featuredImage && b.featuredImage.startsWith('/')
-                          ? (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000') + b.featuredImage
+                          ? `${BACKEND_URL}${b.featuredImage}`
                           : b.featuredImage || '/images/hero/maternity-cutout.png'
                       }
                       alt={b.title}

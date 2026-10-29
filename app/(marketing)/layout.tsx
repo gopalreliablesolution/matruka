@@ -1,12 +1,13 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { BACKEND_URL } from '@/lib/api';
 
 // Fetch settings on server for initial render
 async function getSettings() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/v1/public/settings`, {
-    next: { revalidate: 60 },
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/settings`, {
+      next: { revalidate: 60 },
     });
     if (res.ok) {
       const data = await res.json();
