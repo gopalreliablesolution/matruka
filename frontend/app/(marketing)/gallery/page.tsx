@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Image as ImageIcon, Camera } from 'lucide-react';
-import { BACKEND_URL } from '@/lib/api';
+import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
 
 async function getGalleryData() {
   try {
@@ -49,11 +50,7 @@ export default async function GalleryPage() {
                 <div className="h-52 bg-slate-100 overflow-hidden relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={
-                      item.imageUrl && item.imageUrl.startsWith('/')
-                        ? `${BACKEND_URL}${item.imageUrl}`
-                        : item.imageUrl || '/images/hero/maternity-cutout.png'
-                    }
+                    src={resolveImageUrl(item.imageUrl)}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />

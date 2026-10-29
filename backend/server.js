@@ -72,9 +72,10 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// Serve local uploads directly from server filesystem (NO 3rd party!)
+// Serve local uploads and images directly from server filesystem (NO 3rd party!)
 const uploadsPath = path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadsPath));
+app.use('/images', express.static(uploadsPath));
 
 // API Routes
 app.use('/api/v1/admin', adminRoutes);

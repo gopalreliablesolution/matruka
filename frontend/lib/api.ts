@@ -3,6 +3,16 @@ import Cookies from 'js-cookie';
 
 export const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000').replace(/\/+$/, '');
 
+export function resolveImageUrl(url?: string | null): string {
+  if (!url) return '/images/hero/maternity-cutout.png';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('/uploads')) {
+    return `${BACKEND_URL}${url}`;
+  }
+  // Public static assets starting with /images or / serve from frontend origin
+  return url;
+}
+
 export const publicApi = axios.create({
   baseURL: `${BACKEND_URL}/api/v1/public`,
   headers: {

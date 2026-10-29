@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { BookOpen, User, Calendar, Clock, ArrowRight } from 'lucide-react';
-import { BACKEND_URL } from '@/lib/api';
+import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
 
 async function getBlogsData() {
   try {
@@ -51,11 +51,7 @@ export default async function BlogPage() {
                   <div className="h-48 bg-slate-100 overflow-hidden relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={
-                        b.featuredImage && b.featuredImage.startsWith('/')
-                          ? `${BACKEND_URL}${b.featuredImage}`
-                          : b.featuredImage || '/images/hero/maternity-cutout.png'
-                      }
+                      src={resolveImageUrl(b.featuredImage)}
                       alt={b.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
