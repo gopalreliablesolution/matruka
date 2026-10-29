@@ -29,38 +29,27 @@ app.use(
   })
 );
 
+// Comprehensive CORS Middleware (Guarantees Access-Control-Allow-Origin for Netlify, Vercel & custom domains)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  next();
+});
+
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, server-side fetch)
-      if (!origin) return callback(null, true);
-
-      const clientUrl = process.env.CLIENT_URL;
-      const configuredOrigins = clientUrl ? clientUrl.split(',').map((u) => u.trim()) : [];
-
-      const allowedOrigins = [
-        ...configuredOrigins,
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        'http://localhost:3001',
-        'https://matruka.in',
-        'https://www.matruka.in',
-      ];
-
-      // Match configured origins, any vercel or netlify deployment, or matruka domain
-      if (
-        allowedOrigins.includes(origin) ||
-        origin.endsWith('.vercel.app') ||
-        origin.endsWith('.netlify.app') ||
-        origin.includes('matruka') ||
-        process.env.NODE_ENV !== 'production'
-      ) {
-        return callback(null, true);
-      }
-
-      // Safe fallback: allow all web clients for public informational website
-      return callback(null, true);
-    },
+    origin: (origin, callback) => callback(null, origin || true),
     credentials: true,
   })
 );
