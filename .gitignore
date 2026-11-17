@@ -11,15 +11,11 @@ frontend/node_modules
 frontend/.next
 backend/uploads/*
 !backend/uploads/.gitkeep
-.env.local
 .env.*.local
 
-.env
 backend/.env
 frontend/.env.local
 .vercel
-.env*
-.vscode/
 .idea/
 config.bat
 
