@@ -61,10 +61,10 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="h-screen max-h-screen overflow-hidden bg-[#F5F7F8] font-sans">
+    <main className="h-screen max-h-screen overflow-hidden bg-[#F5F7F8] font-sans select-none">
       <div className="grid h-full lg:grid-cols-[1.05fr_0.95fr]">
         {/* Left Side: Branding & Features */}
-        <section className="relative hidden h-full overflow-hidden bg-primary px-8 py-8 text-white lg:flex lg:flex-col justify-between xl:px-12 xl:py-10">
+        <section className="relative hidden h-full overflow-hidden bg-primary px-8 py-6 text-white lg:flex lg:flex-col justify-between xl:px-12 xl:py-8">
           <div
             className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-white/[0.07]"
             aria-hidden="true"
@@ -85,7 +85,7 @@ export default function LoginPage() {
                 alt="MatruKa - Complete Care for Her"
                 width={160}
                 height={45}
-                className="h-10 w-auto object-contain"
+                className="h-9 w-auto object-contain"
                 priority
               />
             </Link>
@@ -95,20 +95,20 @@ export default function LoginPage() {
             </span>
           </div>
 
-          <div className="relative z-10 max-w-xl py-6">
+          <div className="relative z-10 max-w-xl py-4">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/65">
               MatruKa Administration
             </p>
-            <h1 className="mt-3 font-heading text-3xl font-bold leading-tight tracking-tight xl:text-4xl">
+            <h1 className="mt-2 font-heading text-2xl font-bold leading-tight tracking-tight xl:text-3xl">
               Complete care starts with confident management.
             </h1>
-            <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/75">
+            <p className="mt-2.5 max-w-lg text-xs leading-relaxed text-white/75 xl:text-sm">
               A secure, centralized workspace for patient consultations, clinical
               content, hospital information, and every update on the MatruKa
               website.
             </p>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="mt-6 grid gap-2.5 sm:grid-cols-2">
               {[
                 {
                   icon: CalendarCheck,
@@ -133,11 +133,11 @@ export default function LoginPage() {
               ].map((feature) => (
                 <div
                   key={feature.title}
-                  className="rounded-xl border border-white/10 bg-white/[0.07] p-3.5 backdrop-blur-sm"
+                  className="rounded-xl border border-white/10 bg-white/[0.07] p-3 backdrop-blur-sm"
                 >
-                  <feature.icon size={18} className="text-white/90" />
-                  <p className="mt-2.5 text-xs font-bold">{feature.title}</p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-white/60">
+                  <feature.icon size={16} className="text-white/90" />
+                  <p className="mt-2 text-xs font-bold">{feature.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-relaxed text-white/60">
                     {feature.text}
                   </p>
                 </div>
@@ -151,8 +151,8 @@ export default function LoginPage() {
           </div>
         </section>
 
-        {/* Right Side: Login Form */}
-        <section className="flex h-full items-center justify-center overflow-y-auto px-6 py-8 sm:px-10 lg:px-12">
+        {/* Right Side: Login Form (Completely non-scrollable on desktop) */}
+        <section className="flex h-full items-center justify-center overflow-y-auto px-6 py-6 sm:px-10 lg:px-12 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <div className="w-full max-w-[25rem]">
             {/* Mobile Logo */}
             <div className="mb-6 flex items-center justify-between lg:hidden">
@@ -174,14 +174,14 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-5">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <LockKeyhole size={19} />
               </span>
-              <h2 className="mt-4 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+              <h2 className="mt-3.5 font-heading text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                 Welcome back
               </h2>
-              <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-gray-500">
+              <p className="mt-1 text-xs leading-relaxed text-gray-500 sm:text-sm">
                 Sign in to manage the MatruKa hospital website and patient
                 enquiry workflow.
               </p>
@@ -215,7 +215,7 @@ export default function LoginPage() {
                     required
                     autoComplete="email"
                     placeholder="admin@matruka.in"
-                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-xl border border-gray-200 bg-white py-3 !pl-11 pr-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                   />
@@ -239,7 +239,7 @@ export default function LoginPage() {
                     required
                     autoComplete="current-password"
                     placeholder="Enter your password"
-                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-11 text-sm font-medium text-gray-900 placeholder:text-gray-400 shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    className="w-full rounded-xl border border-gray-200 bg-white py-3 !pl-11 !pr-11 text-sm font-medium text-gray-900 placeholder:text-gray-400 shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                   />
@@ -254,7 +254,7 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between gap-4 pt-1">
+              <div className="flex items-center justify-between gap-4 pt-0.5">
                 <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-gray-600">
                   <input
                     type="checkbox"
@@ -289,7 +289,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 text-[11px] font-medium text-gray-400">
+            <div className="mt-5 flex items-center justify-between border-t border-gray-100 pt-3.5 text-[11px] font-medium text-gray-400">
               <span>MatruKa CMS · Secure Admin</span>
               <Link
                 href="/"

@@ -128,7 +128,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="custom-sidebar-scroll flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           <p className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/[0.45]">
             Workspace
           </p>
