@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { HardDrive, Upload, Trash2, Copy, Check, Search, Loader2, Image as ImageIcon, FileText } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
-import Breadcrumb from '@/components/admin/Breadcrumb';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
 
@@ -111,22 +111,21 @@ export default function AdminMediaPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Breadcrumb & Header */}
-      <div>
-        <Breadcrumb
-          items={[{ label: 'Dashboard', href: '/admin' }, { label: 'Media Library' }]}
-        />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Media Library & Local Server Disk</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Zero 3rd party dependencies: All files are saved directly inside <code className="bg-gray-100 px-1 py-0.5 rounded text-xs">backend/uploads/</code> on the server filesystem.
-            </p>
-          </div>
-
-          <label className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl hover:opacity-90 font-semibold text-sm transition shadow-sm cursor-pointer">
-            {uploading ? <Loader2 size={18} className="animate-spin" /> : <Upload size={18} />}
-            <span>{uploading ? 'Saving to Server...' : 'Upload Media to Server'}</span>
+      <AdminPageHeader
+        title="Media Library"
+        description="All files are stored directly inside the local backend/uploads directory with no third-party dependency."
+        icon={HardDrive}
+        breadcrumb={[{ label: 'Local Media Library' }]}
+        actions={
+          <label className="admin-btn-primary cursor-pointer">
+            {uploading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <Upload size={18} />
+            )}
+            <span>
+              {uploading ? 'Saving to Server...' : 'Upload Media to Server'}
+            </span>
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp,image/svg+xml,application/pdf"
@@ -135,8 +134,8 @@ export default function AdminMediaPage() {
               disabled={uploading}
             />
           </label>
-        </div>
-      </div>
+        }
+      />
 
       {/* Search Toolbar */}
       <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
@@ -163,7 +162,7 @@ export default function AdminMediaPage() {
         </div>
       ) : mediaList.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-16 text-center shadow-sm">
-          <div className="w-16 h-16 rounded-full bg-teal-50 text-primary flex items-center justify-center mx-auto mb-3">
+          <div className="w-16 h-16 rounded-full bg-brand-teal-50 text-primary flex items-center justify-center mx-auto mb-3">
             <HardDrive size={32} />
           </div>
           <h3 className="text-base font-bold text-gray-900 mb-1">No Media Files Stored Yet</h3>
@@ -204,7 +203,7 @@ export default function AdminMediaPage() {
                   <div className="flex items-center gap-2 mt-3 pt-2 border-t border-gray-100">
                     <button
                       onClick={() => copyUrl(item._id, item.url)}
-                      className="flex-1 py-1.5 px-2 bg-gray-50 hover:bg-teal-50 hover:text-primary text-gray-600 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1 border border-gray-200"
+                      className="flex-1 py-1.5 px-2 bg-gray-50 hover:bg-brand-teal-50 hover:text-primary text-gray-600 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1 border border-gray-200"
                       title="Copy Local URL"
                     >
                       {copiedId === item._id ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}

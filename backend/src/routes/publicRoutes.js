@@ -13,6 +13,11 @@ const MenuItem = require('../models/MenuItem');
 const Setting = require('../models/Setting');
 const HomepageSection = require('../models/HomepageSection');
 const Page = require('../models/Page');
+const Appointment = require('../models/Appointment');
+const Video = require('../models/Video');
+const HospitalLocation = require('../models/HospitalLocation');
+const hospitalLocationCtrl = require('../controllers/hospitalLocationController');
+const newsletterCtrl = require('../controllers/newsletterController');
 
 // 1. Aggregated Homepage & Navigation Data
 router.get('/home-data', async (req, res) => {
@@ -30,6 +35,8 @@ router.get('/home-data', async (req, res) => {
       recentBlogs,
       faqs,
       galleryPreview,
+      videos,
+      hospitalLocations,
     ] = await Promise.all([
       Setting.findOne(),
       HomepageSection.find({ isEnabled: true }).sort({ sortOrder: 1 }),
@@ -43,6 +50,8 @@ router.get('/home-data', async (req, res) => {
       Blog.find({ status: 'published' }).sort({ publishedAt: -1 }).limit(3),
       FAQ.find({ isPublished: true }).sort({ sortOrder: 1 }).limit(6),
       GalleryItem.find({ isPublished: true }).sort({ sortOrder: 1 }).limit(8),
+      Video.find({ isPublished: true }).sort({ sortOrder: 1, createdAt: -1 }).limit(4),
+      HospitalLocation.find({ isActive: true }).sort({ order: 1, createdAt: -1 }),
     ]);
 
     res.json({
@@ -62,6 +71,8 @@ router.get('/home-data', async (req, res) => {
         recentBlogs,
         faqs,
         galleryPreview,
+        videos,
+        hospitalLocations: hospitalLocations || [],
       },
     });
   } catch (error) {
@@ -84,8 +95,12 @@ router.get('/settings', async (req, res) => {
 router.get('/navigation', async (req, res) => {
   try {
     const [header, footer] = await Promise.all([
-      MenuItem.find({ isHeader: true, isActive: true }).sort({ sortOrder: 1 }),
-      MenuItem.find({ isFooter: true, isActive: true }).sort({ sortOrder: 1 }),
+      MenuItem.find({ isHeader: true, isActive: true })
+        .populate('parentId', 'label url')
+        .sort({ sortOrder: 1, createdAt: 1 }),
+      MenuItem.find({ isFooter: true, isActive: true })
+        .populate('parentId', 'label url')
+        .sort({ sortOrder: 1, createdAt: 1 }),
     ]);
     res.json({ success: true, data: { header, footer } });
   } catch (error) {
@@ -251,6 +266,33 @@ router.get('/testimonials', async (req, res) => {
   }
 });
 
+// Public Review Submission
+router.post('/feedback', async (req, res) => {
+  try {
+    const { patientName, phone, rating, story, treatmentReceived, location } = req.body;
+    if (!patientName || !story) {
+      return res.status(400).json({ success: false, error: 'Patient name and review story are required' });
+    }
+    const review = await Testimonial.create({
+      patientName,
+      phone: phone || '',
+      rating: Number(rating) || 5,
+      story,
+      treatmentReceived: treatmentReceived || 'General Gynaecology',
+      location: location || 'Surat, Gujarat',
+      isPublished: false, // Requires admin moderation
+      isFeatured: false,
+    });
+    res.status(201).json({
+      success: true,
+      message: 'Feedback submitted successfully. Thank you for sharing your experience!',
+      data: review,
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
 // 10. FAQs
 router.get('/faqs', async (req, res) => {
   try {
@@ -276,5 +318,109 @@ router.get('/pages/:slug', async (req, res) => {
   }
 });
 
-module.exports = router;
+// 12. Public Appointment Booking
+router.post('/appointments', async (req, res) => {
+  try {
+    const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {};
 
+    const asString = (v, fallback = '') => (typeof v === 'string' ? v : v == null ? fallback : String(v));
+    const patientName = asString(body.patientName).trim();
+    const rawPhone = asString(body.phone).trim();
+    const cleanPhone = rawPhone.replace(/\D/g, '');
+    const email = asString(body.email).trim().toLowerCase();
+    const city = asString(body.city, 'Surat').trim() || 'Surat';
+    const department = asString(body.department, 'Obstetrics & Normal Delivery').trim() || 'Obstetrics & Normal Delivery';
+    const doctor = asString(body.doctor, 'Any Available Specialist').trim() || 'Any Available Specialist';
+    const preferredDate = asString(body.preferredDate).trim();
+    const preferredTime = asString(body.preferredTime, 'Morning OPD (10:00 AM - 1:00 PM)').trim() || 'Morning OPD (10:00 AM - 1:00 PM)';
+    const message = asString(body.message).trim();
+
+    if (!patientName) {
+      return res.status(400).json({ success: false, error: 'Please enter patient name' });
+    }
+    if (patientName.length < 2 || patientName.length > 100) {
+      return res.status(400).json({ success: false, error: 'Patient name must be between 2 and 100 characters' });
+    }
+    if (!cleanPhone) {
+      return res.status(400).json({ success: false, error: 'Please provide a mobile number' });
+    }
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return res.status(400).json({ success: false, error: 'Please provide a valid 10-digit Indian mobile number' });
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ success: false, error: 'Please provide a valid email address' });
+    }
+    if (email.length > 120) {
+      return res.status(400).json({ success: false, error: 'Email is too long' });
+    }
+    if (city.length > 60) {
+      return res.status(400).json({ success: false, error: 'City is too long' });
+    }
+    if (department.length > 120) {
+      return res.status(400).json({ success: false, error: 'Department is too long' });
+    }
+    if (doctor.length > 120) {
+      return res.status(400).json({ success: false, error: 'Doctor name is too long' });
+    }
+    if (message.length > 500) {
+      return res.status(400).json({ success: false, error: 'Message must be 500 characters or less' });
+    }
+    if (preferredDate) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(preferredDate)) {
+        return res.status(400).json({ success: false, error: 'Preferred date format is invalid' });
+      }
+      const d = new Date(`${preferredDate}T00:00:00`);
+      if (Number.isNaN(d.getTime())) {
+        return res.status(400).json({ success: false, error: 'Preferred date is invalid' });
+      }
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (d < today) {
+        return res.status(400).json({ success: false, error: 'Preferred date cannot be in the past' });
+      }
+    }
+    if (preferredTime.length > 80) {
+      return res.status(400).json({ success: false, error: 'Preferred time is too long' });
+    }
+
+    const appointment = await Appointment.create({
+      patientName,
+      phone: cleanPhone,
+      email,
+      city,
+      department,
+      doctor,
+      preferredDate,
+      preferredTime,
+      message,
+      status: 'Pending',
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Appointment request submitted successfully. Our team will contact you to confirm the slot.',
+      data: appointment,
+    });
+  } catch (err) {
+    console.error('Appointment booking error:', err);
+    res.status(400).json({ success: false, error: err.message || 'Failed to submit appointment request' });
+  }
+});
+
+// 13. Videos
+router.get('/videos', async (req, res) => {
+  try {
+    const videos = await Video.find({ isPublished: true }).sort({ sortOrder: 1, createdAt: -1 });
+    res.json({ success: true, data: videos });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Failed to fetch videos' });
+  }
+});
+
+// 14. Hospital Locations
+router.get('/hospital-locations', hospitalLocationCtrl.getPublic);
+
+// 15. Newsletter Subscription
+router.post('/newsletter', newsletterCtrl.subscribe);
+
+module.exports = router;

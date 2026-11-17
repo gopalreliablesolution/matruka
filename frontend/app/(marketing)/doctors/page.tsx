@@ -22,16 +22,16 @@ export default async function DoctorsPage() {
   const doctors = await getDoctorsData();
 
   return (
-    <div className="py-12 sm:py-16 space-y-12">
+    <div className="py-6 sm:py-8 space-y-6">
       {/* Header */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           Medical Leadership
         </span>
-        <h1 className="text-3xl sm:text-5xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900">
           Our Expert Doctors
         </h1>
-        <p className="text-base text-slate-600 max-w-2xl mx-auto">
+        <p className="text-sm text-slate-600 max-w-2xl mx-auto">
           Meet Dr. Kairavi Yagnik & Dr. Rut Shah — Consultant Obstetricians, Gynaecologists, and Fellowship-trained Laparoscopic Surgeons in Surat.
         </p>
       </section>

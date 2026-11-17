@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import { Users, Plus, Edit2, Trash2, Shield, X, Loader2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
+import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
 
 interface UserItem {
@@ -19,6 +21,15 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    user: UserItem | null;
+    loading: boolean;
+  }>({
+    isOpen: false,
+    user: null,
+    loading: false,
+  });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -64,50 +75,52 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleDelete = async (id: string, email: string) => {
-    if (!confirm(`Are you sure you want to delete ${email}?`)) return;
+  const handleDelete = async () => {
+    if (!deleteModal.user) return;
+    const userId = deleteModal.user._id || deleteModal.user.id;
+
     try {
-      const res = await adminApi.delete(`/users/${id}`);
+      setDeleteModal((previous) => ({ ...previous, loading: true }));
+      const res = await adminApi.delete(`/users/${userId}`);
       if (res.data.success) {
-        toast.success('User deleted');
+        toast.success('Admin user deleted');
+        setDeleteModal({ isOpen: false, user: null, loading: false });
         fetchUsers();
       }
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to delete user');
+      setDeleteModal((previous) => ({ ...previous, loading: false }));
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-brand-slate-900 font-heading flex items-center gap-2">
-            <Users className="w-6 h-6 text-brand-teal-600" />
-            <span>Admin Users & Role Permissions</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage authenticated administrative staff accounts, Super Admin privileges, and Content Manager roles.
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Admin Users & Role Permissions"
+        description="Manage authenticated staff accounts, Super Admin privileges, and Content Manager roles."
+        icon={Users}
+        breadcrumb={[{ label: 'Admin Users & Roles' }]}
+        actions={
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="admin-btn-primary"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Add New Admin</span>
+          </button>
+        }
+      />
 
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow transition"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Admin</span>
-        </button>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="admin-card overflow-hidden">
         {loading ? (
           <div className="py-16 flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-teal-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm divide-y divide-slate-200">
-              <thead className="bg-slate-50 text-slate-700 font-semibold uppercase tracking-wider text-[11px]">
+            <table className="w-full min-w-[42rem] text-left text-xs sm:text-sm divide-y divide-slate-200">
+              <thead className="sticky top-0 z-10 bg-[#F6F8F9] text-slate-700 font-semibold uppercase tracking-wider text-[11px]">
                 <tr>
                   <th className="py-3.5 px-4">Name</th>
                   <th className="py-3.5 px-4">Email Address</th>
@@ -137,15 +150,24 @@ export default function AdminUsersPage() {
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-center">
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                          Active
+                        <span
+                          className={`inline-block rounded-full px-2.5 py-1 text-[10px] font-semibold ${
+                            u.isActive
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          }`}
+                        >
+                          {u.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <button
-                          onClick={() => handleDelete(uid, u.email)}
+                          onClick={() =>
+                            setDeleteModal({ isOpen: true, user: u, loading: false })
+                          }
                           className="p-1.5 text-red-600 hover:bg-red-50 rounded"
                           title="Delete User"
+                          aria-label={`Delete ${u.name}`}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -238,6 +260,19 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() =>
+          setDeleteModal({ isOpen: false, user: null, loading: false })
+        }
+        onConfirm={handleDelete}
+        title="Delete Admin User?"
+        message={`Are you sure you want to delete ${deleteModal.user?.email || 'this user'}? This action cannot be undone.`}
+        confirmLabel="Delete User"
+        variant="danger"
+        loading={deleteModal.loading}
+      />
     </div>
   );
 }

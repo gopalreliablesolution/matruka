@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquareQuote, Plus, Edit2, Trash2, Star, Check, X, Loader2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
-import Breadcrumb from '@/components/admin/Breadcrumb';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
 
@@ -143,27 +143,22 @@ export default function AdminTestimonialsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Breadcrumb & Header */}
-      <div>
-        <Breadcrumb
-          items={[{ label: 'Dashboard', href: '/admin' }, { label: 'Patient Testimonials' }]}
-        />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Patient Experiences & Reviews</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage patient feedback, delivery stories, 5-star ratings, and consulting doctor attribution.
-            </p>
-          </div>
+      <AdminPageHeader
+        title="Patient Experiences & Reviews"
+        description="Manage patient feedback, delivery stories, ratings, and consulting doctor attribution."
+        icon={MessageSquareQuote}
+        breadcrumb={[{ label: 'Patient Reviews & Feedback' }]}
+        actions={
           <button
+            type="button"
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 font-semibold text-sm transition shadow-sm"
+            className="admin-btn-primary"
           >
             <Plus size={18} />
             <span>Add Review</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {loading ? (
         <div className="p-16 flex flex-col items-center justify-center gap-3">

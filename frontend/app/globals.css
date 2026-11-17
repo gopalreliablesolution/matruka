@@ -2,10 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ensure fixed overlays/modals are never shifted by parent space-y-* margin-top rules */
+.fixed.inset-0,
+div[class*="fixed"][class*="inset-0"] {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 @layer base {
   :root {
-    --primary-teal: #05A6B4;
-    --deep-teal: #078F9C;
+    --primary-teal: #0496AC;
+    --deep-teal: #037B8D;
     --warm-gold: #F2B632;
     --light-aqua: #EAF8F8;
     --slate-text: #344B53;
@@ -19,14 +28,14 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-poppins), sans-serif;
+    font-family: var(--font-inter), sans-serif;
     letter-spacing: -0.015em;
   }
 }
 
 /* Custom UI Utility Classes */
 .bg-gradient-teal {
-  background: linear-gradient(135deg, #05A6B4 0%, #078F9C 100%);
+  background: linear-gradient(135deg, #0496AC 0%, #037B8D 100%);
 }
 
 .bg-gradient-teal-soft {
@@ -38,17 +47,17 @@
 }
 
 .text-teal-gradient {
-  background: linear-gradient(135deg, #05A6B4 0%, #078F9C 100%);
+  background: linear-gradient(135deg, #0496AC 0%, #037B8D 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .border-brand-teal {
-  border-color: #05A6B4;
+  border-color: #0496AC;
 }
 
 .wave-shape {
-  background-image: radial-gradient(circle at 50% 100%, rgba(5, 166, 180, 0.08) 0%, transparent 70%);
+  background-image: radial-gradient(circle at 50% 100%, rgba(4, 150, 172, 0.08) 0%, transparent 70%);
 }
 
 /* Custom Scrollbar for CMS and Table Views */
@@ -69,4 +78,28 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #078F9C;
 }
+
+/* Custom Sidebar Scrollbar */
+.custom-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 9999px;
+}
+
+.custom-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
 

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { BookOpen, Plus, Edit2, Trash2, X, Calendar, User, Eye } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
-import Breadcrumb from '@/components/admin/Breadcrumb';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import DataTable, { Column } from '@/components/admin/DataTable';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
@@ -246,27 +246,22 @@ export default function AdminBlogsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Breadcrumb & Header */}
-      <div>
-        <Breadcrumb
-          items={[{ label: 'Dashboard', href: '/admin' }, { label: 'Blogs & Articles' }]}
-        />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Healthcare Articles & Guides</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Publish educational articles on pregnancy, nutrition, laparoscopy, and reproductive wellness.
-            </p>
-          </div>
+      <AdminPageHeader
+        title="Healthcare Articles & Guides"
+        description="Publish educational articles on pregnancy, nutrition, laparoscopy, and reproductive wellness."
+        icon={BookOpen}
+        breadcrumb={[{ label: 'Pregnancy Blogs & Guides' }]}
+        actions={
           <button
+            type="button"
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 font-semibold text-sm transition shadow-sm"
+            className="admin-btn-primary"
           >
             <Plus size={18} />
             <span>New Article</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Jogi DataTable */}
       <DataTable

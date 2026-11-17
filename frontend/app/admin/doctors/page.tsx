@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
-import Breadcrumb from '@/components/admin/Breadcrumb';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import DataTable, { Column } from '@/components/admin/DataTable';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
@@ -223,7 +223,7 @@ export default function AdminDoctorsPage() {
       accessor: 'name',
       render: (doc: DoctorItem) => (
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-teal-50 border border-teal-100 overflow-hidden shrink-0 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-xl bg-brand-teal-50 border border-brand-teal-100 overflow-hidden shrink-0 flex items-center justify-center">
             {doc.profileImage ? (
               <img src={resolveImageUrl(doc.profileImage)} alt={doc.name} className="w-full h-full object-cover" />
             ) : (
@@ -311,25 +311,22 @@ export default function AdminDoctorsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Breadcrumb & Page Header */}
-      <div>
-        <Breadcrumb items={[{ label: 'Dashboard', href: '/admin' }, { label: 'Doctors & Team' }]} />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Doctor Profiles</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage Dr. Kairavi Yagnik, Dr. Rut Shah, clinical qualifications, OPD timings, and profiles.
-            </p>
-          </div>
+      <AdminPageHeader
+        title="Doctor Profiles"
+        description="Manage clinical qualifications, OPD timings, expertise, publication status, and public profiles."
+        icon={Stethoscope}
+        breadcrumb={[{ label: 'Doctors & Credentials' }]}
+        actions={
           <button
+            type="button"
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 font-semibold text-sm transition shadow-sm"
+            className="admin-btn-primary"
           >
             <Plus size={18} />
             <span>Add Doctor</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Jogi-Style Data Table */}
       <DataTable

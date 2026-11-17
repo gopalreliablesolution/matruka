@@ -2,32 +2,49 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
-import { Lock, Mail, Loader2, ShieldCheck, ArrowRight } from 'lucide-react';
+import {
+  LockKeyhole,
+  Mail,
+  Loader2,
+  ShieldCheck,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  CalendarCheck,
+  FileCheck2,
+  Activity,
+  Globe,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [email, setEmail] = useState('admin@matruka.in');
-  const [password, setPassword] = useState('Admin@Matruka2026');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
     setLoading(true);
+
     try {
-      const res = await login(email, password);
-      if (!res.success) {
-        const errorMsg = res.error || 'Login failed. Please check your credentials.';
-        setError(errorMsg);
-        toast.error(errorMsg);
+      const response = await login(email, password);
+      if (!response.success) {
+        const errorMessage =
+          response.error || 'Login failed. Please check your credentials.';
+        setError(errorMessage);
+        toast.error(errorMessage);
         return;
       }
+
       toast.success('Signed in successfully');
       router.push('/admin');
     } catch (err: any) {
@@ -44,123 +61,246 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-primary px-4 py-12 relative overflow-hidden font-sans">
-      {/* Ambient background glows - Jogi Style */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-96 h-96 bg-white rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-accent rounded-full blur-3xl" />
-      </div>
+    <main className="h-screen max-h-screen overflow-hidden bg-[#F5F7F8] font-sans">
+      <div className="grid h-full lg:grid-cols-[1.05fr_0.95fr]">
+        {/* Left Side: Branding & Features */}
+        <section className="relative hidden h-full overflow-hidden bg-primary px-8 py-8 text-white lg:flex lg:flex-col justify-between xl:px-12 xl:py-10">
+          <div
+            className="pointer-events-none absolute -right-28 -top-28 h-96 w-96 rounded-full bg-white/[0.07]"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute -bottom-36 -left-24 h-[28rem] w-[28rem] rounded-full bg-[#32BDC8]/20"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute right-20 top-1/3 h-52 w-52 rounded-full border border-white/10"
+            aria-hidden="true"
+          />
 
-      <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl w-full max-w-md relative z-10 border border-teal-500/20">
-        {/* Brand Header with Authentic Logo */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-3">
-            <div className="p-2.5 bg-gray-50/80 rounded-2xl border border-gray-100 shadow-sm inline-flex items-center justify-center">
+          <div className="relative z-10 flex items-center justify-between">
+            <Link href="/" className="inline-block transition-opacity hover:opacity-90">
               <Image
-                src="/logo.png"
-                alt="Matruka - Complete Care for Her"
-                width={190}
-                height={55}
-                className="max-h-12 w-auto object-contain"
+                src="/logo-white.png"
+                alt="MatruKa - Complete Care for Her"
+                width={160}
+                height={45}
+                className="h-10 w-auto object-contain"
                 priority
               />
+            </Link>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-white/85">
+              <ShieldCheck size={13} />
+              Secure workspace
+            </span>
+          </div>
+
+          <div className="relative z-10 max-w-xl py-6">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/65">
+              MatruKa Administration
+            </p>
+            <h1 className="mt-3 font-heading text-3xl font-bold leading-tight tracking-tight xl:text-4xl">
+              Complete care starts with confident management.
+            </h1>
+            <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/75">
+              A secure, centralized workspace for patient consultations, clinical
+              content, hospital information, and every update on the MatruKa
+              website.
+            </p>
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {[
+                {
+                  icon: CalendarCheck,
+                  title: 'Patient enquiries',
+                  text: 'Review and progress consultation requests.',
+                },
+                {
+                  icon: FileCheck2,
+                  title: 'Clinical content',
+                  text: 'Keep services, doctors, and guides accurate.',
+                },
+                {
+                  icon: Activity,
+                  title: 'System visibility',
+                  text: 'Monitor content and API health in real time.',
+                },
+                {
+                  icon: Globe,
+                  title: 'Website control',
+                  text: 'Publish updates without developer delays.',
+                },
+              ].map((feature) => (
+                <div
+                  key={feature.title}
+                  className="rounded-xl border border-white/10 bg-white/[0.07] p-3.5 backdrop-blur-sm"
+                >
+                  <feature.icon size={18} className="text-white/90" />
+                  <p className="mt-2.5 text-xs font-bold">{feature.title}</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-white/60">
+                    {feature.text}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
-          <p className="text-primary font-bold uppercase tracking-widest text-[11px] mt-2">
-            Hospital Administration Portal
-          </p>
-        </div>
 
-        {error && (
-          <div className="bg-red-50 text-red-600 p-3.5 rounded-xl mb-6 text-xs sm:text-sm font-medium border border-red-100 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-red-600 rounded-full shrink-0" />
-            <span>{error}</span>
+          <div className="relative z-10 flex items-center justify-between text-[10px] font-medium uppercase tracking-[0.14em] text-white/50">
+            <span>Complete Care for Her</span>
+            <span>Authorized personnel only</span>
           </div>
-        )}
+        </section>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              Admin Email
-            </label>
-            <div className="relative">
-              <input
-                type="email"
-                required
-                placeholder="admin@matruka.in"
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium text-sm text-gray-900 bg-gray-50/50 focus:bg-white"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        {/* Right Side: Login Form */}
+        <section className="flex h-full items-center justify-center overflow-y-auto px-6 py-8 sm:px-10 lg:px-12">
+          <div className="w-full max-w-[25rem]">
+            {/* Mobile Logo */}
+            <div className="mb-6 flex items-center justify-between lg:hidden">
+              <Link href="/">
+                <Image
+                  src="/logo.png"
+                  alt="MatruKa"
+                  width={130}
+                  height={40}
+                  className="h-8 w-auto object-contain"
+                  priority
+                />
+              </Link>
+              <Link
+                href="/"
+                className="text-xs font-semibold text-primary transition hover:text-primary-dark"
+              >
+                Back to website
+              </Link>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type="password"
-                required
-                placeholder="••••••••••••"
-                className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all font-medium text-sm text-gray-900 bg-gray-50/50 focus:bg-white"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <div className="mb-6">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <LockKeyhole size={19} />
+              </span>
+              <h2 className="mt-4 font-heading text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+                Welcome back
+              </h2>
+              <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-gray-500">
+                Sign in to manage the MatruKa hospital website and patient
+                enquiry workflow.
+              </p>
             </div>
-          </div>
 
-          <div className="flex items-center justify-between text-xs">
-            <label className="flex items-center gap-2 cursor-pointer text-gray-600">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <span>Keep me signed in</span>
-            </label>
-            <span className="text-gray-400">Strictly Authorized Personnel</span>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary hover:bg-primary-dark text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-teal-900/20 disabled:opacity-50 active:scale-[0.98] flex items-center justify-center gap-2 text-sm"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Authenticating...</span>
-              </>
-            ) : (
-              <>
-                <span>Sign In to Dashboard</span>
-                <ArrowRight className="w-4 h-4" />
-              </>
+            {error && (
+              <div
+                role="alert"
+                className="mb-4 flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-xs font-medium leading-relaxed text-red-700"
+              >
+                <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-500" />
+                <span>{error}</span>
+              </div>
             )}
-          </button>
-        </form>
 
-        {/* Demo Credentials Reminder */}
-        <div className="mt-6 p-3 rounded-xl bg-teal-50 border border-teal-100 text-[11px] text-teal-800">
-          <p className="font-semibold text-primary mb-0.5">Default System Credentials:</p>
-          <p>
-            Email: <code className="font-bold">admin@matruka.in</code>
-          </p>
-          <p>
-            Password: <code className="font-bold">Admin@Matruka2026</code>
-          </p>
-        </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="admin-email"
+                  className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-700"
+                >
+                  Admin email
+                </label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                    <Mail size={18} />
+                  </div>
+                  <input
+                    id="admin-email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    placeholder="admin@matruka.in"
+                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm font-medium text-gray-900 placeholder:text-gray-400 shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                  />
+                </div>
+              </div>
 
-        <p className="text-center mt-6 text-gray-400 text-xs font-medium flex items-center justify-center gap-1.5">
-          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          <span>Protected & Encrypted Local Server Access</span>
-        </p>
+              <div>
+                <label
+                  htmlFor="admin-password"
+                  className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-700"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+                    <LockKeyhole size={18} />
+                  </div>
+                  <input
+                    id="admin-password"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    autoComplete="current-password"
+                    placeholder="Enter your password"
+                    className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-11 text-sm font-medium text-gray-900 placeholder:text-gray-400 shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-gray-400 transition hover:text-gray-600"
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 pt-1">
+                <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-gray-600">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(event) => setRememberMe(event.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/20"
+                  />
+                  <span>Keep me signed in</span>
+                </label>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-gray-400">
+                  <ShieldCheck size={13} className="text-primary" />
+                  <span>Encrypted access</span>
+                </span>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold text-white shadow-lg shadow-teal-900/15 transition-all hover:bg-primary-dark active:scale-[0.99] disabled:opacity-60 cursor-pointer"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 size={18} className="animate-spin" />
+                    <span>Authenticating...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Sign in to dashboard</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-6 flex items-center justify-between border-t border-gray-100 pt-4 text-[11px] font-medium text-gray-400">
+              <span>MatruKa CMS · Secure Admin</span>
+              <Link
+                href="/"
+                className="font-semibold text-primary transition hover:text-primary-dark"
+              >
+                Return to website
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

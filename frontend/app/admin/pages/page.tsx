@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { FileText, Plus, Edit2, Trash2, Eye, X, Loader2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -78,22 +79,17 @@ export default function AdminPagesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-brand-slate-900 font-heading flex items-center gap-2">
-            <FileText className="w-6 h-6 text-brand-teal-600" />
-            <span>Informational Pages Management</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Manage static and informational pages including About Us, Privacy Policy, Terms & Conditions, and clinic vision.
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Informational Pages"
+        description="Manage static pages including About Us, Privacy Policy, Terms & Conditions, and the clinic vision."
+        icon={FileText}
+        breadcrumb={[{ label: 'Dynamic Pages' }]}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
           <div className="col-span-full py-16 flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-teal-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
           pages.map((p) => (

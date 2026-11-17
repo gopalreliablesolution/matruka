@@ -135,15 +135,21 @@ export default async function ContactPage() {
               </div>
             </div>
 
-            {/* Informational Policy Notice */}
-            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-1">
+            {/* Online Booking Notice */}
+            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 space-y-2">
               <p className="font-bold flex items-center gap-1.5">
                 <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                <span>Informational Website Notice</span>
+                <span>Appointment & Privacy Notice</span>
               </p>
               <p className="text-[11px] leading-relaxed text-amber-800">
-                To safeguard patient confidentiality and clinical accuracy, this website does not collect medical inquiries, appointment booking requests, or patient details online. Please visit Matruka in person during OPD hours or telephone the clinic.
+                You can submit a basic appointment request online for consultation scheduling. Please avoid sharing sensitive medical records or emergency details in the form. For urgent concerns, call the clinic directly.
               </p>
+              <a
+                href="/book-appointment"
+                className="inline-flex items-center justify-center rounded-lg bg-brand-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-brand-teal-700 transition"
+              >
+                Book Appointment Online
+              </a>
             </div>
           </div>
 

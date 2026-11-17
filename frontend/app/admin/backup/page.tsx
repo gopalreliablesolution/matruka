@@ -3,9 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldCheck, Download, HardDrive, Server, Database, Loader2, CheckCircle2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import toast from 'react-hot-toast';
 
 export default function AdminBackupPage() {
+  const { isAdmin } = useAuth();
   const [health, setHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -50,26 +53,31 @@ export default function AdminBackupPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-brand-slate-900 font-heading flex items-center gap-2">
-            <ShieldCheck className="w-6 h-6 text-brand-teal-600" />
-            <span>System Health & Disaster Recovery</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Monitor MongoDB operational status, system uptime, and export complete database JSON dumps.
-          </p>
-        </div>
-
-        <button
-          onClick={handleExportBackup}
-          disabled={downloading}
-          className="inline-flex items-center gap-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow transition disabled:opacity-60"
-        >
-          {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-          <span>{downloading ? 'Generating Dump...' : 'Export DB Backup (JSON)'}</span>
-        </button>
-      </div>
+      <AdminPageHeader
+        title="System Health & Disaster Recovery"
+        description="Monitor database status, system uptime, and export complete JSON database dumps."
+        icon={ShieldCheck}
+        breadcrumb={[{ label: 'Database Backup & Health' }]}
+        actions={
+          isAdmin ? (
+            <button
+              type="button"
+              onClick={handleExportBackup}
+              disabled={downloading}
+              className="admin-btn-primary"
+            >
+              {downloading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Download className="w-4 h-4" />
+              )}
+              <span>
+                {downloading ? 'Generating Dump...' : 'Export DB Backup (JSON)'}
+              </span>
+            </button>
+          ) : null
+        }
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-2">

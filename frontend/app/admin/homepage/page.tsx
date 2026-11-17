@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Home, Eye, EyeOff, Save, Loader2, Edit2, X, Check } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import toast from 'react-hot-toast';
 
 interface SectionItem {
@@ -72,22 +73,17 @@ export default function AdminHomepagePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-brand-slate-900 font-heading flex items-center gap-2">
-            <Home className="w-6 h-6 text-brand-teal-600" />
-            <span>Homepage Section Manager</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Enable or disable sections, modify headings, and adjust section content displayed on the public home page.
-          </p>
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Homepage Section Manager"
+        description="Enable or disable sections, modify headings, and adjust content displayed on the public home page."
+        icon={Home}
+        breadcrumb={[{ label: 'Homepage Sections' }]}
+      />
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="admin-card overflow-hidden">
         {loading ? (
           <div className="py-16 flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-teal-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : sections.length === 0 ? (
           <div className="py-16 text-center text-slate-500 text-sm">No sections configured.</div>

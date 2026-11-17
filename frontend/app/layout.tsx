@@ -1,18 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter, Poppins } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
-});
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-poppins',
   display: 'swap',
 });
 
@@ -47,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${poppins.variable} overflow-x-hidden`}>
+    <html lang="en" className={`${inter.variable} overflow-x-hidden`}>
       <body className="min-h-screen bg-white text-brand-slate-700 font-sans antialiased overflow-x-hidden selection:bg-brand-teal-100 selection:text-brand-teal-700">
         <Toaster position="top-right" />
         {children}

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Sparkles, Plus, Edit2, Trash2, X, ToggleLeft, ToggleRight } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
-import Breadcrumb from '@/components/admin/Breadcrumb';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import DataTable, { Column } from '@/components/admin/DataTable';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
@@ -209,7 +209,7 @@ export default function AdminServicesPage() {
       accessor: 'name',
       render: (srv: ServiceItem) => (
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-10 h-10 rounded-xl bg-brand-teal-50 border border-brand-teal-100 flex items-center justify-center shrink-0 overflow-hidden">
             {srv.featuredImage ? (
               <img src={resolveImageUrl(srv.featuredImage)} alt={srv.name} className="w-full h-full object-cover" />
             ) : (
@@ -227,7 +227,7 @@ export default function AdminServicesPage() {
       header: 'Category',
       accessor: 'category',
       render: (srv: ServiceItem) => (
-        <span className="inline-flex px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-50 text-teal-800 border border-teal-200">
+        <span className="inline-flex px-2.5 py-1 rounded-md text-xs font-semibold bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-200">
           {srv.category}
         </span>
       ),
@@ -285,27 +285,22 @@ export default function AdminServicesPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Breadcrumb & Header */}
-      <div>
-        <Breadcrumb
-          items={[{ label: 'Dashboard', href: '/admin' }, { label: '14 Core Specialities' }]}
-        />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Clinical Specialities & Services</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage the 14 confirmed Matruka specialities, procedures, patient benefits, and clinical descriptions.
-            </p>
-          </div>
+      <AdminPageHeader
+        title="Clinical Specialities & Services"
+        description="Manage MatruKa specialities, procedures, patient benefits, clinical descriptions, and publication status."
+        icon={Sparkles}
+        breadcrumb={[{ label: '14 Core Specialities' }]}
+        actions={
           <button
+            type="button"
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 font-semibold text-sm transition shadow-sm"
+            className="admin-btn-primary"
           >
             <Plus size={18} />
             <span>Add Speciality</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Jogi-Style Data Table */}
       <DataTable

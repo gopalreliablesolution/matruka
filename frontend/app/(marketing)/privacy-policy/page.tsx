@@ -64,12 +64,13 @@ export default function PrivacyPolicyPage() {
           ) : (
             <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-matruka-tealDark mb-3">1. Informational Purpose</h2>
+                <h2 className="text-2xl font-bold text-matruka-tealDark mb-3">1. Informational Purpose & Online Requests</h2>
                 <p>
-                  This website is created solely for public informational and educational guidance regarding the
-                  clinical services, doctors, facilities, and visiting guidelines of Matruka — Complete Care for Her.
-                  We do not collect personal health records, payment information, or online appointment bookings
-                  through this website.
+                  This website provides public informational and educational guidance regarding the clinical services,
+                  doctors, facilities, and visiting guidelines of Matruka — Complete Care for Her. The website also
+                  allows users to submit basic appointment requests (such as name, contact number, preferred date/time,
+                  and concern summary) to help with consultation scheduling. We do not collect payment information
+                  through this website and request that users avoid submitting sensitive medical records online.
                 </p>
               </div>
 

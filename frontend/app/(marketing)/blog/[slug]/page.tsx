@@ -34,7 +34,7 @@ export default async function BlogDetailPage({
   const { blog, related } = detail;
 
   return (
-    <article className="py-12 sm:py-16 space-y-10">
+    <article className="py-6 sm:py-8 space-y-6">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <Link
           href="/blog"
@@ -45,15 +45,15 @@ export default async function BlogDetailPage({
         </Link>
       </div>
 
-      <header className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+      <header className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           {blog.category}
         </span>
-        <h1 className="text-3xl sm:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
+        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 leading-tight">
           {blog.title}
         </h1>
 
-        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-2 border-b border-slate-200 pb-4">
+        <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-2 border-b border-slate-200 pb-3">
           <span className="flex items-center gap-1.5 font-semibold text-brand-slate-800">
             <User className="w-4 h-4 text-brand-teal-600" />
             <span>By {blog.author}</span>
@@ -74,7 +74,7 @@ export default async function BlogDetailPage({
       {/* Featured Image */}
       {blog.featuredImage && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl overflow-hidden h-72 sm:h-96 bg-slate-100">
+          <div className="rounded-2xl overflow-hidden h-64 sm:h-80 bg-slate-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={resolveImageUrl(blog.featuredImage)}

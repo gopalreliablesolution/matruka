@@ -14,9 +14,26 @@ backend/uploads/*
 .env.local
 .env.*.local
 
-
 .env
 backend/.env
 frontend/.env.local
 .vercel
 .env*
+.vscode/
+.idea/
+
+# Documentation files
+*.md
+
+# Testing / QA artifacts
+qa-screenshots/
+backend/tests/
+backend/jest.config.js
+backend/scripts/test-seed.js
+frontend/tests-e2e/
+frontend/playwright.config.ts
+frontend/test-visuals.cjs
+playwright-report/
+test-results/
+blob-report/
+coverage/

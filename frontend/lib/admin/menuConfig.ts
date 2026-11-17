@@ -1,28 +1,26 @@
 import {
   LayoutDashboard,
+  Calendar,
   Stethoscope,
   Sparkles,
   Building2,
   FileText,
-  MessageSquareQuote,
+  Video,
   Image as ImageIcon,
+  MessageSquareQuote,
   HelpCircle,
-  Sliders,
-  Home,
-  Menu as MenuIcon,
-  HardDrive,
+  Globe,
   Settings,
   Users,
-  Activity,
   ShieldCheck,
   LucideIcon,
-  Globe,
 } from 'lucide-react';
 
 export interface SubLink {
   name: string;
   href: string;
   query?: string;
+  superAdminOnly?: boolean;
 }
 
 export interface SidebarItem {
@@ -40,51 +38,53 @@ export const menuItems: SidebarItem[] = [
     icon: LayoutDashboard,
   },
   {
-    name: 'Doctors & Team',
+    name: 'Patient Consultations',
+    icon: Calendar,
+    subLinks: [
+      { name: 'Appointments & Leads', href: '/admin/appointments' },
+      { name: 'Patient Reviews & Feedback', href: '/admin/testimonials' },
+    ],
+  },
+  {
+    name: 'Clinical Team & Care',
     icon: Stethoscope,
     subLinks: [
-      { name: 'All Doctors', href: '/admin/doctors' },
-      { name: 'Doctor Specialities', href: '/admin/services' },
-    ],
-  },
-  {
-    name: 'Clinical Services',
-    icon: Sparkles,
-    subLinks: [
+      { name: 'Doctors & Credentials', href: '/admin/doctors' },
       { name: '14 Core Specialities', href: '/admin/services' },
-      { name: 'Facilities & Infrastructure', href: '/admin/facilities' },
+      { name: 'Hospital Facilities & OT', href: '/admin/facilities' },
     ],
   },
   {
-    name: 'Content Management',
+    name: 'Content & Media',
     icon: FileText,
     subLinks: [
-      { name: 'Blogs & Patient Guides', href: '/admin/blogs' },
-      { name: 'Patient Testimonials', href: '/admin/testimonials' },
-      { name: 'Clinical Gallery & OT', href: '/admin/gallery' },
-      { name: 'Patient FAQs', href: '/admin/faqs' },
       { name: 'Banners & Hero Sliders', href: '/admin/banners' },
+      { name: 'Video Showcase (YouTube)', href: '/admin/videos' },
+      { name: 'Photo Gallery & Rooms', href: '/admin/gallery' },
+      { name: 'Pregnancy Blogs & Guides', href: '/admin/blogs' },
+      { name: 'Patient Clinical FAQs', href: '/admin/faqs' },
     ],
   },
   {
     name: 'Website & CMS',
     icon: Globe,
     subLinks: [
-      { name: 'Homepage Builder', href: '/admin/homepage' },
-      { name: 'Header & Navigation', href: '/admin/menus' },
+      { name: 'Hospital Locations', href: '/admin/hospital-locations' },
+      { name: 'Newsletter Subscribers', href: '/admin/newsletter' },
+      { name: 'Homepage Sections', href: '/admin/homepage' },
+      { name: 'Header & Footer Menus', href: '/admin/menus' },
       { name: 'Dynamic Pages', href: '/admin/pages' },
-      { name: 'Media Library (Local)', href: '/admin/media' },
-      { name: 'Clinic Settings & Hours', href: '/admin/settings' },
+      { name: 'Local Media Library', href: '/admin/media' },
+      { name: 'Hospital Settings & Hours', href: '/admin/settings' },
     ],
   },
   {
     name: 'System & Security',
-    icon: Users,
+    icon: ShieldCheck,
     subLinks: [
-      { name: 'Admin Users & Roles', href: '/admin/users' },
+      { name: 'Admin Users & Roles', href: '/admin/users', superAdminOnly: true },
       { name: 'Activity Audit Logs', href: '/admin/activity-logs' },
-      { name: 'Backup & Server Health', href: '/admin/backup' },
+      { name: 'Database Backup & Health', href: '/admin/backup' },
     ],
   },
 ];
-

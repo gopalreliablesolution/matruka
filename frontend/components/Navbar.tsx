@@ -1,10 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Phone, Clock, MapPin, Menu, X, Heart, Shield, Sparkles } from 'lucide-react';
+import { ChevronDown, Menu, Phone, X } from 'lucide-react';
+
+export interface MenuItemData {
+  _id?: string;
+  label: string;
+  url: string;
+  sortOrder?: number;
+  isExternal?: boolean;
+  isActive?: boolean;
+  parentId?: string | { _id: string; label: string; url: string } | null;
+  children?: MenuItemData[];
+}
 
 interface NavbarProps {
   settings?: {
@@ -14,134 +25,561 @@ interface NavbarProps {
     opdTimings?: string;
     address?: string;
   };
+  menus?: MenuItemData[];
 }
 
-export default function Navbar({ settings }: NavbarProps) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
+const DEFAULT_SERVICES = [
+  { label: 'Personalized Antenatal Care (ANC)', href: '/services/personalized-antenatal-care' },
+  { label: 'Normal Delivery & Cesarean Section', href: '/services/normal-delivery-cesarean-section' },
+  { label: 'Painless Vaginal Delivery (Epidural)', href: '/services/painless-vaginal-delivery' },
+  { label: 'High Risk Pregnancy Management', href: '/services/high-risk-pregnancy-management' },
+  { label: 'Gynecological Endoscopic Surgeries', href: '/services/gynecological-endoscopic-surgeries' },
+  { label: 'Fertility Evaluation & Workup', href: '/services/fertility-evaluation-workup' },
+];
 
-  const phone = settings?.appointmentPhone || '7984882273';
-  const opdTimings = settings?.opdTimings || '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Mon - Sat)';
+const DEFAULT_MEDIA = [
+  { label: 'Photo Gallery', href: '/gallery' },
+  { label: 'Video Showcase (YouTube)', href: '/videos' },
+];
 
-  const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'About Us', href: '/about' },
-    { label: 'Services', href: '/services' },
-    { label: 'Doctors', href: '/doctors' },
-    { label: 'Facilities', href: '/facilities' },
-    { label: 'Gallery', href: '/gallery' },
-    { label: 'Blogs', href: '/blog' },
-    { label: 'FAQs', href: '/faqs' },
-    { label: 'Contact', href: '/contact' },
-  ];
+const DEFAULT_MENUS: MenuItemData[] = [
+  { label: 'Home', url: '/', sortOrder: 1 },
+  { label: 'About Us', url: '/about', sortOrder: 2 },
+  { label: 'Services', url: '/services', sortOrder: 3 },
+  { label: 'Doctors', url: '/doctors', sortOrder: 4 },
+  { label: 'Facilities', url: '/facilities', sortOrder: 5 },
+  { label: 'Media', url: '/media', sortOrder: 6 },
+  { label: 'Book Appointment', url: '/book-appointment', sortOrder: 7 },
+  { label: 'Contact Us', url: '/contact', sortOrder: 8 },
+];
+
+interface DesktopNavItemProps {
+  label: string;
+  href?: string;
+  isActive?: boolean;
+  hasDropdown?: boolean;
+  expanded?: boolean;
+  onClick?: () => void;
+  onMouseEnter?: () => void;
+}
+
+function DesktopNavItem({
+  label,
+  href,
+  isActive = false,
+  hasDropdown = false,
+  expanded = false,
+  onClick,
+  onMouseEnter,
+}: DesktopNavItemProps) {
+  const content = (
+    <span
+      className={`flex items-center gap-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.08em] transition-colors xl:text-sm xl:tracking-wide ${
+        isActive || expanded
+          ? 'text-[#0496AC] font-bold'
+          : 'text-[#1A2C30] hover:text-[#0496AC]'
+      }`}
+    >
+      {label}
+      {hasDropdown && (
+        <ChevronDown
+          size={12}
+          className={`shrink-0 transition-transform duration-200 ${
+            expanded ? 'rotate-180 text-[#0496AC]' : 'text-slate-400'
+          }`}
+        />
+      )}
+    </span>
+  );
+
+  if (href && !hasDropdown) {
+    return (
+      <Link
+        href={href}
+        className="relative flex h-full items-center px-2 lg:px-3 transition-colors hover:bg-slate-50/50"
+        aria-current={isActive ? 'page' : undefined}
+      >
+        {content}
+      </Link>
+    );
+  }
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white shadow-sm transition-all">
-      {/* Main Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
-        {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <Image
-            src="/logo.png"
-            alt="MatruKa - Complete Care for Her"
-            width={180}
-            height={44}
-            className="h-8 sm:h-9 md:h-10 w-auto max-w-[150px] sm:max-w-[190px] object-contain transition-transform group-hover:scale-[1.02]"
-            priority
-          />
-        </Link>
-
-        {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1">
-          {navLinks.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`px-2.5 py-1.5 rounded-lg text-xs xl:text-[13px] font-medium transition-colors ${
-                  isActive
-                    ? 'text-brand-teal-600 bg-brand-teal-50 font-semibold shadow-xs'
-                    : 'text-brand-slate-700 hover:text-brand-teal-600 hover:bg-slate-50'
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Call to Action Buttons */}
-        <div className="hidden sm:flex items-center gap-2.5">
-          <a
-            href={`tel:${phone}`}
-            className="flex items-center gap-1.5 bg-brand-teal-600 hover:bg-brand-teal-700 text-white text-xs lg:text-[13px] font-semibold px-3.5 py-2 rounded-lg shadow-xs hover:shadow transition-all"
-          >
-            <Phone className="w-3.5 h-3.5" />
-            <span>Call Clinic</span>
-          </a>
-          <a
-            href={`https://wa.me/91${phone}?text=Hello%20MatruKa%2C%20I%20would%20like%20information%20regarding%20OPD%20timings.`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 border border-emerald-500 text-emerald-700 hover:bg-emerald-50 text-xs lg:text-[13px] font-semibold px-3.5 py-2 rounded-lg transition-colors"
-          >
-            <span>WhatsApp</span>
-          </a>
-        </div>
-
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 rounded-lg text-brand-slate-600 hover:text-brand-teal-600 hover:bg-slate-100 focus:outline-none"
-          aria-label="Toggle navigation menu"
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </div>
-
-      {/* Mobile Drawer Navigation */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-100 bg-white px-4 pt-3 pb-6 space-y-2 animate-fadeIn shadow-lg">
-          <div className="grid grid-cols-1 gap-1">
-            {navLinks.map((item) => {
-              const isActive = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`px-3 py-2.5 rounded-md text-base font-medium flex items-center justify-between ${isActive
-                      ? 'bg-brand-teal-50 text-brand-teal-600 font-semibold'
-                      : 'text-brand-slate-700 hover:bg-slate-50'
-                    }`}
-                >
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
-
-          <div className="pt-4 border-t border-slate-100 space-y-2.5">
-            <a
-              href={`tel:${phone}`}
-              className="w-full flex items-center justify-center gap-2 bg-brand-teal-600 text-white font-semibold py-3 rounded-lg shadow-sm"
-            >
-              <Phone className="w-4 h-4" />
-              <span>Call Clinic: {phone}</span>
-            </a>
-            <a
-              href={`https://wa.me/91${phone}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 border border-emerald-500 text-emerald-700 font-medium py-2.5 rounded-lg"
-            >
-              <span>Chat on WhatsApp</span>
-            </a>
-          </div>
-        </div>
-      )}
-    </header>
+    <button
+      type="button"
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      className="relative flex h-full cursor-pointer items-center px-2 lg:px-3 select-none transition-colors hover:bg-slate-50/50"
+      aria-haspopup={hasDropdown ? 'menu' : undefined}
+      aria-expanded={hasDropdown ? expanded : undefined}
+    >
+      {content}
+    </button>
   );
 }
 
+export default function Navbar({ settings, menus }: NavbarProps) {
+  const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
+  const [openMobileAccordions, setOpenMobileAccordions] = useState<string[]>([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const navContainerRef = useRef<HTMLDivElement>(null);
+
+  const phone = settings?.appointmentPhone || '7984882273';
+
+  const getParentIdStr = (item: MenuItemData): string | null => {
+    if (!item.parentId) return null;
+    if (typeof item.parentId === 'object' && item.parentId !== null) {
+      return item.parentId._id;
+    }
+    return String(item.parentId);
+  };
+
+  // Build the hierarchical menu tree
+  const processedMenus = useMemo(() => {
+    const rawItems: MenuItemData[] =
+      menus && menus.length > 0 ? menus : DEFAULT_MENUS;
+
+    const activeItems = rawItems.filter((m) => m.isActive !== false);
+
+    // Filter top-level items
+    const topLevels = activeItems
+      .filter((m) => !getParentIdStr(m))
+      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+    // Attach children to each top-level menu
+    const built = topLevels.map((parent) => {
+      const parentId = parent._id;
+      let children = activeItems
+        .filter((child) => parentId && getParentIdStr(child) === parentId)
+        .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
+      // Fallback for default Services if no database children exist yet
+      const labelLower = parent.label.trim().toLowerCase();
+      if (
+        children.length === 0 &&
+        (parent.url === '/services' || labelLower === 'services' || labelLower === 'specialities')
+      ) {
+        children = DEFAULT_SERVICES.map((s, idx) => ({
+          label: s.label,
+          url: s.href,
+          sortOrder: idx + 1,
+        }));
+      }
+
+      // Fallback for default Media if no database children exist yet
+      if (
+        children.length === 0 &&
+        (parent.url === '/media' || labelLower === 'media')
+      ) {
+        children = DEFAULT_MEDIA.map((m, idx) => ({
+          label: m.label,
+          url: m.href,
+          sortOrder: idx + 1,
+        }));
+      }
+
+      return {
+        ...parent,
+        children,
+      };
+    });
+
+    // Ensure Book Appointment is always available in header (without breaking dynamic menus)
+    const hasBookAppointment = built.some(
+      (item) => item.url === '/book-appointment' || item.label.trim().toLowerCase() === 'book appointment'
+    );
+    if (!hasBookAppointment) {
+      const contactIdx = built.findIndex((item) => ['contact', 'contact us'].includes(item.label.trim().toLowerCase()) || item.url === '/contact');
+      const bookItem = {
+        label: 'Book Appointment',
+        url: '/book-appointment',
+        sortOrder: contactIdx >= 0 ? (built[contactIdx].sortOrder || contactIdx + 1) : (built.length + 1),
+        children: [] as MenuItemData[],
+      };
+      if (contactIdx >= 0) {
+        built.splice(contactIdx, 0, bookItem);
+      } else {
+        built.push(bookItem);
+      }
+    }
+
+    return built;
+  }, [menus]);
+
+  // Keep desktop header clean: show primary items and group the rest under "More"
+  const { primaryMenus, moreMenus } = useMemo(() => {
+    const priority = ['home', 'about us', 'about', 'services', 'specialities', 'doctors', 'facilities', 'media', 'book appointment', 'book consultation', 'gallery', 'blog', 'blogs', 'testimonials', 'faqs', 'contact us', 'contact'];
+    const scored = processedMenus.map((item, idx) => {
+      const key = item.label.trim().toLowerCase();
+      const p = priority.indexOf(key);
+      return { item, idx, score: p === -1 ? 100 + idx : p };
+    });
+    const ordered = [...scored].sort((a, b) => a.score - b.score || a.idx - b.idx).map((s) => s.item);
+
+    // If contact exists, prefer keeping it visible as primary CTA target; otherwise cap at 6
+    const contactIndex = ordered.findIndex((i) => ['contact', 'contact us'].includes(i.label.trim().toLowerCase()));
+    let primaryCount = ordered.length <= 7 ? ordered.length : 6;
+    if (contactIndex >= 6 && ordered.length > 7) {
+      // include contact by swapping into last primary slot
+      const copy = [...ordered];
+      const [contactItem] = copy.splice(contactIndex, 1);
+      copy.splice(5, 0, contactItem);
+      return { primaryMenus: copy.slice(0, 6), moreMenus: copy.slice(6) };
+    }
+    return { primaryMenus: ordered.slice(0, primaryCount), moreMenus: ordered.slice(primaryCount) };
+  }, [processedMenus]);
+
+  const isPathActive = (href: string) => {
+    if (!href) return false;
+    if (href === '/') return pathname === '/';
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  useEffect(() => {
+    setActiveDropdownId(null);
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        navContainerRef.current &&
+        !navContainerRef.current.contains(event.target as Node)
+      ) {
+        setActiveDropdownId(null);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setActiveDropdownId(null);
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    }
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [mobileMenuOpen]);
+
+  const toggleMobileAccordion = (id: string) => {
+    setOpenMobileAccordions((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  return (
+    <>
+      <header className="fixed left-0 right-0 top-0 z-50 w-full bg-[#F4F8F9] shadow-[0_2px_12px_rgba(4,150,172,0.1)] lg:shadow-none">
+        <div className="relative z-50 flex h-[4.5rem] w-full items-center justify-between px-4 sm:px-6 lg:h-20 lg:px-8 xl:px-12">
+          {/* Logo */}
+          <Link
+            href="/"
+            translate="no"
+            className="notranslate relative h-[3.25rem] w-[8.125rem] shrink-0 lg:h-[3.125rem] lg:w-[9.375rem]"
+            aria-label="MatruKa home"
+          >
+            <Image
+              src="/logo.png"
+              alt="MatruKa - Complete Care for Her"
+              fill
+              sizes="(max-width: 1024px) 130px, 150px"
+              priority
+              className="object-contain"
+            />
+          </Link>
+
+          {/* Mobile actions */}
+          <div className="flex items-center gap-3 lg:hidden">
+            <a
+              href={`tel:+91${phone}`}
+              translate="no"
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0496AC] transition-opacity hover:opacity-90"
+              aria-label={`Call MatruKa clinic on +91 ${phone}`}
+            >
+              <Phone size={18} className="text-white" />
+            </a>
+
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-1 pl-1 transition-opacity hover:opacity-80 cursor-pointer"
+              aria-label="Open navigation menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              <Menu size={30} className="text-[#1A2C30]" />
+            </button>
+          </div>
+
+          {/* Desktop navigation */}
+          <nav
+            ref={navContainerRef}
+            className="hidden h-full flex-1 items-center justify-center lg:flex"
+            aria-label="Main navigation"
+          >
+            <div className="flex h-full items-center">
+              {[...primaryMenus, ...(moreMenus.length ? [{ _id: '__more__', label: 'More', url: '#', children: moreMenus }] : [])].map((item: any) => {
+                const itemId = item._id || item.url || item.label;
+                const isMore = item._id === '__more__';
+                const hasChildren = Boolean(item.children && item.children.length > 0);
+                const isDropdownOpen = activeDropdownId === itemId;
+
+                const isChildActive = hasChildren
+                  ? item.children!.some((c: any) => isPathActive(c.url))
+                  : false;
+                const isParentActive = !isMore && (isPathActive(item.url) || isChildActive);
+
+                if (hasChildren) {
+                  return (
+                    <div
+                      key={itemId}
+                      className="relative flex h-full items-center"
+                      onMouseEnter={() => setActiveDropdownId(itemId)}
+                      onMouseLeave={() => setActiveDropdownId(null)}
+                    >
+                      <DesktopNavItem
+                        label={item.label.toUpperCase()}
+                        hasDropdown
+                        isActive={isParentActive || isChildActive}
+                        expanded={isDropdownOpen}
+                        onClick={() =>
+                          setActiveDropdownId((prev) => (prev === itemId ? null : itemId))
+                        }
+                      />
+
+                      {isDropdownOpen && (
+                        <div
+                          role="menu"
+                          className={`absolute ${isMore ? 'right-0 left-auto translate-x-0' : 'left-1/2 -translate-x-1/2'} top-[4.5rem] z-[60] flex max-h-[70vh] min-w-[15rem] max-w-[20rem] flex-col gap-1 overflow-y-auto rounded-xl border border-gray-100 bg-white py-3 shadow-[0_12px_45px_rgba(4,150,172,0.18)] animate-in fade-in slide-in-from-top-2 duration-150`}
+                        >
+                          {item.children!.map((child: any) => {
+                            const childHasNested = Boolean(child.children && child.children.length > 0);
+                            if (childHasNested) {
+                              return (
+                                <div key={child._id || child.url || child.label} className="px-2">
+                                  <div className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                    {child.label}
+                                  </div>
+                                  {child.children.map((nested: any) => {
+                                    const isNestedCurrent = isPathActive(nested.url);
+                                    return (
+                                      <Link
+                                        key={nested._id || nested.url}
+                                        href={nested.url}
+                                        role="menuitem"
+                                        onClick={() => setActiveDropdownId(null)}
+                                        className={`block rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                                          isNestedCurrent
+                                            ? 'bg-[#0496AC]/10 text-[#0496AC] font-bold'
+                                            : 'text-[#1A2C30] hover:bg-slate-50 hover:text-[#0496AC]'
+                                        }`}
+                                      >
+                                        {nested.label}
+                                      </Link>
+                                    );
+                                  })}
+                                </div>
+                              );
+                            }
+                            const isChildCurrent = isPathActive(child.url);
+                            return (
+                              <Link
+                                key={child._id || child.url}
+                                href={child.url}
+                                role="menuitem"
+                                onClick={() => setActiveDropdownId(null)}
+                                className={`px-5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                                  isChildCurrent
+                                    ? 'bg-[#0496AC]/10 text-[#0496AC] font-bold border-l-2 border-[#0496AC]'
+                                    : 'text-[#1A2C30] hover:bg-slate-50 hover:text-[#0496AC]'
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return (
+                  <DesktopNavItem
+                    key={itemId}
+                    label={item.label.toUpperCase()}
+                    href={item.url}
+                    isActive={isParentActive}
+                  />
+                );
+              })}
+            </div>
+          </nav>
+
+          {/* Desktop call action */}
+          <div className="hidden shrink-0 items-center lg:flex">
+            <a
+              href={`tel:+91${phone}`}
+              translate="no"
+              className="notranslate flex items-center gap-2.5 rounded-full bg-[#0496AC] px-5 py-2.5 text-white transition-opacity hover:opacity-90"
+            >
+              <Phone size={15} />
+              <span className="text-xs font-bold tracking-wide">+91 {phone}</span>
+            </a>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Drawer Backdrop */}
+      {mobileMenuOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 z-[120] bg-black/40 backdrop-blur-xs transition-opacity lg:hidden"
+          onClick={closeMobileMenu}
+          aria-label="Close menu backdrop"
+        />
+      )}
+
+      {/* Mobile slide-out drawer */}
+      <aside
+        className={`fixed inset-y-0 right-0 z-[130] flex w-[85%] max-w-[20rem] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation"
+      >
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+          <Link href="/" onClick={closeMobileMenu}>
+            <Image
+              src="/logo.png"
+              alt="MatruKa"
+              width={120}
+              height={35}
+              className="h-7 w-auto object-contain"
+            />
+          </Link>
+          <button
+            type="button"
+            onClick={closeMobileMenu}
+            className="rounded-lg p-2 text-[#1A2C30] transition-colors hover:bg-gray-100 cursor-pointer"
+            aria-label="Close navigation menu"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-4 py-4">
+          <nav className="flex flex-col gap-1.5" aria-label="Mobile navigation links">
+            {processedMenus.map((item) => {
+              const itemId = item._id || item.url || item.label;
+              const hasChildren = Boolean(item.children && item.children.length > 0);
+              const isOpen = openMobileAccordions.includes(itemId);
+
+              const isChildActive = hasChildren
+                ? item.children!.some((c) => isPathActive(c.url))
+                : false;
+              const isParentActive = isPathActive(item.url) || isChildActive;
+
+              if (hasChildren) {
+                return (
+                  <div key={itemId} className="rounded-lg border border-transparent">
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileAccordion(itemId)}
+                      className={`flex w-full items-center justify-between rounded-lg px-4 py-3 text-sm font-bold transition-colors ${
+                        isParentActive
+                          ? 'bg-[#0496AC]/5 text-[#0496AC]'
+                          : 'text-[#1A2C30] hover:bg-gray-50'
+                      }`}
+                      aria-expanded={isOpen}
+                    >
+                      <span>{item.label.toUpperCase()}</span>
+                      <ChevronDown
+                        size={15}
+                        className={`transition-transform duration-300 text-slate-400 ${
+                          isOpen ? 'rotate-180 text-[#0496AC]' : ''
+                        }`}
+                      />
+                    </button>
+
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ${
+                        isOpen ? 'max-h-[30rem] opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div className="mt-1 flex flex-col rounded-lg bg-gray-50/80 px-2 py-2 space-y-1">
+                        {item.children!.map((child) => {
+                          const isChildCurrent = isPathActive(child.url);
+                          return (
+                            <Link
+                              key={child._id || child.url}
+                              href={child.url}
+                              onClick={closeMobileMenu}
+                              className={`rounded-md px-3.5 py-2 text-xs font-semibold uppercase leading-relaxed transition-colors ${
+                                isChildCurrent
+                                  ? 'bg-[#0496AC]/10 text-[#0496AC] font-bold'
+                                  : 'text-[#1A2C30] hover:bg-white hover:text-[#0496AC]'
+                              }`}
+                            >
+                              {child.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={itemId}
+                  href={item.url}
+                  onClick={closeMobileMenu}
+                  className={`rounded-lg px-4 py-3 text-sm font-bold transition-colors ${
+                    isParentActive
+                      ? 'bg-[#0496AC]/5 text-[#0496AC]'
+                      : 'text-[#1A2C30] hover:bg-gray-50'
+                  }`}
+                >
+                  {item.label.toUpperCase()}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="border-t border-gray-100 bg-gray-50 p-6">
+          <a
+            href={`tel:+91${phone}`}
+            translate="no"
+            className="notranslate flex w-full items-center justify-center gap-3 rounded-xl bg-[#0496AC] p-3 text-white transition-opacity hover:opacity-90 shadow-xs"
+          >
+            <Phone size={18} />
+            <span className="text-sm font-bold">+91 {phone}</span>
+          </a>
+        </div>
+      </aside>
+    </>
+  );
+}

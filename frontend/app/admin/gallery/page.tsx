@@ -1,9 +1,21 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Image as ImageIcon, Plus, Trash2, Loader2, X, FolderPlus } from 'lucide-react';
+import {
+  Image as ImageIcon,
+  Plus,
+  Trash2,
+  Loader2,
+  X,
+  FolderPlus,
+  ZoomIn,
+  Eye,
+  ExternalLink,
+} from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
+import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
 
 interface GalleryItem {
@@ -28,6 +40,7 @@ export default function AdminGalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [albums, setAlbums] = useState<AlbumItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAlbumModalOpen, setIsAlbumModalOpen] = useState(false);
 
@@ -46,12 +59,25 @@ export default function AdminGalleryPage() {
     description: '',
   });
 
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    itemId: string | null;
+    title: string;
+    loading: boolean;
+  }>({
+    isOpen: false,
+    itemId: null,
+    title: '',
+    loading: false,
+  });
+
   useEffect(() => {
     fetchGalleryData();
   }, []);
 
   const fetchGalleryData = async () => {
     try {
+      setLoading(true);
       const [itemsRes, albumsRes] = await Promise.all([
         adminApi.get('/gallery'),
         adminApi.get('/gallery/albums'),
@@ -75,13 +101,20 @@ export default function AdminGalleryPage() {
     try {
       const res = await adminApi.post('/gallery', formData);
       if (res.data.success) {
-        toast.success('Gallery image added');
+        toast.success('Gallery photo added successfully');
         fetchGalleryData();
         setIsModalOpen(false);
-        setFormData({ title: '', imageUrl: '', caption: '', category: 'Facilities', albumId: '', isPublished: true });
+        setFormData({
+          title: '',
+          imageUrl: '',
+          caption: '',
+          category: 'Facilities',
+          albumId: '',
+          isPublished: true,
+        });
       }
     } catch {
-      toast.error('Failed to add gallery image');
+      toast.error('Failed to add gallery photo');
     }
   };
 
@@ -95,7 +128,7 @@ export default function AdminGalleryPage() {
     try {
       const res = await adminApi.post('/gallery/albums', albumData);
       if (res.data.success) {
-        toast.success('Album created');
+        toast.success('Album created successfully');
         fetchGalleryData();
         setIsAlbumModalOpen(false);
         setAlbumData({ title: '', category: 'Facilities', description: '' });
@@ -105,89 +138,131 @@ export default function AdminGalleryPage() {
     }
   };
 
-  const handleDeleteItem = async (id: string) => {
-    if (!confirm('Delete this gallery image?')) return;
+  const handleDeleteItem = async () => {
+    if (!deleteModal.itemId) return;
     try {
-      const res = await adminApi.delete(`/gallery/${id}`);
+      setDeleteModal((prev) => ({ ...prev, loading: true }));
+      const res = await adminApi.delete(`/gallery/${deleteModal.itemId}`);
       if (res.data.success) {
-        toast.success('Image deleted');
-        fetchGalleryData();
+        toast.success('Photo removed from gallery');
+        setItems((prev) => prev.filter((i) => i._id !== deleteModal.itemId));
+        setDeleteModal({ isOpen: false, itemId: null, title: '', loading: false });
       }
     } catch {
-      toast.error('Failed to delete image');
+      toast.error('Failed to delete photo');
+      setDeleteModal((prev) => ({ ...prev, loading: false }));
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-brand-slate-900 font-heading flex items-center gap-2">
-            <ImageIcon className="w-6 h-6 text-brand-teal-600" />
-            <span>Clinic Gallery & Album CMS</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Upload and organize authentic clinic photographs, delivery suites, laparoscopic theater, and consultation spaces.
-          </p>
-        </div>
+  const categories = ['All', 'Facilities', 'Suites', 'OT & Surgery', 'Diagnostics'];
 
-        <div className="flex items-center gap-2">
+  const filteredItems =
+    selectedCategory === 'All'
+      ? items
+      : items.filter(
+          (i) => i.category.toLowerCase() === selectedCategory.toLowerCase()
+        );
+
+  return (
+    <div className="space-y-6 pb-12 font-sans">
+      <AdminPageHeader
+        title="Hospital Photography & Suites"
+        description="Manage authentic hospital photographs, maternity suites, 3D laparoscopic OT, and consultation cabins."
+        icon={ImageIcon}
+        breadcrumb={[{ label: 'Photo Gallery & Rooms' }]}
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={() => setIsAlbumModalOpen(true)}
+              className="admin-btn-secondary"
+            >
+              <FolderPlus size={16} className="text-primary" />
+              <span>Create Album</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="admin-btn-primary"
+            >
+              <Plus size={16} />
+              <span>Add New Photo</span>
+            </button>
+          </>
+        }
+      />
+
+      {/* Category Filter Pills */}
+      <div className="flex items-center gap-2 flex-wrap">
+        {categories.map((cat) => (
           <button
-            onClick={() => setIsAlbumModalOpen(true)}
-            className="inline-flex items-center gap-2 border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl transition"
+            key={cat}
+            type="button"
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${
+              selectedCategory === cat
+                ? 'bg-primary text-white shadow-sm'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+            }`}
           >
-            <FolderPlus className="w-4 h-4 text-brand-teal-600" />
-            <span>Create Album</span>
+            {cat === 'All' ? `All Photos (${items.length})` : cat}
           </button>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow transition"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Add Photo</span>
-          </button>
-        </div>
+        ))}
       </div>
 
       {/* Gallery Items Grid */}
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <h2 className="text-base font-bold text-brand-slate-900 font-heading mb-4">
-          All Gallery Photos ({items.length})
-        </h2>
-
+      <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
         {loading ? (
-          <div className="py-20 flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-teal-600" />
+          <div className="py-20 flex flex-col items-center justify-center gap-2">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <p className="text-xs text-gray-500 font-medium">Loading hospital photographs...</p>
           </div>
-        ) : items.length === 0 ? (
-          <div className="py-16 text-center text-slate-500 text-sm">No photos added yet.</div>
+        ) : filteredItems.length === 0 ? (
+          <div className="py-16 text-center text-gray-400 text-sm">
+            No photographs found in this category.
+          </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {items.map((img) => (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+            {filteredItems.map((img) => (
               <div
                 key={img._id}
-                className="group relative rounded-xl border border-slate-200 overflow-hidden bg-slate-50 flex flex-col justify-between"
+                className="group relative rounded-2xl border border-gray-200 overflow-hidden bg-gray-50 flex flex-col justify-between shadow-sm hover:shadow-md transition"
               >
-                <div className="h-40 overflow-hidden relative">
+                <div className="aspect-[4/3] overflow-hidden relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={resolveImageUrl(img.imageUrl)}
                     alt={img.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <button
-                    onClick={() => handleDeleteItem(img._id)}
-                    className="absolute top-2 right-2 p-1.5 bg-red-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition shadow"
-                    title="Delete Photo"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDeleteModal({
+                          isOpen: true,
+                          itemId: img._id,
+                          title: img.title,
+                          loading: false,
+                        })
+                      }
+                      className="p-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition shadow"
+                      title="Delete Photo"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+
+                  <span className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {img.category}
+                  </span>
                 </div>
 
-                <div className="p-3 bg-white border-t border-slate-100">
-                  <p className="text-xs font-bold text-brand-slate-900 truncate">{img.title}</p>
-                  <p className="text-[11px] text-brand-teal-700 mt-0.5">{img.category}</p>
-                  {img.caption && <p className="text-[10px] text-slate-400 truncate mt-1">{img.caption}</p>}
+                <div className="p-3.5 bg-white border-t border-gray-100">
+                  <p className="text-xs font-bold text-gray-900 truncate">{img.title}</p>
+                  {img.caption && (
+                    <p className="text-[11px] text-gray-400 truncate mt-0.5">{img.caption}</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -197,91 +272,94 @@ export default function AdminGalleryPage() {
 
       {/* Add Photo Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h2 className="text-base font-bold text-brand-slate-900 font-heading">Add Photo to Gallery</h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
-                <X className="w-5 h-5" />
+        <div
+          className="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/60">
+              <h3 className="text-base font-bold text-gray-900 font-heading">
+                Upload Photograph to Hospital Gallery
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateItem} className="mt-4 space-y-4 text-xs sm:text-sm">
+            <form onSubmit={handleCreateItem} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Photo Title *</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                  Photo Title *
+                </label>
                 <input
                   type="text"
                   required
+                  placeholder="e.g. Modern Maternity Suite & Newborn Cradle"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Labor & Birthing Suite"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-teal-500 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                 />
-              </div>
-
-              <ImageUpload
-                label="Select Photo (Stored on server disk) *"
-                value={formData.imageUrl}
-                onChange={(url) => setFormData({ ...formData, imageUrl: url })}
-                altText={formData.title}
-              />
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-teal-500 focus:outline-none bg-white"
-                  >
-                    <option value="Facilities">Facilities & OT</option>
-                    <option value="Suites">Suites & Inpatient</option>
-                    <option value="Clinic">Clinic Interior</option>
-                    <option value="Doctors">Doctors & Events</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Album</label>
-                  <select
-                    value={formData.albumId}
-                    onChange={(e) => setFormData({ ...formData, albumId: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-teal-500 focus:outline-none bg-white"
-                  >
-                    <option value="">No Album (Standalone)</option>
-                    {albums.map((a) => (
-                      <option key={a._id} value={a._id}>
-                        {a.title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Caption / Description</label>
-                <input
-                  type="text"
-                  value={formData.caption}
-                  onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
-                  placeholder="Brief descriptive note..."
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-teal-500 focus:outline-none"
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                  Category
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none bg-white font-medium"
+                >
+                  <option value="Facilities">Hospital Facilities</option>
+                  <option value="Suites">Patient Rooms & Suites</option>
+                  <option value="OT & Surgery">3D Laparoscopy OT & Recovery</option>
+                  <option value="Diagnostics">Ultrasound & Consultation</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                  Photo Upload *
+                </label>
+                <ImageUpload
+                  value={formData.imageUrl}
+                  onChange={(url) => setFormData({ ...formData, imageUrl: url })}
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                  Caption / Description (Optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Spacious private birthing suite with medical monitoring"
+                  value={formData.caption}
+                  onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
+                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                />
+              </div>
+
+              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-xl hover:bg-slate-50"
+                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-semibold rounded-xl shadow"
+                  className="px-5 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-xl transition shadow-sm"
                 >
-                  Save Photo
+                  Upload & Save Photo
                 </button>
               </div>
             </form>
@@ -291,50 +369,69 @@ export default function AdminGalleryPage() {
 
       {/* Create Album Modal */}
       {isAlbumModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h2 className="text-base font-bold text-brand-slate-900 font-heading">Create New Album</h2>
-              <button onClick={() => setIsAlbumModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-600">
-                <X className="w-5 h-5" />
+        <div
+          className="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setIsAlbumModalOpen(false)}
+        >
+          <div
+            className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border border-gray-100 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/60">
+              <h3 className="text-base font-bold text-gray-900 font-heading">
+                Create New Photo Album
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsAlbumModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X size={20} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateAlbum} className="mt-4 space-y-4 text-xs sm:text-sm">
+            <form onSubmit={handleCreateAlbum} className="p-6 space-y-4">
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Album Title *</label>
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                  Album Title *
+                </label>
                 <input
                   type="text"
                   required
+                  placeholder="e.g. VIP Birthing Suites & LDR Rooms"
                   value={albumData.title}
                   onChange={(e) => setAlbumData({ ...albumData, title: e.target.value })}
-                  placeholder="e.g. Labor & Birthing Suites"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-teal-500 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">Category</label>
-                <input
-                  type="text"
+                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
+                  Category
+                </label>
+                <select
                   value={albumData.category}
                   onChange={(e) => setAlbumData({ ...albumData, category: e.target.value })}
-                  placeholder="e.g. Facilities"
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-teal-500 focus:outline-none"
-                />
+                  className="w-full px-3.5 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none bg-white font-medium"
+                >
+                  <option value="Facilities">Hospital Facilities</option>
+                  <option value="Suites">Patient Rooms & Suites</option>
+                  <option value="OT & Surgery">3D Laparoscopy OT & Recovery</option>
+                  <option value="Diagnostics">Ultrasound & Consultation</option>
+                </select>
               </div>
 
-              <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsAlbumModalOpen(false)}
-                  className="px-4 py-2 border border-slate-300 text-slate-700 font-medium rounded-xl hover:bg-slate-50"
+                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-semibold rounded-xl shadow"
+                  className="px-5 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-xl transition shadow-sm"
                 >
                   Create Album
                 </button>
@@ -343,7 +440,18 @@ export default function AdminGalleryPage() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, itemId: null, title: '', loading: false })}
+        onConfirm={handleDeleteItem}
+        title="Delete Photo?"
+        message={`Are you sure you want to delete "${deleteModal.title}" from the hospital gallery?`}
+        confirmLabel="Delete Photo"
+        variant="danger"
+        loading={deleteModal.loading}
+      />
     </div>
   );
 }
-

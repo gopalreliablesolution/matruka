@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Building2, Plus, Edit2, Trash2, Check, X, Loader2, Sparkles } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
-import Breadcrumb from '@/components/admin/Breadcrumb';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
 
@@ -150,27 +150,22 @@ export default function AdminFacilitiesPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* Breadcrumb & Header */}
-      <div>
-        <Breadcrumb
-          items={[{ label: 'Dashboard', href: '/admin' }, { label: 'Facilities & Tech' }]}
-        />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Facilities & Infrastructure</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage ultrasound suites, modular laparoscopic OT, delivery rooms, and recovery infrastructure.
-            </p>
-          </div>
+      <AdminPageHeader
+        title="Facilities & Infrastructure"
+        description="Manage ultrasound suites, modular laparoscopic OT, delivery rooms, and recovery infrastructure."
+        icon={Building2}
+        breadcrumb={[{ label: 'Hospital Facilities & OT' }]}
+        actions={
           <button
+            type="button"
             onClick={() => handleOpenModal()}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 font-semibold text-sm transition shadow-sm"
+            className="admin-btn-primary"
           >
             <Plus size={18} />
             <span>Add Facility</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {loading ? (
         <div className="p-16 flex flex-col items-center justify-center gap-3">
@@ -187,7 +182,7 @@ export default function AdminFacilitiesPage() {
               <div>
                 <div className="flex items-center justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-teal-50 border border-teal-100 text-primary flex items-center justify-center font-bold">
+                    <div className="w-11 h-11 rounded-xl bg-brand-teal-50 border border-brand-teal-100 text-primary flex items-center justify-center font-bold">
                       <Building2 size={22} />
                     </div>
                     <div>

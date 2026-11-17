@@ -10,9 +10,9 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#078F9C",
-          dark: "#066A74",
-          light: "#32BDC8",
+          DEFAULT: "#0496AC",
+          dark: "#037B8D",
+          light: "#05B4CE",
         },
         accent: {
           DEFAULT: "#F2B632",
@@ -60,7 +60,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
-        heading: ["var(--font-poppins)", "sans-serif"],
+        heading: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
       },
     },
   },

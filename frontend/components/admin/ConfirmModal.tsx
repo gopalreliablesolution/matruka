@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { X, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface ConfirmModalProps {
@@ -26,52 +26,132 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   variant = 'danger',
   loading = false,
 }) => {
+  const titleId = useId();
+  const messageId = useId();
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const focusTimer = window.setTimeout(() => {
+      cancelButtonRef.current?.focus();
+    }, 0);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !loading) {
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen, loading, onClose]);
+
   if (!isOpen) return null;
 
   const variantColors = {
     danger: 'bg-red-600 hover:bg-red-700 text-white',
     warning: 'bg-amber-600 hover:bg-amber-700 text-white',
-    info: 'bg-teal-600 hover:bg-teal-700 text-white',
+    info: 'bg-primary hover:bg-primary-dark text-white',
   };
 
   const iconColors = {
-    danger: 'text-red-600 bg-red-50',
-    warning: 'text-amber-600 bg-amber-50',
-    info: 'text-teal-600 bg-teal-50',
+    danger: 'text-red-600 bg-red-50 ring-red-100',
+    warning: 'text-amber-600 bg-amber-50 ring-amber-100',
+    info: 'text-primary bg-primary-light/20 ring-primary-light/40',
   };
 
   return (
-    <div className="fixed inset-0 z-[10001] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 duration-200">
+    <div
+      className="admin-fade-in fixed inset-0 z-[10001] !m-0 !mt-0 flex items-center justify-center bg-[#0B2227]/60 p-4 backdrop-blur-sm"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget && !loading) onClose();
+      }}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={messageId}
+        className="admin-zoom-in w-full max-w-sm overflow-hidden rounded-2xl border border-[#E1E9EB] bg-white shadow-[0_24px_70px_rgba(6,35,40,0.24)]"
+      >
         <div className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className={`p-2 rounded-full ${iconColors[variant]}`}>
-              <AlertTriangle size={24} />
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div className={`rounded-full p-2.5 ring-1 ${iconColors[variant]}`}>
+              <AlertTriangle size={22} />
             </div>
             <button
+              type="button"
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors"
+              disabled={loading}
+              className="rounded-lg p-1.5 text-[#8AA3AD] transition hover:bg-[#F0F4F5] hover:text-[#344B53] disabled:opacity-50"
+              aria-label="Close confirmation dialog"
             >
-              <X size={20} />
+              <X size={19} />
             </button>
           </div>
 
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-          <p className="text-gray-500 text-sm leading-relaxed">{message}</p>
+          <h3
+            id={titleId}
+            className="font-heading text-xl font-bold text-[#1A2C30]"
+          >
+            {title}
+          </h3>
+          <p
+            id={messageId}
+            className="mt-2 text-sm leading-relaxed text-[#637C85]"
+          >
+            {message}
+          </p>
         </div>
 
-        <div className="bg-gray-50 p-4 flex gap-3">
+        <div className="flex gap-3 border-t border-[#E7EDEF] bg-[#F8FAFB] p-4">
           <button
+            ref={cancelButtonRef}
+            type="button"
             onClick={onClose}
             disabled={loading}
-            className="flex-1 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 font-semibold rounded-xl hover:bg-gray-100 transition-colors disabled:opacity-50"
+            className="flex-1 rounded-lg border border-[#D8E1E4] bg-white px-4 py-2.5 text-sm font-semibold text-[#4D636B] shadow-sm transition hover:bg-[#F6F8F9] disabled:opacity-50"
           >
             {cancelLabel}
           </button>
           <button
+            type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`flex-1 px-4 py-2.5 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 ${variantColors[variant]}`}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold shadow-sm transition disabled:opacity-50 ${variantColors[variant]}`}
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
             {confirmLabel}
@@ -83,4 +163,3 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 };
 
 export default ConfirmModal;
-

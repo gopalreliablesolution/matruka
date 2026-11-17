@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { BACKEND_URL } from '@/lib/api';
+import HospitalLocationSection from '@/components/HospitalLocationSection';
+import FAQSection from '@/components/FAQSection';
 import {
   Phone,
   PhoneCall,
@@ -49,6 +51,7 @@ export default async function HomePage() {
   const testimonials = data?.testimonials || [];
   const recentBlogs = data?.recentBlogs || [];
   const faqs = data?.faqs || [];
+  const hospitalLocations = data?.hospitalLocations || [];
 
   const phone = settings.appointmentPhone || '7984882273';
   const opdTimings = settings.opdTimings || '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Monday to Saturday)';
@@ -84,7 +87,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               {/* Left Content */}
-              <div className="lg:col-span-6 space-y-4 text-left">
+              <div className="order-2 lg:order-1 lg:col-span-6 space-y-4 text-left">
                 <div className="inline-block">
                   <span className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-brand-teal-700 font-sans block">
                     {activeBanner.badgeText || 'MATRUKA — COMPLETE CARE FOR HER'}
@@ -121,20 +124,13 @@ export default async function HomePage() {
                 </div>
               </div>
 
-              {/* Right Hero Image - Free-standing Cutout with Organic Peach Curve */}
-              <div className="lg:col-span-6 relative flex items-center justify-center lg:justify-end mt-4 lg:mt-0">
-                <div className="relative w-full max-w-[280px] sm:max-w-md lg:max-w-none flex justify-center items-center">
-                  {/* Organic warm peach backdrop curve shape */}
-                  <div
-                    className="absolute -bottom-3 -left-3 sm:-left-2 lg:-left-4 w-44 h-44 sm:w-72 sm:h-72 lg:w-80 lg:h-80 rounded-full bg-[#FCEAE6] -z-10 pointer-events-none transform translate-y-3"
-                    aria-hidden="true"
-                  />
-
-                  {/* Free-standing Transparent Cutout - Proportional & Clean */}
+              {/* Right Hero Image */}
+              <div className="order-1 lg:order-2 lg:col-span-6 flex items-center justify-center lg:justify-end mt-2 lg:mt-0">
+                <div className="w-full flex justify-center lg:justify-end">
                   <img
-                    src="/images/hero/maternity-cutout.png"
+                    src="/images/hero/serene-maternity-moment-at-home.png"
                     alt="Mother tenderly embracing newborn infant - MatruKa Maternity & Gynaecology Care Surat"
-                    className="w-full max-w-[260px] sm:max-w-[380px] lg:max-w-[460px] h-auto object-contain select-none pointer-events-none [mask-image:linear-gradient(to_bottom,black_86%,transparent_100%)]"
+                    className="h-[280px] sm:h-[360px] lg:h-[460px] xl:h-[520px] w-auto max-w-full object-contain"
                   />
                 </div>
               </div>
@@ -172,7 +168,7 @@ export default async function HomePage() {
 
       {/* 3. About Matruka Overview */}
       {isSectionEnabled('about_clinic') && (
-        <section className="py-10 sm:py-16 lg:py-20 bg-white">
+        <section className="py-6 sm:py-8 lg:py-10 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
               <div className="lg:col-span-6 space-y-5">
@@ -285,9 +281,9 @@ export default async function HomePage() {
 
       {/* 4. Confirmed Services & Specialities */}
       {isSectionEnabled('services_specialities') && (
-        <section className="py-10 sm:py-16 lg:py-20 bg-slate-50 border-t border-slate-200">
+        <section className="py-6 sm:py-8 lg:py-10 bg-slate-50 border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-3 py-1 rounded-md">
                 Clinical Specialities
               </span>
@@ -367,9 +363,9 @@ export default async function HomePage() {
 
       {/* 5. Featured Doctors Section */}
       {isSectionEnabled('featured_doctors') && (
-        <section className="py-10 sm:py-16 lg:py-20 bg-white">
+        <section className="py-6 sm:py-8 lg:py-10 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
                 Our Specialists
               </span>
@@ -457,9 +453,9 @@ export default async function HomePage() {
 
       {/* 6. Facilities & Infrastructure */}
       {isSectionEnabled('facilities_infrastructure') && (
-        <section className="py-10 sm:py-16 lg:py-20 bg-slate-50 border-t border-slate-200">
+        <section className="py-6 sm:py-8 lg:py-10 bg-slate-50 border-t border-slate-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-3 py-1 rounded-md">
                 Hospital Infrastructure
               </span>
@@ -514,9 +510,9 @@ export default async function HomePage() {
 
       {/* 7. Patient Testimonials */}
       {isSectionEnabled('testimonials') && testimonials.length > 0 && (
-        <section className="py-10 sm:py-16 lg:py-20 bg-white">
+        <section className="py-6 sm:py-8 lg:py-10 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+            <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
               <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
                 Patient Stories
               </span>
@@ -559,148 +555,17 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* 8. FAQs Section */}
-      {isSectionEnabled('faqs') && faqs.length > 0 && (
-        <section className="py-10 sm:py-16 lg:py-20 bg-slate-50 border-t border-slate-200">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-10 sm:mb-12">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-3 py-1 rounded-md">
-                Common Inquiries
-              </span>
-              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
-                {getSectionTitle('faqs', 'Frequently Asked Questions')}
-              </h2>
-            </div>
-
-            <div className="space-y-4">
-              {faqs.map((faq: any) => (
-                <div
-                  key={faq._id}
-                  className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded bg-brand-teal-50 text-brand-teal-700">
-                      {faq.category}
-                    </span>
-                    <h3 className="font-bold text-brand-slate-900 text-sm sm:text-base font-heading">
-                      {faq.question}
-                    </h3>
-                  </div>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed pl-2 border-l-2 border-brand-teal-300">
-                    {faq.answer}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="text-center mt-8">
-              <Link
-                href="/faqs"
-                className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-brand-teal-700 hover:text-brand-teal-800"
-              >
-                <span>View Full Frequently Asked Questions Directory</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
+      {/* 8. Hospital Location, OPD Timings, Map & Newsletter (Jogi Placement) */}
+      {isSectionEnabled('location_contact') && (
+        <HospitalLocationSection initialLocations={hospitalLocations} />
       )}
 
-      {/* 9. Location, OPD Timings & Map */}
-      {isSectionEnabled('location_contact') && (
-        <section className="py-10 sm:py-16 lg:py-20 bg-white border-t border-slate-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-5 space-y-5">
-                <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
-                    Visit Our Clinic
-                  </span>
-                  <h2 className="text-xl sm:text-3xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
-                    Solaris Cure, VIP Road Surat
-                  </h2>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Easy access with ample parking and elevator access.
-                  </p>
-                </div>
-
-                <div className="space-y-4 text-xs sm:text-sm">
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-brand-teal-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-brand-slate-900">Address:</p>
-                      <p className="text-slate-600">
-                        303-306, Solaris Cure, Beside Ratnajyoti Apartment, VIP Road, Surat - 395007
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Clock className="w-5 h-5 text-brand-gold-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-brand-slate-900">OPD Timings:</p>
-                      <p className="text-slate-600">{opdTimings}</p>
-                      <p className="text-xs text-amber-700 font-semibold mt-0.5">
-                        Sunday: Emergency 24*7 Only
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3">
-                    <Phone className="w-5 h-5 text-brand-teal-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <p className="font-semibold text-brand-slate-900">Call / Inquiries:</p>
-                      <a href={`tel:${phone}`} className="text-base font-bold text-brand-teal-700">
-                        {phone}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-2 flex flex-wrap gap-3">
-                  <a
-                    href={`tel:${phone}`}
-                    className="inline-flex items-center gap-2 bg-brand-teal-600 hover:bg-brand-teal-700 text-white font-semibold text-sm px-5 py-3 rounded-xl shadow transition"
-                  >
-                    <Phone className="w-4 h-4" />
-                    <span>Call Clinic</span>
-                  </a>
-                  <a
-                    href={
-                      settings.googleMapsDirectionsUrl ||
-                      'https://maps.google.com/?q=Solaris+Cure+VIP+Road+Surat+395007'
-                    }
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 border border-slate-300 hover:bg-slate-50 text-brand-slate-800 font-semibold text-sm px-5 py-3 rounded-xl transition"
-                  >
-                    <MapPin className="w-4 h-4 text-brand-teal-600" />
-                    <span>Get Directions</span>
-                  </a>
-                </div>
-              </div>
-
-              {/* Google Maps Embed */}
-              <div className="lg:col-span-7">
-                <div className="rounded-3xl border border-slate-200 overflow-hidden shadow-md h-96 relative">
-                  <iframe
-                    src={
-                      settings.googleMapsEmbedUrl ||
-                      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.2223847847953!2d72.825!3d21.145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04f4c!2sSolaris+Cure+VIP+Road+Surat!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin'
-                    }
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen={false}
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Matruka Location on Google Maps"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+      {/* 9. FAQs Section (Jogi Accordion UI/UX - Placed directly above footer) */}
+      {isSectionEnabled('faqs') && faqs.length > 0 && (
+        <FAQSection
+          initialFaqs={faqs}
+          title={getSectionTitle('faqs', 'Frequently Asked Questions')}
+        />
       )}
     </div>
   );

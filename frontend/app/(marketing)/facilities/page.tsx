@@ -21,15 +21,15 @@ export default async function FacilitiesPage() {
   const facilities = await getFacilitiesData();
 
   return (
-    <div className="py-12 sm:py-16 space-y-12">
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+    <div className="py-6 sm:py-8 space-y-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           Medical Infrastructure
         </span>
-        <h1 className="text-3xl sm:text-5xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900">
           Hospital Facilities & Surgical Suites
         </h1>
-        <p className="text-base text-slate-600 max-w-2xl mx-auto">
+        <p className="text-sm text-slate-600 max-w-2xl mx-auto">
           Sterile, state-of-the-art medical infrastructure designed specifically for safe childbirth, advanced laparoscopy, and respectful patient healing.
         </p>
       </section>

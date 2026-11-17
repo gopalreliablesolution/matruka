@@ -3,34 +3,33 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
+  Calendar,
   Stethoscope,
   Sparkles,
-  BookOpen,
-  Image as ImageIcon,
-  MessageSquareQuote,
-  HelpCircle,
-  HardDrive,
   Building2,
-  Plus,
-  Settings,
+  BookOpen,
+  Video,
+  MessageSquareQuote,
+  Images,
   ArrowRight,
-  ShieldCheck,
-  Clock,
+  Globe,
   Loader2,
-  TrendingUp,
-  MapPin,
-  Phone,
-  Calendar,
   CheckCircle2,
   Activity,
-  Globe,
+  Clock,
+  MapPin,
+  Phone,
+  Server,
+  Database,
+  ExternalLink,
 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
-import Breadcrumb from '@/components/admin/Breadcrumb';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 
 interface StatsData {
   counts: {
+    appointments?: { total: number; pending: number };
     doctors: { total: number; published: number };
     services: { total: number; published: number };
     facilities: { total: number };
@@ -39,7 +38,17 @@ interface StatsData {
     testimonials: { total: number };
     faqs: { total: number };
     media: { total: number };
+    videos?: { total: number };
   };
+  recentAppointments?: Array<{
+    _id: string;
+    patientName: string;
+    phone: string;
+    department: string;
+    status: string;
+    preferredDate?: string;
+    createdAt: string;
+  }>;
   recentActivity: Array<{
     _id: string;
     userName: string;
@@ -56,10 +65,18 @@ interface StatsData {
   };
 }
 
+const statusClasses: Record<string, string> = {
+  Pending: 'bg-amber-50 text-amber-700 border-amber-200',
+  Confirmed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  Completed: 'bg-blue-50 text-blue-700 border-blue-200',
+  Cancelled: 'bg-rose-50 text-rose-700 border-rose-200',
+};
+
 export default function AdminDashboardPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState<StatsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchStats();
@@ -67,12 +84,16 @@ export default function AdminDashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const res = await adminApi.get('/dashboard/stats');
-      if (res.data?.success) {
-        setStats(res.data.data);
+      setError('');
+      const response = await adminApi.get('/dashboard/stats');
+      if (response.data?.success) {
+        setStats(response.data.data);
+      } else {
+        setError('Dashboard statistics are temporarily unavailable.');
       }
     } catch (err) {
       console.error('Failed to load admin stats:', err);
+      setError('We could not load the latest dashboard data. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -80,331 +101,533 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
-        <Loader2 className="w-9 h-9 animate-spin text-primary" />
-        <p className="text-gray-500 font-medium text-sm">Loading Matruka Dashboard...</p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3">
+        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-light/20">
+          <Loader2 className="h-5 w-5 animate-spin text-primary" />
+        </span>
+        <div className="text-center">
+          <p className="text-sm font-semibold text-[#344B53]">
+            Preparing your dashboard
+          </p>
+          <p className="mt-1 text-xs text-[#8AA3AD]">
+            Loading the latest hospital operations data...
+          </p>
+        </div>
       </div>
     );
   }
 
-  const { counts, recentActivity = [], system } = stats || {};
+  const {
+    counts,
+    recentAppointments = [],
+    recentActivity = [],
+    system,
+  } = stats || ({} as StatsData);
+  const safeCounts = counts || ({} as StatsData['counts']);
 
-  const statCards = [
+  const primaryMetrics = [
     {
-      name: 'Doctors',
-      count: counts?.doctors?.total || 2,
-      subtitle: `${counts?.doctors?.published || 2} Active in OPD`,
+      name: 'Consultation Leads',
+      value: safeCounts.appointments?.total ?? 0,
+      note: `${safeCounts.appointments?.pending ?? 0} awaiting review`,
+      icon: Calendar,
+      iconClass: 'bg-primary-light/20 text-primary',
+      href: '/admin/appointments',
+    },
+    {
+      name: 'Clinical Specialists',
+      value: safeCounts.doctors?.total ?? 0,
+      note: `${safeCounts.doctors?.published ?? 0} published on website`,
       icon: Stethoscope,
-      color: 'bg-teal-50 text-teal-600',
+      iconClass: 'bg-emerald-50 text-emerald-600',
       href: '/admin/doctors',
     },
     {
-      name: 'Clinical Services',
-      count: counts?.services?.total || 14,
-      subtitle: '14 Confirmed Specialities',
+      name: 'Clinical Specialities',
+      value: safeCounts.services?.total ?? 0,
+      note: `${safeCounts.services?.published ?? 0} currently published`,
       icon: Sparkles,
-      color: 'bg-emerald-50 text-emerald-600',
+      iconClass: 'bg-blue-50 text-blue-600',
       href: '/admin/services',
     },
     {
-      name: 'Facilities & Tech',
-      count: counts?.facilities?.total || 4,
-      subtitle: 'OT, USG, LDR, Recovery',
-      icon: Building2,
-      color: 'bg-blue-50 text-blue-600',
-      href: '/admin/facilities',
-    },
-    {
-      name: 'Blogs & Articles',
-      count: counts?.blogs?.total || 2,
-      subtitle: `${counts?.blogs?.published || 2} Published Guides`,
+      name: 'Published Guides',
+      value: safeCounts.blogs?.published ?? 0,
+      note: `${safeCounts.blogs?.draft ?? 0} drafts in progress`,
       icon: BookOpen,
-      color: 'bg-purple-50 text-purple-600',
+      iconClass: 'bg-violet-50 text-violet-600',
       href: '/admin/blogs',
-    },
-    {
-      name: 'Patient Reviews',
-      count: counts?.testimonials?.total || 3,
-      subtitle: '5-Star Verified Feedback',
-      icon: MessageSquareQuote,
-      color: 'bg-amber-50 text-amber-600',
-      href: '/admin/testimonials',
-    },
-    {
-      name: 'Patient FAQs',
-      count: counts?.faqs?.total || 5,
-      subtitle: 'Categorized Clinical Q&As',
-      icon: HelpCircle,
-      color: 'bg-rose-50 text-rose-600',
-      href: '/admin/faqs',
-    },
-    {
-      name: 'Gallery & Media',
-      count: counts?.media?.total || 0,
-      subtitle: 'Server Disk Storage',
-      icon: HardDrive,
-      color: 'bg-indigo-50 text-indigo-600',
-      href: '/admin/media',
-    },
-    {
-      name: 'System Status',
-      count: 'Online',
-      subtitle: 'MongoDB & API Active',
-      icon: ShieldCheck,
-      color: 'bg-cyan-50 text-cyan-600',
-      href: '/admin/backup',
     },
   ];
 
+  const secondaryMetrics = [
+    {
+      name: 'Facilities & OT',
+      value: safeCounts.facilities?.total ?? 0,
+      icon: Building2,
+      href: '/admin/facilities',
+    },
+    {
+      name: 'Gallery Assets',
+      value: safeCounts.gallery?.items ?? 0,
+      icon: Images,
+      href: '/admin/gallery',
+    },
+    {
+      name: 'Clinical Videos',
+      value: safeCounts.videos?.total ?? 0,
+      icon: Video,
+      href: '/admin/videos',
+    },
+    {
+      name: 'Patient Reviews',
+      value: safeCounts.testimonials?.total ?? 0,
+      icon: MessageSquareQuote,
+      href: '/admin/testimonials',
+    },
+  ];
+
+  const doctorProgress = safeCounts.doctors?.total
+    ? ((safeCounts.doctors?.published ?? 0) / safeCounts.doctors.total) * 100
+    : 0;
+  const serviceProgress = safeCounts.services?.total
+    ? ((safeCounts.services?.published ?? 0) / safeCounts.services.total) * 100
+    : 0;
+  const blogProgress = safeCounts.blogs?.total
+    ? ((safeCounts.blogs?.published ?? 0) / safeCounts.blogs.total) * 100
+    : 0;
+
+  const systemIsOnline =
+    String(system?.status || '').toLowerCase() === 'online' ||
+    String(system?.status || '').toLowerCase() === 'healthy';
+
   return (
-    <div className="space-y-8 pb-10">
-      {/* Breadcrumb & Header */}
-      <div>
-        <Breadcrumb items={[{ label: 'Dashboard' }]} />
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Hospital Administration</h1>
-            <p className="text-gray-500 mt-1 text-sm">
-              Welcome back, <span className="text-primary font-semibold">{user?.name || 'Administrator'}</span>
-            </p>
-          </div>
-          <div className="flex items-center gap-2.5">
+    <div className="space-y-7 pb-10">
+      <AdminPageHeader
+        title="Hospital Administration"
+        description={
+          <>
+            Welcome back,{' '}
+            <span className="font-semibold text-primary">
+              {user?.name || 'Administrator'}
+            </span>
+            . Here is the latest overview of consultations, clinical content, and website operations.
+          </>
+        }
+        breadcrumb={[{ label: 'Dashboard' }]}
+        actions={
+          <>
             <Link
               href="/"
               target="_blank"
-              className="flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition text-sm font-semibold shadow-sm"
+              rel="noreferrer"
+              className="admin-btn-secondary"
             >
               <Globe size={16} />
-              <span>Live Website</span>
+              Live website
             </Link>
-            <Link
-              href="/admin/doctors"
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl hover:opacity-90 transition text-sm font-semibold shadow-sm"
-            >
-              <Plus size={16} />
-              <span>Add Content</span>
+            <Link href="/admin/appointments" className="admin-btn-primary">
+              <Calendar size={16} />
+              Review appointments
             </Link>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      {/* Stats Grid - Jogi Style */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {statCards.map((stat) => (
-          <Link
-            href={stat.href}
-            key={stat.name}
-            className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 hover:shadow-md transition-all active:scale-[0.98] group"
+      {error && (
+        <div className="flex flex-col items-start justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 sm:flex-row sm:items-center">
+          <span>{error}</span>
+          <button
+            type="button"
+            onClick={fetchStats}
+            className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-semibold text-amber-800 transition hover:bg-amber-100"
           >
-            <div className={`p-3.5 rounded-xl ${stat.color} group-hover:scale-110 transition-transform shrink-0`}>
-              <stat.icon size={26} />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-gray-500 truncate">{stat.name}</p>
-              <p className="text-2xl font-bold text-gray-900">{stat.count}</p>
-              <p className="text-[11px] text-gray-400 truncate mt-0.5">{stat.subtitle}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
+            Try again
+          </button>
+        </div>
+      )}
 
-      {/* Widgets Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Clinical Operations Widget (Jogi User Insights Style) */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden relative group">
-          <div className="absolute -right-10 -top-10 w-32 h-32 bg-teal-50 rounded-full blur-3xl opacity-70 group-hover:opacity-100 transition-all pointer-events-none" />
-          <div className="absolute -bottom-12 left-8 w-28 h-28 bg-sky-50 rounded-full blur-3xl opacity-70 pointer-events-none" />
+      <section aria-labelledby="primary-metrics-heading">
+        <div className="mb-3 flex items-center justify-between">
+          <h2
+            id="primary-metrics-heading"
+            className="text-xs font-bold uppercase tracking-[0.14em] text-[#637C85]"
+          >
+            Key Performance Indicators
+          </h2>
+          <span className="text-[11px] font-medium text-[#8AA3AD]">
+            Live CMS data
+          </span>
+        </div>
 
-          <div className="flex items-center justify-between mb-6 relative z-10">
-            <div>
-              <p className="text-[11px] uppercase tracking-widest text-primary font-bold">Clinical Operations</p>
-              <h2 className="text-xl font-bold flex items-center gap-3 mt-1 text-slate-900">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-primary">
-                  <TrendingUp size={20} />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {primaryMetrics.map((metric) => (
+            <Link
+              key={metric.name}
+              href={metric.href}
+              className="admin-card-lg group flex items-center gap-4 p-5 transition duration-200 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-[0_12px_30px_rgba(19,52,58,0.09)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/25"
+            >
+              <span
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${metric.iconClass}`}
+              >
+                <metric.icon size={22} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-xs font-semibold text-[#637C85]">
+                  {metric.name}
                 </span>
-                Matruka Highlights
+                <span className="mt-0.5 block font-heading text-2xl font-bold leading-none text-[#1A2C30]">
+                  {metric.value}
+                </span>
+                <span className="mt-1.5 block truncate text-[10px] font-medium text-[#8AA3AD]">
+                  {metric.note}
+                </span>
+              </span>
+              <ArrowRight
+                size={16}
+                className="shrink-0 text-[#B2C3C9] transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
+              />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-12">
+        <div className="admin-card overflow-hidden xl:col-span-8">
+          <div className="flex items-center justify-between gap-4 border-b border-[#E7EDEF] px-5 py-4 sm:px-6">
+            <div>
+              <h2 className="font-heading text-lg font-bold text-[#1A2C30]">
+                Recent Consultation Requests
               </h2>
+              <p className="mt-0.5 text-xs text-[#8AA3AD]">
+                New patient leads submitted through the website.
+              </p>
             </div>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <CheckCircle2 size={13} /> OPD Active
-            </span>
+            <Link
+              href="/admin/appointments"
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-primary transition hover:bg-primary-light/20"
+            >
+              View all
+              <ArrowRight size={13} />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 relative z-10">
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 min-w-0">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Consultant Obstetricians</p>
-              <p className="text-xl font-bold text-slate-900 mt-1">Dr. Kairavi Yagnik & Dr. Rut Shah</p>
-              <p className="text-xs text-slate-600 mt-1">MBBS, MS OBGYN | Laparoscopic Specialists</p>
-            </div>
-
-            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 min-w-0">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">OPD Consultation Hours</p>
-              <p className="text-base font-bold text-slate-900 mt-1">10:00 AM - 1:00 PM</p>
-              <p className="text-base font-bold text-slate-900">5:00 PM - 7:00 PM</p>
-              <p className="text-[11px] text-primary font-medium mt-0.5">Monday to Saturday</p>
-            </div>
-          </div>
-
-          <div className="space-y-2.5 relative z-10 border-t border-gray-100 pt-4">
-            <div className="flex items-center justify-between text-xs text-gray-600">
-              <span className="flex items-center gap-2">
-                <MapPin size={14} className="text-primary" />
-                <span>303-306, Solaris Cure, Besides Ratnajyoti Apt, VIP Road, Surat</span>
+          {recentAppointments.length === 0 ? (
+            <div className="flex min-h-64 flex-col items-center justify-center px-6 py-12 text-center">
+              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-[#F0F4F5] text-[#8AA3AD]">
+                <Calendar size={22} />
               </span>
-              <span className="font-semibold text-gray-800">VIP Road</span>
+              <p className="text-sm font-semibold text-[#344B53]">
+                No consultation requests yet
+              </p>
+              <p className="mt-1 max-w-xs text-xs leading-relaxed text-[#8AA3AD]">
+                New patient enquiries will appear here as soon as they are received.
+              </p>
             </div>
-            <div className="flex items-center justify-between text-xs text-gray-600">
-              <span className="flex items-center gap-2">
-                <Phone size={14} className="text-primary" />
-                <span>Official Contact & Emergency Line</span>
-              </span>
-              <a href="tel:7984882273" className="font-bold text-primary hover:underline">
-                7984882273
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Quick Management Actions */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-[11px] uppercase tracking-widest text-primary font-bold">Admin Shortcuts</p>
-              <h2 className="text-xl font-bold text-slate-900 mt-1">Quick Management</h2>
-            </div>
-            <Link href="/admin/settings" className="text-xs text-primary font-medium hover:underline">
-              All Settings
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3.5">
-            <Link
-              href="/admin/doctors"
-              className="p-4 rounded-xl border border-gray-100 bg-gray-50/60 hover:bg-teal-50/40 hover:border-teal-200 transition-all group flex flex-col justify-between"
-            >
-              <div className="w-9 h-9 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                <Stethoscope size={18} />
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-gray-900">Manage Doctors</p>
-                <p className="text-xs text-gray-500 mt-0.5">Qualifications & Profiles</p>
-              </div>
-            </Link>
-
-            <Link
-              href="/admin/services"
-              className="p-4 rounded-xl border border-gray-100 bg-gray-50/60 hover:bg-teal-50/40 hover:border-teal-200 transition-all group flex flex-col justify-between"
-            >
-              <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                <Sparkles size={18} />
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-gray-900">14 Specialities</p>
-                <p className="text-xs text-gray-500 mt-0.5">Edit Descriptions & SEO</p>
-              </div>
-            </Link>
-
-            <Link
-              href="/admin/media"
-              className="p-4 rounded-xl border border-gray-100 bg-gray-50/60 hover:bg-teal-50/40 hover:border-teal-200 transition-all group flex flex-col justify-between"
-            >
-              <div className="w-9 h-9 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                <HardDrive size={18} />
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-gray-900">Media Library</p>
-                <p className="text-xs text-gray-500 mt-0.5">Local Server File Upload</p>
-              </div>
-            </Link>
-
-            <Link
-              href="/admin/homepage"
-              className="p-4 rounded-xl border border-gray-100 bg-gray-50/60 hover:bg-teal-50/40 hover:border-teal-200 transition-all group flex flex-col justify-between"
-            >
-              <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                <TrendingUp size={18} />
-              </div>
-              <div>
-                <p className="font-semibold text-sm text-gray-900">Homepage Builder</p>
-                <p className="text-xs text-gray-500 mt-0.5">Hero & Dynamic Sections</p>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Content Activity Table (Jogi Style) */}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-teal-50 rounded-xl text-primary">
-              <Activity size={22} />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Recent Content Activity</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Audit log of latest changes across the CMS</p>
-            </div>
-          </div>
-          <Link
-            href="/admin/activity-logs"
-            className="text-xs text-primary font-semibold hover:underline"
-          >
-            View Full Logs
-          </Link>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-gray-600">
-            <thead className="bg-gray-50/80 text-xs uppercase font-semibold text-gray-700 tracking-wider border-y border-gray-200">
-              <tr>
-                <th className="px-4 py-3 rounded-l-lg">User</th>
-                <th className="px-4 py-3">Action</th>
-                <th className="px-4 py-3">Module</th>
-                <th className="px-4 py-3">Details</th>
-                <th className="px-4 py-3 rounded-r-lg">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {recentActivity && recentActivity.length > 0 ? (
-                recentActivity.map((log) => (
-                  <tr key={log._id} className="hover:bg-gray-50/60 transition-colors">
-                    <td className="px-4 py-3.5 font-medium text-gray-900 flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-xs">
-                        {log.userName?.[0] || 'A'}
+          ) : (
+            <div className="divide-y divide-[#EDF1F2]">
+              {recentAppointments.map((appointment) => (
+                <div
+                  key={appointment._id}
+                  className="flex flex-col gap-3 px-5 py-4 transition hover:bg-[#F8FAFB] sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                >
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-light/20 text-xs font-bold text-primary">
+                      {appointment.patientName?.charAt(0).toUpperCase() || 'P'}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-bold text-[#27393F]">
+                        {appointment.patientName || 'Patient enquiry'}
+                      </p>
+                      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-[#637C85]">
+                        <span className="inline-flex items-center gap-1">
+                          <Phone size={11} className="text-primary" />
+                          {appointment.phone || 'No phone'}
+                        </span>
+                        <span className="truncate">{appointment.department}</span>
                       </div>
-                      <span>{log.userName || 'Administrator'}</span>
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span className="px-2 py-0.5 rounded text-xs font-semibold bg-teal-50 text-teal-700 uppercase">
-                        {log.action}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 pl-12 sm:justify-end sm:pl-0">
+                    <div className="text-left sm:text-right">
+                      <span
+                        className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-bold ${
+                          statusClasses[appointment.status] ||
+                          'border-slate-200 bg-slate-50 text-slate-600'
+                        }`}
+                      >
+                        {appointment.status || 'Unknown'}
                       </span>
-                    </td>
-                    <td className="px-4 py-3.5 capitalize font-medium text-gray-800">{log.module}</td>
-                    <td className="px-4 py-3.5 text-gray-600 text-xs max-w-xs truncate">{log.description}</td>
-                    <td className="px-4 py-3.5 text-xs text-gray-400">
-                       {new Date(log.timestamp).toLocaleString('en-GB', {
+                      <p className="mt-1 text-[10px] text-[#8AA3AD]">
+                        {new Date(appointment.createdAt).toLocaleDateString('en-IN', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    </div>
+                    <Link
+                      href="/admin/appointments"
+                      className="rounded-lg p-2 text-[#8AA3AD] transition hover:bg-primary-light/20 hover:text-primary"
+                      aria-label={`Review appointment for ${appointment.patientName}`}
+                    >
+                      <ExternalLink size={15} />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="admin-card overflow-hidden xl:col-span-4">
+          <div className="border-b border-[#E7EDEF] px-5 py-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="font-heading text-lg font-bold text-[#1A2C30]">
+                  System Health
+                </h2>
+                <p className="mt-0.5 text-xs text-[#8AA3AD]">
+                  API and CMS infrastructure status.
+                </p>
+              </div>
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold ${
+                  systemIsOnline
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                    : 'border-amber-200 bg-amber-50 text-amber-700'
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    systemIsOnline ? 'bg-emerald-500' : 'bg-amber-500'
+                  }`}
+                />
+                {systemIsOnline ? 'Operational' : 'Check status'}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3 p-5">
+            <div className="flex items-center gap-3 rounded-xl border border-[#E7EDEF] bg-[#F8FAFB] p-3.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-primary shadow-sm">
+                <Server size={17} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold text-[#344B53]">API Server</p>
+                <p className="mt-0.5 text-[10px] capitalize text-[#8AA3AD]">
+                  {system?.status || 'Status unavailable'}
+                </p>
+              </div>
+              <CheckCircle2
+                size={16}
+                className={systemIsOnline ? 'text-emerald-500' : 'text-amber-500'}
+              />
+            </div>
+
+            <div className="flex items-center gap-3 rounded-xl border border-[#E7EDEF] bg-[#F8FAFB] p-3.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-primary shadow-sm">
+                <Database size={17} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold text-[#344B53]">Database</p>
+                <p className="mt-0.5 text-[10px] capitalize text-[#8AA3AD]">
+                  {system?.db || 'MongoDB'}
+                </p>
+              </div>
+              <CheckCircle2 size={16} className="text-emerald-500" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border border-[#E7EDEF] p-3">
+                <p className="text-[9px] font-bold uppercase tracking-wider text-[#8AA3AD]">
+                  Uptime
+                </p>
+                <p className="mt-1 text-sm font-bold text-[#344B53]">
+                  {system?.uptime ?? 0}%
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#E7EDEF] p-3">
+                <p className="text-[9px] font-bold uppercase tracking-wider text-[#8AA3AD]">
+                  Runtime
+                </p>
+                <p className="mt-1 truncate text-sm font-bold text-[#344B53]">
+                  {system?.nodeVersion || 'Node'}
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/admin/backup"
+              className="flex items-center justify-between rounded-lg border border-[#D8E1E4] px-3.5 py-2.5 text-xs font-semibold text-[#4D636B] transition hover:border-primary/30 hover:bg-primary-light/15 hover:text-primary"
+            >
+              Open system controls
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-12">
+        <div className="admin-card p-5 sm:p-6 xl:col-span-7">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="font-heading text-lg font-bold text-[#1A2C30]">
+                Publishing Overview
+              </h2>
+              <p className="mt-0.5 text-xs text-[#8AA3AD]">
+                Website content readiness across key sections.
+              </p>
+            </div>
+            <Activity size={19} className="text-primary" />
+          </div>
+
+          <div className="space-y-5">
+            {[
+              {
+                label: 'Doctor profiles',
+                published: safeCounts.doctors?.published ?? 0,
+                total: safeCounts.doctors?.total ?? 0,
+                progress: doctorProgress,
+              },
+              {
+                label: 'Clinical specialities',
+                published: safeCounts.services?.published ?? 0,
+                total: safeCounts.services?.total ?? 0,
+                progress: serviceProgress,
+              },
+              {
+                label: 'Pregnancy guides',
+                published: safeCounts.blogs?.published ?? 0,
+                total: safeCounts.blogs?.total ?? 0,
+                progress: blogProgress,
+              },
+            ].map((item) => (
+              <div key={item.label}>
+                <div className="mb-2 flex items-center justify-between text-xs">
+                  <span className="font-semibold text-[#4D636B]">{item.label}</span>
+                  <span className="text-[#8AA3AD]">
+                    <strong className="font-bold text-[#344B53]">{item.published}</strong>
+                    {' / '}
+                    {item.total} published
+                  </span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-[#EAF0F1]">
+                  <div
+                    className="h-full rounded-full bg-primary transition-all"
+                    style={{ width: `${Math.min(item.progress, 100)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 gap-3 border-t border-[#EDF1F2] pt-5 sm:grid-cols-4">
+            {secondaryMetrics.map((metric) => (
+              <Link
+                key={metric.name}
+                href={metric.href}
+                className="rounded-xl border border-[#E7EDEF] p-3.5 transition hover:border-primary/25 hover:bg-primary-light/10"
+              >
+                <metric.icon size={17} className="text-primary" />
+                <p className="mt-2 font-heading text-xl font-bold text-[#27393F]">
+                  {metric.value}
+                </p>
+                <p className="mt-0.5 text-[10px] font-medium text-[#8AA3AD]">
+                  {metric.name}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="admin-card overflow-hidden xl:col-span-5">
+          <div className="flex items-center justify-between border-b border-[#E7EDEF] px-5 py-4 sm:px-6">
+            <div>
+              <h2 className="font-heading text-lg font-bold text-[#1A2C30]">
+                Recent Activity
+              </h2>
+              <p className="mt-0.5 text-xs text-[#8AA3AD]">
+                Latest administrator actions.
+              </p>
+            </div>
+            <Link
+              href="/admin/activity-logs"
+              className="text-xs font-semibold text-primary hover:underline"
+            >
+              View log
+            </Link>
+          </div>
+
+          {recentActivity.length === 0 ? (
+            <div className="px-6 py-12 text-center text-xs text-[#8AA3AD]">
+              No recent administrator activity.
+            </div>
+          ) : (
+            <div className="divide-y divide-[#EDF1F2]">
+              {recentActivity.slice(0, 5).map((activity) => (
+                <div key={activity._id} className="flex gap-3 px-5 py-3.5 sm:px-6">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary-light/20 text-primary">
+                    <Activity size={14} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-semibold text-[#344B53]">
+                      {activity.description || activity.action}
+                    </p>
+                    <p className="mt-1 text-[10px] text-[#8AA3AD]">
+                      {activity.userName || 'Administrator'} · {activity.module} ·{' '}
+                      {new Date(activity.timestamp).toLocaleString('en-IN', {
                         day: '2-digit',
                         month: 'short',
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="text-center py-8 text-gray-500">
-                    <div className="flex flex-col items-center justify-center gap-1.5 opacity-60">
-                      <Activity size={32} className="text-gray-300" />
-                      <p className="text-sm">Database seeded with initial clinical records.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </div>
+      </section>
+
+      <section className="admin-card grid grid-cols-1 divide-y divide-[#EDF1F2] md:grid-cols-3 md:divide-x md:divide-y-0">
+        <div className="p-5">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#637C85]">
+            <Clock size={15} className="text-primary" />
+            OPD Timings
+          </div>
+          <p className="mt-3 text-sm font-bold text-[#344B53]">
+            Morning: 10:00 AM – 1:00 PM
+          </p>
+          <p className="mt-1 text-sm font-bold text-[#344B53]">
+            Evening: 5:00 PM – 7:00 PM
+          </p>
+          <p className="mt-1.5 text-[11px] text-[#8AA3AD]">Monday to Saturday</p>
+        </div>
+        <div className="p-5">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#637C85]">
+            <MapPin size={15} className="text-primary" />
+            Clinic Address
+          </div>
+          <p className="mt-3 text-xs font-medium leading-relaxed text-[#4D636B]">
+            303–306, Solaris Cure, Besides Ratnajyoti Apartment, VIP Road, Surat – 395007
+          </p>
+        </div>
+        <div className="p-5">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#637C85]">
+            <Phone size={15} className="text-primary" />
+            Patient Support
+          </div>
+          <p className="mt-3 text-sm font-bold text-[#344B53]">
+            +91 79848 82273
+          </p>
+          <p className="mt-1.5 text-[11px] text-[#8AA3AD]">
+            24×7 emergency maternity support
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

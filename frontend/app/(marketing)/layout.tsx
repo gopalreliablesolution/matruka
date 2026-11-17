@@ -3,25 +3,32 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BACKEND_URL } from '@/lib/api';
 
-// Fetch settings on server for initial render
-async function getSettings() {
+async function getLayoutData() {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/v1/public/settings`, {
-      next: { revalidate: 60 },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data.data;
-    }
-  } catch {
-    // fallback defaults
+    const [settingsRes, navRes] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/v1/public/settings`, { cache: 'no-store' }),
+      fetch(`${BACKEND_URL}/api/v1/public/navigation`, { cache: 'no-store' }),
+    ]);
+
+    const settingsData = settingsRes.ok ? await settingsRes.json() : null;
+    const navData = navRes.ok ? await navRes.json() : null;
+
+    return {
+      settings: settingsData?.data || {},
+      navigation: navData?.data || { header: [], footer: [] },
+    };
+  } catch (err) {
+    console.error('Error fetching layout data:', err);
   }
   return {
-    clinicName: 'Matruka',
-    gujaratiName: 'માતૃકા',
-    appointmentPhone: '7984882273',
-    opdTimings: '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Monday to Saturday)',
-    address: '303-306, Solaris Cure, Besides Ratnajyoti Apartment, VIP Road, Surat - 395007',
+    settings: {
+      clinicName: 'Matruka',
+      gujaratiName: 'માતૃકા',
+      appointmentPhone: '7984882273',
+      opdTimings: '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Monday to Saturday)',
+      address: '303-306, Solaris Cure, Besides Ratnajyoti Apartment, VIP Road, Surat - 395007',
+    },
+    navigation: { header: [], footer: [] },
   };
 }
 
@@ -30,15 +37,13 @@ export default async function MarketingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getSettings();
+  const { settings, navigation } = await getLayoutData();
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar settings={settings} />
-      <main className="flex-1">{children}</main>
-      <Footer settings={settings} />
+      <Navbar settings={settings} menus={navigation.header} />
+      <main className="flex-1 pt-[4.5rem] lg:pt-20">{children}</main>
+      <Footer settings={settings} footerMenus={navigation.footer} />
     </div>
   );
 }
-
-

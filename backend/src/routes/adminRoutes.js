@@ -22,6 +22,10 @@ const pageCtrl = require('../controllers/pageController');
 const userCtrl = require('../controllers/userController');
 const activityLogCtrl = require('../controllers/activityLogController');
 const backupCtrl = require('../controllers/backupController');
+const appointmentCtrl = require('../controllers/appointmentController');
+const videoCtrl = require('../controllers/videoController');
+const hospitalLocationCtrl = require('../controllers/hospitalLocationController');
+const newsletterCtrl = require('../controllers/newsletterController');
 
 // Public Auth routes
 router.post('/auth/login', authCtrl.login);
@@ -37,6 +41,30 @@ router.get('/dashboard', dashboardCtrl.getStats);
 router.post('/media/upload', upload.single('file'), mediaCtrl.uploadFile);
 router.get('/media', mediaCtrl.getAll);
 router.delete('/media/:id', mediaCtrl.remove);
+
+// Appointments & Consultation Leads
+router.get('/appointments', appointmentCtrl.getAll);
+router.get('/appointments/:id', appointmentCtrl.getById);
+router.put('/appointments/:id', appointmentCtrl.update);
+router.delete('/appointments/:id', appointmentCtrl.remove);
+
+// Videos
+router.get('/videos', videoCtrl.getAll);
+router.get('/videos/:id', videoCtrl.getById);
+router.post('/videos', videoCtrl.create);
+router.put('/videos/:id', videoCtrl.update);
+router.delete('/videos/:id', videoCtrl.remove);
+
+// Hospital Locations
+router.get('/hospital-locations', hospitalLocationCtrl.getAll);
+router.get('/hospital-locations/:id', hospitalLocationCtrl.getById);
+router.post('/hospital-locations', hospitalLocationCtrl.create);
+router.put('/hospital-locations/:id', hospitalLocationCtrl.update);
+router.delete('/hospital-locations/:id', hospitalLocationCtrl.remove);
+
+// Newsletter Subscribers
+router.get('/newsletter', newsletterCtrl.getAll);
+router.delete('/newsletter/:id', newsletterCtrl.remove);
 
 // Doctors
 router.get('/doctors', doctorCtrl.getAll);
@@ -104,6 +132,7 @@ router.delete('/banners/:id', bannerCtrl.remove);
 // Menus
 router.get('/menus', menuCtrl.getAll);
 router.post('/menus', menuCtrl.create);
+router.put('/menus/reorder', menuCtrl.reorder);
 router.put('/menus/:id', menuCtrl.update);
 router.delete('/menus/:id', menuCtrl.remove);
 

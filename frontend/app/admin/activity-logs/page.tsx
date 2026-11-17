@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Search, Loader2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import toast from 'react-hot-toast';
 
 interface LogItem {
@@ -43,37 +44,34 @@ export default function AdminActivityLogsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-brand-slate-900 font-heading flex items-center gap-2">
-            <Activity className="w-6 h-6 text-brand-teal-600" />
-            <span>Administrative Activity & Audit Logs</span>
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Permanent audit trail of who created, updated, or deleted doctors, services, blogs, banners, and clinic settings.
-          </p>
-        </div>
+      <AdminPageHeader
+        title="Administrative Activity"
+        description="Review the latest 50 records showing who created, updated, or deleted website content and settings."
+        icon={Activity}
+        breadcrumb={[{ label: 'Activity Audit Logs' }]}
+        actions={
+          <select
+            value={moduleFilter}
+            onChange={(event) => setModuleFilter(event.target.value)}
+            className="rounded-lg border border-[#D8E1E4] bg-white px-3.5 py-2.5 text-xs font-medium text-[#344B53] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15 sm:text-sm"
+            aria-label="Filter activity by module"
+          >
+            <option value="">All Modules</option>
+            <option value="doctors">Doctors</option>
+            <option value="services">Services</option>
+            <option value="blogs">Blogs</option>
+            <option value="banners">Banners</option>
+            <option value="media">Media</option>
+            <option value="settings">Settings</option>
+            <option value="auth">Auth / Logins</option>
+          </select>
+        }
+      />
 
-        <select
-          value={moduleFilter}
-          onChange={(e) => setModuleFilter(e.target.value)}
-          className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none"
-        >
-          <option value="">All Modules</option>
-          <option value="doctors">Doctors</option>
-          <option value="services">Services</option>
-          <option value="blogs">Blogs</option>
-          <option value="banners">Banners</option>
-          <option value="media">Media</option>
-          <option value="settings">Settings</option>
-          <option value="auth">Auth / Logins</option>
-        </select>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="admin-card overflow-hidden">
         {loading ? (
           <div className="py-20 flex justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-teal-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : logs.length === 0 ? (
           <div className="py-16 text-center text-slate-500 text-sm">No activity logs recorded.</div>

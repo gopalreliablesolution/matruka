@@ -7,6 +7,8 @@ const Testimonial = require('../models/Testimonial');
 const FAQ = require('../models/FAQ');
 const Media = require('../models/Media');
 const ActivityLog = require('../models/ActivityLog');
+const Appointment = require('../models/Appointment');
+const Video = require('../models/Video');
 
 exports.getStats = async (req, res) => {
   try {
@@ -24,7 +26,11 @@ exports.getStats = async (req, res) => {
       testimonialsTotal,
       faqsTotal,
       mediaTotal,
+      appointmentsTotal,
+      appointmentsPending,
+      videosTotal,
       recentActivity,
+      recentAppointments,
     ] = await Promise.all([
       Doctor.countDocuments(),
       Doctor.countDocuments({ isPublished: true }),
@@ -39,7 +45,11 @@ exports.getStats = async (req, res) => {
       Testimonial.countDocuments(),
       FAQ.countDocuments(),
       Media.countDocuments(),
+      Appointment.countDocuments(),
+      Appointment.countDocuments({ status: 'Pending' }),
+      Video.countDocuments(),
       ActivityLog.find().sort({ timestamp: -1 }).limit(10),
+      Appointment.find().sort({ createdAt: -1 }).limit(5),
     ]);
 
     res.json({
@@ -54,11 +64,14 @@ exports.getStats = async (req, res) => {
           testimonials: { total: testimonialsTotal },
           faqs: { total: faqsTotal },
           media: { total: mediaTotal },
+          appointments: { total: appointmentsTotal, pending: appointmentsPending },
+          videos: { total: videosTotal },
         },
         recentActivity,
+        recentAppointments,
         system: {
           status: 'online',
-          db: 'MongoDB Connected',
+          db: 'MongoDB Atlas Connected',
           uptime: Math.round(process.uptime()),
           nodeVersion: process.version,
           memoryUsage: process.memoryUsage(),
@@ -70,4 +83,3 @@ exports.getStats = async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to retrieve dashboard stats' });
   }
 };
-
