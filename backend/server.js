@@ -1,4 +1,5 @@
 const path = require('path');
+
 // Test runs receive an explicit isolated environment and must never source backend/.env.
 if (process.env.NODE_ENV !== 'test') {
   require('dotenv').config();

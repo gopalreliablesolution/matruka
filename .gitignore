@@ -21,6 +21,7 @@ frontend/.env.local
 .env*
 .vscode/
 .idea/
+config.bat
 
 # Documentation files
 *.md
