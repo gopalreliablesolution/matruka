@@ -20,11 +20,16 @@ div[class*="fixed"][class*="inset-0"] {
     --slate-text: #344B53;
   }
 
+  html {
+    overflow-x: clip;
+  }
+
   body {
     color: #344B53;
     background-color: #FFFFFF;
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4, h5, h6 {

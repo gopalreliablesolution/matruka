@@ -148,7 +148,25 @@ router.get('/services', async (req, res) => {
 
 router.get('/services/:slug', async (req, res) => {
   try {
-    const service = await Service.findOne({ slug: req.params.slug, isPublished: true });
+    const slug = req.params.slug;
+    const aliases = {
+      'gynecological-endoscopic-surgeries': 'gynec-laparoscopic-surgeries',
+      'gynec-laparoscopic-surgeries': 'gynecological-endoscopic-surgeries',
+      'fertility-evaluation-workup': 'infertility-evaluation-management',
+      'infertility-evaluation-management': 'fertility-evaluation-workup',
+    };
+
+    let service = await Service.findOne({ slug, isPublished: true });
+    if (!service && aliases[slug]) {
+      service = await Service.findOne({ slug: aliases[slug], isPublished: true });
+    }
+    if (!service) {
+      service = await Service.findOne({
+        slug: new RegExp(`^${slug.replace(/-/g, '[-_ ]?')}$`, 'i'),
+        isPublished: true,
+      });
+    }
+
     if (!service) return res.status(404).json({ success: false, error: 'Service not found' });
 
     // Fetch related services in the same category

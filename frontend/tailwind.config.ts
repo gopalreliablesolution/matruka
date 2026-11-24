@@ -18,6 +18,13 @@ const config: Config = {
           DEFAULT: "#F2B632",
           light: "#F7CE6E",
         },
+        matruka: {
+          teal: "#0496AC",
+          tealDark: "#037B8D",
+          gold: "#F2B632",
+          lightAqua: "#EAF8F8",
+          text: "#344B53",
+        },
         brand: {
           teal: {
             50: "#F0FBFB",

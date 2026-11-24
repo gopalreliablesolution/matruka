@@ -151,7 +151,7 @@ export default async function HomePage() {
   const founderQuoteAuthor = aboutSettings.quoteAuthor || 'Dr. Kairavi Yagnik & Dr. Rut Shah';
 
   return (
-    <div className="space-y-0 text-slate-800 antialiased selection:bg-brand-teal-100 selection:text-brand-teal-900 overflow-x-hidden">
+    <div className="space-y-0 text-slate-800 antialiased selection:bg-brand-teal-100 selection:text-brand-teal-900">
       {/* 1. Hero Section - Luxury Multi-Slide Carousel */}
       {isSectionEnabled('hero_slider') && (
         <HeroSlider

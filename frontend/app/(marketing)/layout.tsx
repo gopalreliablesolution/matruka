@@ -4,6 +4,8 @@ import Footer from '@/components/Footer';
 import ConsultationModal from '@/components/ConsultationModal';
 import { BACKEND_URL } from '@/lib/api';
 
+export const dynamic = 'force-dynamic';
+
 async function getLayoutData() {
   try {
     const [settingsRes, navRes, homeRes, servicesRes] = await Promise.all([
