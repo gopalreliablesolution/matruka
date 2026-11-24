@@ -14,13 +14,20 @@ const blogSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    excerpt: { type: String, required: true },
-    content: { type: String, required: true },
-    featuredImage: { type: String, default: '/images/blogs/default-blog.jpg' },
+    excerpt: { type: String, default: '' },
+    content: { type: String, default: '' },
+    featuredImage: { type: String, default: '' },
     imageAlt: { type: String },
     author: { type: String, default: 'Dr. Kairavi Yagnik' },
     category: { type: String, default: 'Pregnancy & Childbirth' },
     tags: { type: [String], default: [] },
+    displayMode: {
+      type: String,
+      enum: ['both', 'image_only', 'content_only'],
+      default: 'both',
+    },
+    showContent: { type: Boolean, default: true },
+    showImage: { type: Boolean, default: true },
     status: {
       type: String,
       enum: ['draft', 'published', 'scheduled'],

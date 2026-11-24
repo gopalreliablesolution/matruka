@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import ConsultationModal from '@/components/ConsultationModal';
 import { BACKEND_URL } from '@/lib/api';
 
 async function getLayoutData() {
@@ -17,6 +18,7 @@ async function getLayoutData() {
     const homeData = homeRes.ok ? await homeRes.json() : null;
     const servicesData = servicesRes.ok ? await servicesRes.json() : null;
     const servicesList = servicesData?.data?.services || homeData?.data?.featuredServices || [];
+    const doctorsList = homeData?.data?.featuredDoctors || [];
 
     const contactSec = homeData?.data?.sections?.find((s: any) => s.sectionKey === 'location_contact');
     const footerLogo = contactSec?.settings?.footerLogo || settingsData?.data?.logoWhiteUrl || '';
@@ -39,6 +41,7 @@ async function getLayoutData() {
         footer: homeData?.data?.footerMenus || [],
       },
       servicesList,
+      doctorsList,
     };
   } catch (err) {
     console.error('Error fetching layout data:', err);
@@ -54,6 +57,7 @@ async function getLayoutData() {
     },
     navigation: { header: [], footer: [] },
     servicesList: [],
+    doctorsList: [],
   };
 }
 
@@ -62,13 +66,14 @@ export default async function MarketingLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { settings, navigation, servicesList } = await getLayoutData();
+  const { settings, navigation, servicesList, doctorsList } = await getLayoutData();
 
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar settings={settings} menus={navigation.header} services={servicesList} />
       <main className="flex-1 pt-[4.5rem] lg:pt-20">{children}</main>
-      <Footer settings={settings} footerMenus={navigation.footer} />
+      <Footer settings={settings} footerMenus={navigation.footer} services={servicesList} />
+      <ConsultationModal settings={settings} services={servicesList} doctors={doctorsList} />
     </div>
   );
 }

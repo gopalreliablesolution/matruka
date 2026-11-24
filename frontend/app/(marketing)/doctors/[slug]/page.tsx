@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Stethoscope, Clock, Phone, Award, CheckCircle2, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
+import DoctorAvatar from '@/components/DoctorAvatar';
 
 async function getDoctorDetail(slug: string) {
   try {
@@ -46,9 +47,13 @@ export default async function DoctorProfilePage({
       <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-gradient-teal flex items-center justify-center font-bold text-3xl sm:text-4xl text-white flex-shrink-0 shadow-lg shadow-brand-teal-500/20">
-              {doctor.name[4] || 'D'}
-            </div>
+            <DoctorAvatar
+              name={doctor.name}
+              profileImage={doctor.profileImage}
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl shadow-lg shadow-brand-teal-500/20"
+              textSize="text-3xl sm:text-4xl"
+              showBadge={true}
+            />
 
             <div className="space-y-1.5">
               <span className="text-xs font-bold text-brand-gold-600 bg-brand-gold-50 px-2.5 py-0.5 rounded border border-brand-gold-200">

@@ -22,23 +22,37 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { title, subtitle } = req.body;
-    if (!title || !subtitle) {
-      return res.status(400).json({ success: false, error: 'Title and subtitle are required' });
+    const { desktopImage, showContent } = req.body;
+    if (!desktopImage || !desktopImage.trim()) {
+      return res.status(400).json({ success: false, error: 'Banner image is required' });
     }
 
-    if (!req.body.desktopImage || !req.body.desktopImage.trim()) {
-      req.body.desktopImage = '/images/hero/serene-maternity-moment-at-home.png';
-    }
+    const bannerData = {
+      ...req.body,
+      title: req.body.title ? req.body.title.trim() : '',
+      subtitle: req.body.subtitle ? req.body.subtitle.trim() : '',
+      badgeText: req.body.badgeText ? req.body.badgeText.trim() : '',
+      desktopImage: req.body.desktopImage.trim(),
+      mobileImage: req.body.mobileImage ? req.body.mobileImage.trim() : '',
+      primaryBtnText: req.body.primaryBtnText ? req.body.primaryBtnText.trim() : '',
+      primaryBtnLink: req.body.primaryBtnLink ? req.body.primaryBtnLink.trim() : '',
+      secondaryBtnText: req.body.secondaryBtnText ? req.body.secondaryBtnText.trim() : '',
+      secondaryBtnLink: req.body.secondaryBtnLink ? req.body.secondaryBtnLink.trim() : '',
+      showContent: showContent !== undefined ? Boolean(showContent) : true,
+      bannerLinkUrl: req.body.bannerLinkUrl ? req.body.bannerLinkUrl.trim() : '',
+      openInNewTab: Boolean(req.body.openInNewTab),
+      sortOrder: req.body.sortOrder ? Number(req.body.sortOrder) : 0,
+      isActive: req.body.isActive !== undefined ? Boolean(req.body.isActive) : true,
+    };
 
-    const banner = await Banner.create(req.body);
+    const banner = await Banner.create(bannerData);
 
     await ActivityLog.create({
       userId: req.user?._id?.toString() || 'admin',
       userName: req.user?.name || 'Admin',
       action: 'create',
       module: 'banners',
-      description: `Created banner: ${banner.title}`,
+      description: `Created banner: ${banner.title || 'Image-Only Banner'}`,
     });
 
     res.status(201).json({ success: true, data: banner });
@@ -49,11 +63,25 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    if (req.body.desktopImage !== undefined && (!req.body.desktopImage || !req.body.desktopImage.trim())) {
-      req.body.desktopImage = '/images/hero/serene-maternity-moment-at-home.png';
-    }
-    const banner = await Banner.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updateData = { ...req.body };
+    if (updateData.title !== undefined) updateData.title = updateData.title.trim();
+    if (updateData.subtitle !== undefined) updateData.subtitle = updateData.subtitle.trim();
+    if (updateData.badgeText !== undefined) updateData.badgeText = updateData.badgeText.trim();
+    if (updateData.bannerLinkUrl !== undefined) updateData.bannerLinkUrl = updateData.bannerLinkUrl.trim();
+    if (updateData.openInNewTab !== undefined) updateData.openInNewTab = Boolean(updateData.openInNewTab);
+    if (updateData.showContent !== undefined) updateData.showContent = Boolean(updateData.showContent);
+
+    const banner = await Banner.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!banner) return res.status(404).json({ success: false, error: 'Banner not found' });
+
+    await ActivityLog.create({
+      userId: req.user?._id?.toString() || 'admin',
+      userName: req.user?.name || 'Admin',
+      action: 'update',
+      module: 'banners',
+      description: `Updated banner: ${banner.title || 'Image-Only Banner'}`,
+    });
+
     res.json({ success: true, data: banner });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message || 'Failed to update banner' });
@@ -68,4 +96,3 @@ exports.remove = async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to delete banner' });
   }
 };
-

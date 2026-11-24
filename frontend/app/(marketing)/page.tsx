@@ -9,6 +9,7 @@ import AnimatedCounter from '@/components/AnimatedCounter';
 import MaternityCarePathway from '@/components/MaternityCarePathway';
 import GalleryPreviewSection from '@/components/GalleryPreviewSection';
 import LatestBlogsSection from '@/components/LatestBlogsSection';
+import DoctorAvatar from '@/components/DoctorAvatar';
 import {
   Phone,
   Clock,
@@ -34,7 +35,7 @@ import {
 async function getHomeData() {
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/home-data`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const json = await res.json();
@@ -157,8 +158,8 @@ export default async function HomePage() {
           banners={banners}
           phone={phone}
           whatsappNumber={whatsappNumber}
-          trustBadge1={settings.heroBadge1 || settings.footerBadge1 || 'FOGSI Ultrasound Certified'}
-          trustBadge2={settings.heroBadge2 || settings.footerBadge2 || 'Laparoscopic Fellow Surgeons'}
+          trustBadge1={settings.heroBadge1 || ''}
+          trustBadge2={settings.heroBadge2 || ''}
           ratingScore={settings.ratingScore || '4.9/5'}
           ratingText={settings.ratingText || "Surat's Trusted Women's Care"}
         />
@@ -522,21 +523,13 @@ export default async function HomePage() {
                   >
                     <div className="space-y-4">
                       <div className="flex items-start gap-4">
-                        {doc.profileImage ? (
-                          <div className="relative shrink-0">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={resolveImageUrl(doc.profileImage)}
-                              alt={doc.name}
-                              className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl object-cover ring-4 ring-teal-50 border-2 border-brand-teal-300/80 shadow-xs"
-                            />
-                            <span className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-2xs" title="Available for consultation" />
-                          </div>
-                        ) : (
-                          <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl bg-brand-teal-50 ring-4 ring-teal-50 border-2 border-brand-teal-300/80 flex items-center justify-center font-bold text-2xl text-brand-teal-700 shrink-0">
-                            {doc.name ? doc.name.replace(/^Dr\.\s*/i, '')[0] : 'D'}
-                          </div>
-                        )}
+                        <DoctorAvatar
+                          name={doc.name}
+                          profileImage={doc.profileImage}
+                          className="w-20 h-20 sm:w-22 sm:h-22 rounded-2xl"
+                          textSize="text-2xl sm:text-3xl"
+                          showBadge={true}
+                        />
                         <div>
                           <h3 className="text-xl font-bold text-brand-slate-900 font-heading">
                             {doc.name}
@@ -738,15 +731,20 @@ export default async function HomePage() {
       {/* 10. Latest Blogs - Pregnancy & Gynaecology Knowledge */}
       {isSectionEnabled('latest_blogs') && (
         <LatestBlogsSection
-          badgeText={blogsSection?.badgeText || 'PREGNANCY & WOMEN\'S HEALTH EDUCATION'}
-          title={getSectionTitle('latest_blogs', 'Doctor-Authored Articles & Patient Health Tips')}
+          badgeText={
+            blogsSection?.badgeText &&
+            !['HEALTH BLOGS & EDUCATION', "PREGNANCY & WOMEN'S HEALTH EDUCATION", 'PREGNANCY & WOMEN’S HEALTH EDUCATION'].includes(blogsSection.badgeText.trim())
+              ? blogsSection.badgeText
+              : 'BLOGS'
+          }
+          title={getSectionTitle('latest_blogs', 'Doctor-Authored Health Blogs & Tips')}
           subtitle={
             getSectionSubtitle(
               'latest_blogs',
               'Evidence-based advice on trimester wellness, gynaecological health, and post-delivery care written directly by our clinic specialists in Surat.'
             )
           }
-          btnText={blogsSection?.settings?.btnText || 'Explore All Pregnancy & Gynaec Articles'}
+          btnText={blogsSection?.settings?.btnText || 'Explore All Health Blogs'}
           btnLink={blogsSection?.settings?.btnLink || '/blog'}
           blogs={recentBlogs}
         />

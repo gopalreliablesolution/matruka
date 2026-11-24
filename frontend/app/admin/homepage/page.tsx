@@ -157,7 +157,7 @@ export default function AdminHomepagePage() {
         : sec.sectionKey === 'gallery_preview'
         ? 'Explore Complete Hospital Tour'
         : sec.sectionKey === 'latest_blogs'
-        ? 'Explore All Pregnancy & Gynaec Articles'
+        ? 'Explore All Health Blogs'
         : 'Read More About Our Care Philosophy';
 
     const defaultBtnLink =

@@ -25,6 +25,7 @@ config.bat
 *.md
 
 # Testing / QA artifacts
+backend/check_app.js
 qa-screenshots/
 backend/tests/
 backend/jest.config.js

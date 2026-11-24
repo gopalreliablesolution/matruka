@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { User, Clock, ArrowLeft, ArrowRight, Share2, Eye } from 'lucide-react';
 import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
+import { parseBlogItem } from '@/lib/blogUtils';
 
 async function getBlogDetail(slug: string) {
   try {
@@ -31,7 +32,8 @@ export default async function BlogDetailPage({
     notFound();
   }
 
-  const { blog, related } = detail;
+  const blog = parseBlogItem(detail.blog);
+  const related = detail.related || [];
 
   return (
     <article className="py-6 sm:py-8 space-y-6">
@@ -41,14 +43,16 @@ export default async function BlogDetailPage({
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-teal-700 hover:text-brand-teal-800"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to All Articles</span>
+          <span>Back to All Blogs</span>
         </Link>
       </div>
 
       <header className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
-        <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
-          {blog.category}
-        </span>
+        {blog.category && (
+          <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
+            {blog.category}
+          </span>
+        )}
         <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 leading-tight">
           {blog.title}
         </h1>
@@ -71,48 +75,50 @@ export default async function BlogDetailPage({
         </div>
       </header>
 
-      {/* Featured Image */}
-      {blog.featuredImage && (
+      {/* Featured Image (Only when showImage is true) */}
+      {blog.showImage && blog.featuredImage && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl overflow-hidden h-64 sm:h-80 bg-slate-100">
+          <div className="rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/80 flex items-center justify-center p-1 sm:p-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={resolveImageUrl(blog.featuredImage)}
               alt={blog.title}
-              className="w-full h-full object-cover"
+              className="w-full h-auto max-h-[700px] object-contain mx-auto block rounded-xl"
             />
           </div>
         </div>
       )}
 
-      {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-          <div className="text-sm sm:text-base text-slate-700 leading-relaxed space-y-4 whitespace-pre-line">
-            {blog.content}
-          </div>
-
-          {blog.tags && blog.tags.length > 0 && (
-            <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-slate-500">Tags:</span>
-              {blog.tags.map((t: string, i: number) => (
-                <span
-                  key={i}
-                  className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-medium"
-                >
-                  #{t}
-                </span>
-              ))}
+      {/* Content (Only when content exists or showContent is true) */}
+      {(blog.content?.trim() || blog.showContent) && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+            <div className="text-sm sm:text-base text-slate-700 leading-relaxed space-y-4 whitespace-pre-line">
+              {blog.content}
             </div>
-          )}
+
+            {blog.tags && blog.tags.length > 0 && (
+              <div className="pt-6 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-slate-500">Tags:</span>
+                {blog.tags.map((t: string, i: number) => (
+                  <span
+                    key={i}
+                    className="text-xs bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md"
+                  >
+                    #{t}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Related Posts */}
       {related && related.length > 0 && (
         <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
           <h3 className="text-lg font-bold font-heading text-brand-slate-900 mb-4">
-            Related Health Articles
+            Related Health Blogs
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {related.map((rel: any) => (

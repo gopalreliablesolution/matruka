@@ -6,6 +6,15 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/appointments',
+        destination: '/book-appointment',
+        permanent: false,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

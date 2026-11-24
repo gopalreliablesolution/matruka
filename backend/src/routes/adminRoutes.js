@@ -100,13 +100,14 @@ router.put('/blogs/:id', blogCtrl.update);
 router.delete('/blogs/:id', blogCtrl.remove);
 
 // Gallery & Albums
+router.get('/gallery/albums', galleryCtrl.getAlbums);
+router.post('/gallery/albums', galleryCtrl.createAlbum);
+router.put('/gallery/albums/:id', galleryCtrl.updateAlbum);
+router.delete('/gallery/albums/:id', galleryCtrl.deleteAlbum);
 router.get('/gallery', galleryCtrl.getItems);
 router.post('/gallery', galleryCtrl.createItem);
 router.put('/gallery/:id', galleryCtrl.updateItem);
 router.delete('/gallery/:id', galleryCtrl.deleteItem);
-router.get('/gallery/albums', galleryCtrl.getAlbums);
-router.post('/gallery/albums', galleryCtrl.createAlbum);
-router.delete('/gallery/albums/:id', galleryCtrl.deleteAlbum);
 
 // Testimonials
 router.get('/testimonials', testimonialCtrl.getAll);

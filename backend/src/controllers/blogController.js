@@ -47,10 +47,14 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { title, excerpt, content } = req.body;
-    if (!title || !excerpt || !content) {
-      return res.status(400).json({ success: false, error: 'Title, excerpt, and content are required' });
+    const { title } = req.body;
+    if (!title || !title.trim()) {
+      return res.status(400).json({ success: false, error: 'Title is required' });
     }
+
+    const displayMode = req.body.displayMode || 'both';
+    const showContent = req.body.showContent !== undefined ? Boolean(req.body.showContent) : displayMode !== 'image_only';
+    const showImage = req.body.showImage !== undefined ? Boolean(req.body.showImage) : displayMode !== 'content_only';
 
     let slug = req.body.slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const exists = await Blog.findOne({ slug });
@@ -58,6 +62,11 @@ exports.create = async (req, res) => {
 
     const blog = await Blog.create({
       ...req.body,
+      excerpt: req.body.excerpt || '',
+      content: req.body.content || '',
+      displayMode,
+      showContent,
+      showImage,
       slug,
       author: req.body.author || req.user?.name || 'Dr. Kairavi Yagnik',
     });

@@ -21,6 +21,7 @@ import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import DataTable, { Column } from '@/components/admin/DataTable';
 import ConfirmModal from '@/components/admin/ConfirmModal';
+import DoctorAvatar from '@/components/DoctorAvatar';
 import toast from 'react-hot-toast';
 
 interface DoctorItem {
@@ -223,13 +224,13 @@ export default function AdminDoctorsPage() {
       accessor: 'name',
       render: (doc: DoctorItem) => (
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-brand-teal-50 border border-brand-teal-100 overflow-hidden shrink-0 flex items-center justify-center">
-            {doc.profileImage ? (
-              <img src={resolveImageUrl(doc.profileImage)} alt={doc.name} className="w-full h-full object-cover" />
-            ) : (
-              <Stethoscope className="w-5 h-5 text-primary" />
-            )}
-          </div>
+          <DoctorAvatar
+            name={doc.name}
+            profileImage={doc.profileImage}
+            className="w-11 h-11 rounded-xl"
+            textSize="text-sm font-bold"
+            showBadge={false}
+          />
           <div>
             <p className="font-bold text-gray-900 text-sm">{doc.name}</p>
             <p className="text-xs text-primary font-medium">{doc.qualifications}</p>

@@ -1,7 +1,14 @@
-
 import React from 'react';
-import { Image as ImageIcon, Camera } from 'lucide-react';
-import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
+import { Camera } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/api';
+import GalleryClient from '@/components/GalleryClient';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Hospital Gallery & Virtual Tour | Matruka Women’s Hospital Surat',
+  description:
+    'Explore photographs of Matruka Women’s Hospital in Surat, featuring our advanced laparoscopic operation theatre, comfortable patient suites, ultrasound unit, and maternity amenities.',
+};
 
 async function getGalleryData() {
   try {
@@ -13,64 +20,34 @@ async function getGalleryData() {
       return data.data;
     }
   } catch (e) {
-    console.error(e);
+    console.error('Failed to fetch public gallery:', e);
   }
   return { items: [], albums: [] };
 }
 
 export default async function GalleryPage() {
-  const { items, albums } = await getGalleryData();
+  const { items } = await getGalleryData();
 
   return (
-    <div className="py-6 sm:py-8 space-y-6">
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
-        <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
-          Clinic Tour
+    <div className="py-8 sm:py-12 space-y-8 min-h-[60vh]">
+      {/* Page Header */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+        <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3.5 py-1.5 rounded-full border border-brand-teal-100">
+          <Camera className="w-3.5 h-3.5 text-brand-teal-600" />
+          <span>Hospital Tour & Facilities</span>
         </span>
-        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900">
-          Matruka Clinic Gallery
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 tracking-tight">
+          Matruka Hospital Gallery
         </h1>
-        <p className="text-sm text-slate-600 max-w-2xl mx-auto">
-          Take a look inside our modern facility at Solaris Cure, VIP Road Surat, including our consultation suites, ultrasound room, and maternity amenities.
+        <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          Take a visual tour inside our modern facility at Solaris Cure, VIP Road Surat, including our consultation suites, ultrasound room, modular OT, and patient suites.
         </p>
       </section>
 
+      {/* Interactive Gallery Component */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {items.length === 0 ? (
-          <div className="py-12 text-center text-slate-500 text-sm bg-slate-50 rounded-2xl border border-slate-200">
-            No gallery photographs published yet. Check back soon!
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {items.map((item: any) => (
-              <div
-                key={item._id}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-md transition group"
-              >
-                <div className="h-52 bg-slate-100 overflow-hidden relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={resolveImageUrl(item.imageUrl)}
-                    alt={item.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <span className="absolute bottom-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-black/60 text-white px-2 py-0.5 rounded backdrop-blur-xs">
-                    {item.category}
-                  </span>
-                </div>
-
-                <div className="p-4 space-y-1">
-                  <h3 className="font-bold text-brand-slate-900 text-sm font-heading">{item.title}</h3>
-                  {item.caption && <p className="text-xs text-slate-500 line-clamp-2">{item.caption}</p>}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <GalleryClient items={items || []} />
       </section>
     </div>
   );
 }
-
-

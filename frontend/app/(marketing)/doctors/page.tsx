@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Stethoscope, Clock, Phone, Award, CheckCircle2, ChevronRight, ArrowRight } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
+import DoctorAvatar from '@/components/DoctorAvatar';
 
 async function getDoctorsData() {
   try {
@@ -46,9 +47,13 @@ export default async function DoctorsPage() {
             >
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-brand-teal-50 border-2 border-brand-teal-200 flex items-center justify-center font-bold text-2xl text-brand-teal-700 flex-shrink-0">
-                    {doc.name[4] || 'D'}
-                  </div>
+                  <DoctorAvatar
+                    name={doc.name}
+                    profileImage={doc.profileImage}
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl"
+                    textSize="text-2xl"
+                    showBadge={true}
+                  />
                   <div>
                     <h2 className="text-xl font-bold text-brand-slate-900 font-heading">
                       {doc.name}

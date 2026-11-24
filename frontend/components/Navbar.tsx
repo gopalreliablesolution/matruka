@@ -307,7 +307,7 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_4px_20px_rgba(4,150,172,0.06)] transition-all">
+      <header className="fixed left-0 right-0 top-0 z-50 w-full bg-white border-b border-slate-200/90 shadow-[0_4px_20px_rgba(4,150,172,0.06)] transition-all">
         <div className="relative z-50 flex h-[4.5rem] w-full items-center justify-between px-4 sm:px-6 lg:h-20 lg:px-8 xl:px-12">
           {/* Logo */}
           <Link
@@ -391,7 +391,8 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
                       {isDropdownOpen && (
                         <div
                           role="menu"
-                          className={`absolute ${isMore ? 'right-0 left-auto translate-x-0' : 'left-1/2 -translate-x-1/2'} top-[4.75rem] z-[60] flex max-h-[72vh] min-w-[16rem] max-w-[22rem] flex-col gap-1 overflow-y-auto rounded-2xl border border-slate-100/90 bg-white/98 p-2.5 backdrop-blur-md shadow-[0_16px_45px_rgba(4,150,172,0.14)] ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-150`}
+                          style={{ backgroundColor: '#ffffff', opacity: 1 }}
+                          className={`absolute ${isMore ? 'right-0 left-auto translate-x-0' : 'left-1/2 -translate-x-1/2'} top-[4.75rem] z-[100] flex max-h-[72vh] min-w-[16rem] max-w-[22rem] flex-col gap-1 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.18)] ring-1 ring-black/10 animate-in fade-in slide-in-from-top-2 duration-150`}
                         >
                           {item.children!.map((child: any) => {
                             const childHasNested = Boolean(child.children && child.children.length > 0);

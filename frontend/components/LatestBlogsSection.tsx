@@ -4,18 +4,24 @@ import React from 'react';
 import Link from 'next/link';
 import { BookOpen, Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import { resolveImageUrl } from '@/lib/api';
+import { parseBlogItem, ParsedBlog } from '@/lib/blogUtils';
 import ScrollReveal from './ScrollReveal';
 
 export interface BlogPostData {
   _id?: string;
   title: string;
   slug: string;
-  excerpt: string;
+  excerpt?: string;
+  content?: string;
   featuredImage?: string;
+  imageAlt?: string;
   author?: string;
   category?: string;
   publishedAt?: string | Date;
   readTime?: string;
+  displayMode?: 'both' | 'image_only' | 'content_only';
+  showContent?: boolean;
+  showImage?: boolean;
 }
 
 interface LatestBlogsSectionProps {
@@ -64,14 +70,16 @@ const DEFAULT_BLOGS: BlogPostData[] = [
 ];
 
 export default function LatestBlogsSection({
-  badgeText = 'PREGNANCY & WOMEN\'S HEALTH EDUCATION',
-  title = 'Doctor-Authored Articles & Patient Health Tips',
+  badgeText = 'BLOGS',
+  title = 'Doctor-Authored Health Blogs & Tips',
   subtitle = 'Evidence-based advice on trimester wellness, gynaecological health, and post-delivery care written directly by our clinic specialists in Surat.',
-  btnText = 'Explore All Pregnancy & Gynaec Articles',
+  btnText = 'Explore All Health Blogs',
   btnLink = '/blog',
   blogs = [],
 }: LatestBlogsSectionProps) {
-  const displayBlogs = blogs && blogs.length > 0 ? blogs.slice(0, 3) : DEFAULT_BLOGS;
+  const displayBlogs = (
+    blogs && blogs.length > 0 ? blogs.slice(0, 3) : DEFAULT_BLOGS
+  ).map(parseBlogItem);
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-white border-t border-slate-100 relative">
@@ -94,65 +102,150 @@ export default function LatestBlogsSection({
 
         {/* 3 Blogs Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-7">
-          {displayBlogs.map((b, idx) => (
-            <ScrollReveal key={b._id || idx} animation="fade-up" delay={idx * 100} duration={500}>
-              <article className="group rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:border-brand-teal-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full">
-                <div>
-                  <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={resolveImageUrl(b.featuredImage)}
-                      alt={b.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      onError={(e) => {
-                        e.currentTarget.src = '/images/banners/maternity-hero.jpg';
-                      }}
-                    />
-                    {b.category && (
-                      <span className="absolute top-3 left-3 bg-white/95 text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs">
-                        {b.category}
-                      </span>
-                    )}
-                  </div>
+          {displayBlogs.map((b, idx) => {
+            const isImageOnly = b.showImage && !b.showContent;
+            const isContentOnly = !b.showImage && b.showContent;
+            const cleanExcerpt = (b.excerpt || '').replace(/<[^>]*>/g, '').trim();
 
-                  <div className="p-5 space-y-2.5">
-                    <div className="flex items-center gap-3 text-[11px] text-slate-500">
-                      <span className="flex items-center gap-1">
-                        <User className="w-3 h-3 text-brand-teal-600" />
-                        <span>{b.author || 'Dr. Kairavi Yagnik'}</span>
-                      </span>
-                      {b.readTime && (
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3 text-slate-400" />
-                          <span>{b.readTime}</span>
+            return (
+              <ScrollReveal key={b._id || idx} animation="fade-up" delay={idx * 100} duration={500}>
+                {/* CASE 1: ONLY IMAGE (Infographic / Poster - Full Card Coverage like Gallery) */}
+                {isImageOnly ? (
+                  <article className="group rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:border-brand-teal-300 hover:shadow-xl transition-all duration-300 h-full flex flex-col relative min-h-[280px]">
+                    <Link
+                      href={`/blog/${b.slug}`}
+                      className="relative w-full h-full flex-1 overflow-hidden block"
+                      title={b.title}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={resolveImageUrl(b.featuredImage)}
+                        alt={b.title || 'Health Education Poster'}
+                        loading="lazy"
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        onError={(e) => {
+                          e.currentTarget.src = '/images/banners/maternity-hero.jpg';
+                        }}
+                      />
+
+                      {b.category && (
+                        <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs z-10">
+                          {b.category}
                         </span>
                       )}
+
+                      <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-black/60 px-3.5 py-1.5 rounded-full backdrop-blur-xs border border-white/20 shadow-md transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                          <span>Read Blog</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                    </Link>
+                  </article>
+                ) : isContentOnly ? (
+                  /* CASE 2: ONLY CONTENT (Text Article without Image) */
+                  <article className="group rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:border-brand-teal-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full p-6">
+                    <div className="space-y-3.5">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        {b.category && (
+                          <span className="bg-brand-teal-50 border border-brand-teal-200/80 text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md">
+                            {b.category}
+                          </span>
+                        )}
+                        <div className="flex items-center gap-3 text-[11px] text-slate-500">
+                          <span className="flex items-center gap-1">
+                            <User className="w-3.5 h-3.5 text-brand-teal-600" />
+                            <span>{b.author || 'Dr. Kairavi Yagnik'}</span>
+                          </span>
+                          {b.readTime && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5 text-slate-400" />
+                              <span>{b.readTime}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <h3 className="font-bold text-brand-slate-900 text-base sm:text-lg leading-snug group-hover:text-brand-teal-700 transition-colors">
+                        <Link href={`/blog/${b.slug}`}>{b.title}</Link>
+                      </h3>
+
+                      <p className="text-xs text-slate-600 line-clamp-4 leading-relaxed">
+                        {cleanExcerpt}
+                      </p>
                     </div>
 
-                    <h3 className="font-bold text-brand-slate-900 text-base leading-snug group-hover:text-brand-teal-700 transition-colors">
-                      <Link href={`/blog/${b.slug}`}>
-                        {b.title}
+                    <div className="px-0 pb-0 pt-4 border-t border-slate-100 mt-4">
+                      <Link
+                        href={`/blog/${b.slug}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-teal-700 hover:text-brand-teal-800 group-hover:translate-x-1 transition-all"
+                      >
+                        <span>Read Full Blog</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
-                    </h3>
+                    </div>
+                  </article>
+                ) : (
+                  /* CASE 3: STANDARD (Image + Content) */
+                  <article className="group rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:border-brand-teal-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full">
+                    <div>
+                      <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={resolveImageUrl(b.featuredImage)}
+                          alt={b.title}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            e.currentTarget.src = '/images/banners/maternity-hero.jpg';
+                          }}
+                        />
+                        {b.category && (
+                          <span className="absolute top-3 left-3 bg-white/95 text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs">
+                            {b.category}
+                          </span>
+                        )}
+                      </div>
 
-                    <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                      {b.excerpt}
-                    </p>
-                  </div>
-                </div>
+                      <div className="p-5 space-y-2.5">
+                        <div className="flex items-center gap-3 text-[11px] text-slate-500">
+                          <span className="flex items-center gap-1">
+                            <User className="w-3 h-3 text-brand-teal-600" />
+                            <span>{b.author || 'Dr. Kairavi Yagnik'}</span>
+                          </span>
+                          {b.readTime && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3 text-slate-400" />
+                              <span>{b.readTime}</span>
+                            </span>
+                          )}
+                        </div>
 
-                <div className="px-5 pb-5 pt-2 border-t border-slate-100 mt-2">
-                  <Link
-                    href={`/blog/${b.slug}`}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-teal-700 hover:text-brand-teal-800 group-hover:translate-x-1 transition-all"
-                  >
-                    <span>Read Full Article</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </article>
-            </ScrollReveal>
-          ))}
+                        <h3 className="font-bold text-brand-slate-900 text-base leading-snug group-hover:text-brand-teal-700 transition-colors">
+                          <Link href={`/blog/${b.slug}`}>
+                            {b.title}
+                          </Link>
+                        </h3>
+
+                        <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                          {cleanExcerpt}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="px-5 pb-5 pt-2 border-t border-slate-100 mt-2">
+                      <Link
+                        href={`/blog/${b.slug}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-teal-700 hover:text-brand-teal-800 group-hover:translate-x-1 transition-all"
+                      >
+                        <span>Read Full Blog</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </article>
+                )}
+              </ScrollReveal>
+            );
+          })}
         </div>
 
         {/* View All Articles */}

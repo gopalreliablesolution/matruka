@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { BookOpen, Plus, Edit2, Trash2, X, Calendar, User, Eye } from 'lucide-react';
+import { BookOpen, Plus, Edit2, Trash2, X, Calendar, User, Eye, Image as ImageIcon, FileText } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
+import { parseBlogItem, BlogDisplayMode } from '@/lib/blogUtils';
 import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import DataTable, { Column } from '@/components/admin/DataTable';
@@ -16,6 +17,7 @@ interface BlogItem {
   excerpt: string;
   content: string;
   featuredImage: string;
+  imageAlt?: string;
   author: string;
   category: string;
   tags: string[];
@@ -23,6 +25,9 @@ interface BlogItem {
   publishedAt: string;
   isFeatured: boolean;
   views: number;
+  displayMode?: BlogDisplayMode;
+  showContent?: boolean;
+  showImage?: boolean;
 }
 
 export default function AdminBlogsPage() {
@@ -49,11 +54,13 @@ export default function AdminBlogsPage() {
     excerpt: '',
     content: '',
     featuredImage: '',
+    imageAlt: '',
     author: 'Dr. Kairavi Yagnik',
     category: 'Pregnancy & Childbirth',
     tags: '',
     status: 'published' as 'draft' | 'published' | 'scheduled',
     isFeatured: false,
+    displayMode: 'both' as BlogDisplayMode,
   });
 
   useEffect(() => {
@@ -79,6 +86,7 @@ export default function AdminBlogsPage() {
 
   const handleOpenModal = (blog?: BlogItem) => {
     if (blog) {
+      const parsed = parseBlogItem(blog);
       setEditingBlog(blog);
       setFormData({
         title: blog.title || '',
@@ -86,11 +94,13 @@ export default function AdminBlogsPage() {
         excerpt: blog.excerpt || '',
         content: blog.content || '',
         featuredImage: blog.featuredImage || '',
+        imageAlt: blog.imageAlt || '',
         author: blog.author || 'Dr. Kairavi Yagnik',
         category: blog.category || 'Pregnancy & Childbirth',
         tags: (blog.tags || []).join(', '),
         status: blog.status || 'published',
         isFeatured: blog.isFeatured ?? false,
+        displayMode: parsed.displayMode,
       });
     } else {
       setEditingBlog(null);
@@ -100,11 +110,13 @@ export default function AdminBlogsPage() {
         excerpt: '',
         content: '',
         featuredImage: '',
+        imageAlt: '',
         author: 'Dr. Kairavi Yagnik',
         category: 'Pregnancy & Childbirth',
         tags: '',
         status: 'published',
         isFeatured: false,
+        displayMode: 'both',
       });
     }
     setIsModalOpen(true);
@@ -117,8 +129,26 @@ export default function AdminBlogsPage() {
       return;
     }
 
+    const isImageOnly = formData.displayMode === 'image_only';
+    const isContentOnly = formData.displayMode === 'content_only';
+
+    if (isImageOnly && !formData.featuredImage) {
+      toast.error('Featured Image is required for Image-Only Poster format');
+      return;
+    }
+
     const payload = {
       ...formData,
+      excerpt: formData.excerpt || (isImageOnly ? formData.title : ''),
+      content: formData.content || (isImageOnly ? (formData.excerpt || formData.title) : ''),
+      displayMode: formData.displayMode,
+      showContent: !isImageOnly,
+      showImage: !isContentOnly,
+      imageAlt: `__META__:${JSON.stringify({
+        displayMode: formData.displayMode,
+        showContent: !isImageOnly,
+        showImage: !isContentOnly,
+      })}`,
       tags: formData.tags
         .split(',')
         .map((s) => s.trim())
@@ -177,10 +207,38 @@ export default function AdminBlogsPage() {
           </div>
           <div>
             <p className="font-bold text-gray-900 text-sm line-clamp-1">{blog.title}</p>
-            <p className="text-xs text-gray-500 line-clamp-1 max-w-sm">{blog.excerpt}</p>
+            <p className="text-xs text-gray-500 line-clamp-1 max-w-sm">{blog.excerpt || 'Image-Only Infographic'}</p>
           </div>
         </div>
       ),
+    },
+    {
+      header: 'Format',
+      accessor: 'displayMode',
+      render: (blog: BlogItem) => {
+        const parsed = parseBlogItem(blog);
+        if (parsed.displayMode === 'image_only') {
+          return (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+              <ImageIcon size={12} />
+              <span>Only Image</span>
+            </span>
+          );
+        }
+        if (parsed.displayMode === 'content_only') {
+          return (
+            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+              <FileText size={12} />
+              <span>Only Content</span>
+            </span>
+          );
+        }
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span>✨ Both</span>
+          </span>
+        );
+      },
     },
     {
       header: 'Author & Category',
@@ -310,9 +368,70 @@ export default function AdminBlogsPage() {
             </div>
 
             <form onSubmit={handleSave} className="p-6 overflow-y-auto space-y-4 text-sm">
+              {/* Display Format Selector */}
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200/90 space-y-2">
+                <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider">
+                  Card Display Format (Website & Home Page)
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, displayMode: 'both' })}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      formData.displayMode === 'both'
+                        ? 'bg-white border-primary shadow-xs ring-2 ring-primary/20'
+                        : 'bg-white/60 border-gray-200 hover:bg-white text-gray-600'
+                    }`}
+                  >
+                    <div className="font-semibold text-xs text-gray-900 flex items-center gap-1.5">
+                      <span>✨ Both Image & Text</span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-1">
+                      Standard card: Photo on top + title & excerpt below.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, displayMode: 'image_only' })}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      formData.displayMode === 'image_only'
+                        ? 'bg-white border-primary shadow-xs ring-2 ring-primary/20'
+                        : 'bg-white/60 border-gray-200 hover:bg-white text-gray-600'
+                    }`}
+                  >
+                    <div className="font-semibold text-xs text-gray-900 flex items-center gap-1.5">
+                      <ImageIcon size={13} className="text-blue-600" />
+                      <span>🖼️ Only Image</span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-1">
+                      Full poster / infographic without text below.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, displayMode: 'content_only' })}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                      formData.displayMode === 'content_only'
+                        ? 'bg-white border-primary shadow-xs ring-2 ring-primary/20'
+                        : 'bg-white/60 border-gray-200 hover:bg-white text-gray-600'
+                    }`}
+                  >
+                    <div className="font-semibold text-xs text-gray-900 flex items-center gap-1.5">
+                      <FileText size={13} className="text-amber-600" />
+                      <span>📝 Only Content</span>
+                    </div>
+                    <p className="text-[11px] text-gray-500 mt-1">
+                      Text article card without any top image.
+                    </p>
+                  </button>
+                </div>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Article Title *
+                  Article Title * {formData.displayMode === 'image_only' && <span className="text-gray-400 font-normal">(Admin / Image Alt Reference)</span>}
                 </label>
                 <input
                   type="text"
@@ -323,6 +442,23 @@ export default function AdminBlogsPage() {
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none font-medium"
                 />
               </div>
+
+              {formData.displayMode !== 'content_only' && (
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Featured Image {formData.displayMode === 'image_only' ? '*' : '(Optional)'}
+                  </label>
+                  <ImageUpload
+                    value={formData.featuredImage}
+                    onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+                  />
+                  {formData.displayMode === 'image_only' && (
+                    <p className="text-[11px] text-blue-600 mt-1">
+                      💡 In "Only Image" format, this graphic will fill the whole card.
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
@@ -372,23 +508,23 @@ export default function AdminBlogsPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Short Excerpt (Cards preview)
+                  Short Excerpt {formData.displayMode === 'image_only' ? '(Optional for poster)' : '(Cards preview)'}
                 </label>
                 <textarea
                   rows={2}
                   value={formData.excerpt}
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                  placeholder="Summary for preview cards..."
+                  placeholder={formData.displayMode === 'image_only' ? 'Optional brief note for search...' : 'Summary for preview cards...'}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Full Article Body (Markdown supported)
+                  Full Article Body {formData.displayMode === 'image_only' ? '(Optional for poster)' : '(Markdown supported)'}
                 </label>
                 <textarea
-                  rows={8}
+                  rows={formData.displayMode === 'image_only' ? 3 : 8}
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   placeholder="Comprehensive clinical guidance, dietary recommendations, symptoms, and when to consult..."
@@ -396,15 +532,12 @@ export default function AdminBlogsPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Featured Image (Saved to local server disk)
-                </label>
-                <ImageUpload
-                  value={formData.featuredImage}
-                  onChange={(url) => setFormData({ ...formData, featuredImage: url })}
-                />
-              </div>
+              {formData.displayMode === 'content_only' && (
+                <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800 flex items-center gap-2">
+                  <FileText size={16} className="text-amber-600 shrink-0" />
+                  <span>This article will be presented cleanly as a text-only card without any image header.</span>
+                </div>
+              )}
 
               <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
                 <button
