@@ -4,17 +4,25 @@ import React, { useEffect, useState } from 'react';
 import { Settings, Save, Loader2, Check, Globe, MapPin, Phone, Clock, Share2, Sparkles, AlertCircle } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
+import ImageUpload from '@/components/ImageUpload';
 import toast from 'react-hot-toast';
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'general' | 'contact' | 'timings' | 'seo' | 'social'>('general');
+  const [contactSectionId, setContactSectionId] = useState<string | null>(null);
+  const [contactSectionSettings, setContactSectionSettings] = useState<any>({});
 
   const [formData, setFormData] = useState({
     clinicName: 'Matruka',
     gujaratiName: 'માતૃકા',
     tagline: 'Complete Care for Her',
+    logoUrl: '',
+    logoWhiteUrl: '',
+    footerAboutText: 'Surat’s dedicated women’s healthcare, pregnancy, and advanced gynaecological laparoscopy clinic. Led with compassion and clinical rigor by Dr. Kairavi Yagnik & Dr. Rut Shah.',
+    footerBadge1: 'FOGSI Certified Ultrasound',
+    footerBadge2: 'Laparoscopic Surgeons',
     appointmentPhone: '7984882273',
     emergencyPhone: '7984882273',
     whatsappNumber: '917984882273',
@@ -53,9 +61,39 @@ export default function AdminSettingsPage() {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.get('/settings');
+      const [res, secRes] = await Promise.all([
+        adminApi.get('/settings'),
+        adminApi.get('/homepage-sections').catch(() => null),
+      ]);
+
+      let footerLogoFromSec = '';
+      let footerAboutFromSec = '';
+      let footerBadge1FromSec = '';
+      let footerBadge2FromSec = '';
+      if (secRes?.data?.success && Array.isArray(secRes.data.data)) {
+        const contactSec = secRes.data.data.find((s: any) => s.sectionKey === 'location_contact');
+        if (contactSec) {
+          setContactSectionId(contactSec._id);
+          setContactSectionSettings(contactSec.settings || {});
+          footerLogoFromSec = contactSec.settings?.footerLogo || '';
+          footerAboutFromSec = contactSec.settings?.footerAboutText || '';
+          footerBadge1FromSec = contactSec.settings?.footerBadge1 || '';
+          footerBadge2FromSec = contactSec.settings?.footerBadge2 || '';
+        }
+      }
+
       if (res.data?.success && res.data.data) {
-        setFormData(res.data.data);
+        const d = res.data.data;
+        const activeHeaderLogo = d.logoUrl && d.logoUrl !== '/logo.png' ? d.logoUrl : '';
+        const activeFooterLogo = footerLogoFromSec || (d.logoWhiteUrl && d.logoWhiteUrl !== '/logo-white.png' ? d.logoWhiteUrl : '');
+        setFormData({
+          ...d,
+          logoUrl: activeHeaderLogo,
+          logoWhiteUrl: activeFooterLogo,
+          footerAboutText: footerAboutFromSec || d.footerAboutText || 'Surat’s dedicated women’s healthcare, pregnancy, and advanced gynaecological laparoscopy clinic. Led with compassion and clinical rigor by Dr. Kairavi Yagnik & Dr. Rut Shah.',
+          footerBadge1: footerBadge1FromSec || d.footerBadge1 || 'FOGSI Certified Ultrasound',
+          footerBadge2: footerBadge2FromSec || d.footerBadge2 || 'Laparoscopic Surgeons',
+        });
       }
     } catch {
       toast.error('Failed to load website settings');
@@ -68,10 +106,34 @@ export default function AdminSettingsPage() {
     e.preventDefault();
     try {
       setSaving(true);
-      const res = await adminApi.put('/settings', formData);
-      if (res.data?.success) {
-        toast.success('Website settings updated live!');
+      const payload = {
+        ...formData,
+        logoUrl: formData.logoUrl || '',
+        logoWhiteUrl: formData.logoWhiteUrl || '',
+        footerAboutText: formData.footerAboutText || '',
+        footerBadge1: formData.footerBadge1 || '',
+        footerBadge2: formData.footerBadge2 || '',
+      };
+
+      const promises: Promise<any>[] = [adminApi.put('/settings', payload)];
+
+      // Persist footer settings reliably in HomepageSection settings as well
+      if (contactSectionId) {
+        promises.push(
+          adminApi.put(`/homepage-sections/${contactSectionId}`, {
+            settings: {
+              ...contactSectionSettings,
+              footerLogo: formData.logoWhiteUrl || '',
+              footerAboutText: formData.footerAboutText || '',
+              footerBadge1: formData.footerBadge1 || '',
+              footerBadge2: formData.footerBadge2 || '',
+            },
+          })
+        );
       }
+
+      await Promise.all(promises);
+      toast.success('Website settings & logos updated live!');
     } catch (err: any) {
       toast.error(err.response?.data?.error || 'Failed to save settings');
     } finally {
@@ -189,6 +251,113 @@ export default function AdminSettingsPage() {
                   placeholder="Announcement ticker text..."
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-white text-xs outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
+              </div>
+
+              {/* Logos & Branding */}
+              <div className="pt-3 border-t border-gray-100">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Clinic Logos & Branding</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex flex-col justify-between">
+                    <div>
+                      <ImageUpload
+                        label="Header Logo (Color / Light Theme)"
+                        value={formData.logoUrl}
+                        onChange={(url) => setFormData({ ...formData, logoUrl: url })}
+                        altText="MatruKa Header Logo"
+                      />
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-gray-200/60 flex items-center justify-between text-[11px]">
+                      <span className="text-gray-500 font-medium">
+                        {formData.logoUrl ? '✓ Custom logo active' : 'Default active: /logo.png'}
+                      </span>
+                      {formData.logoUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, logoUrl: '' })}
+                          className="text-red-600 hover:underline font-semibold cursor-pointer"
+                        >
+                          Reset to default
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex flex-col justify-between">
+                    <div>
+                      <ImageUpload
+                        label="Footer Logo (White / Dark Background)"
+                        value={formData.logoWhiteUrl}
+                        onChange={(url) => setFormData({ ...formData, logoWhiteUrl: url })}
+                        altText="MatruKa Footer Logo"
+                        isDarkPreview={true}
+                      />
+                    </div>
+                    <div className="mt-3 pt-2 border-t border-gray-200/60 flex items-center justify-between text-[11px]">
+                      <span className="text-gray-500 font-medium">
+                        {formData.logoWhiteUrl ? '✓ Custom logo active' : 'Default active: /logo-white.png'}
+                      </span>
+                      {formData.logoWhiteUrl && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, logoWhiteUrl: '' })}
+                          className="text-red-600 hover:underline font-semibold cursor-pointer"
+                        >
+                          Reset to default
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Brand Description & Trust Badges */}
+                <div className="mt-5 pt-4 border-t border-gray-200/80 space-y-4">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                    Footer Brand Description &amp; Trust Badges
+                  </h3>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Footer Brand Summary / Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={formData.footerAboutText}
+                      onChange={(e) => setFormData({ ...formData, footerAboutText: e.target.value })}
+                      placeholder="Surat’s dedicated women’s healthcare, pregnancy..."
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm leading-relaxed"
+                    />
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      Displayed directly below the white logo in the website footer.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Footer Trust Badge 1
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.footerBadge1}
+                        onChange={(e) => setFormData({ ...formData, footerBadge1: e.target.value })}
+                        placeholder="FOGSI Certified Ultrasound"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-700 mb-1">
+                        Footer Trust Badge 2
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.footerBadge2}
+                        onChange={(e) => setFormData({ ...formData, footerBadge2: e.target.value })}
+                        placeholder="Laparoscopic Surgeons"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm font-medium"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}

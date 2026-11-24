@@ -14,7 +14,9 @@ backend/uploads/*
 .env.*.local
 
 backend/.env
+frontend/.env
 frontend/.env.local
+*.tsbuildinfo
 .vercel
 .idea/
 config.bat

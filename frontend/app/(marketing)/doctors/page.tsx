@@ -6,7 +6,7 @@ import { BACKEND_URL } from '@/lib/api';
 async function getDoctorsData() {
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/doctors`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();

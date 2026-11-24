@@ -118,24 +118,31 @@ export default function AdminBannersPage() {
     setIsModalOpen(true);
   };
 
+  const DEFAULT_HERO_FALLBACK = '/images/hero/serene-maternity-moment-at-home.png';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.subtitle || !formData.desktopImage) {
-      toast.error('Title, subtitle, and desktop hero image are required');
+    if (!formData.title || !formData.subtitle) {
+      toast.error('Title and subtitle are required');
       return;
     }
+
+    const payload = {
+      ...formData,
+      desktopImage: formData.desktopImage?.trim() || DEFAULT_HERO_FALLBACK,
+    };
 
     try {
       setSubmitting(true);
       if (editingBanner) {
-        const res = await adminApi.put(`/banners/${editingBanner._id}`, formData);
+        const res = await adminApi.put(`/banners/${editingBanner._id}`, payload);
         if (res.data.success) {
           toast.success('Hero banner updated');
           fetchBanners();
           setIsModalOpen(false);
         }
       } else {
-        const res = await adminApi.post('/banners', formData);
+        const res = await adminApi.post('/banners', payload);
         if (res.data.success) {
           toast.success('Hero banner created');
           fetchBanners();
@@ -352,9 +359,14 @@ export default function AdminBannersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
-                  Desktop Hero Image *
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-bold text-gray-700 uppercase">
+                    Desktop Hero Image
+                  </label>
+                  <span className="text-[11px] text-slate-400 font-normal">
+                    (Optional - default image will be used if removed)
+                  </span>
+                </div>
                 <ImageUpload
                   value={formData.desktopImage}
                   onChange={(url) => setFormData({ ...formData, desktopImage: url })}

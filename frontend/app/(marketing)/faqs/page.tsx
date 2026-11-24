@@ -5,7 +5,7 @@ import FAQSection from '@/components/FAQSection';
 async function getFaqsData() {
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/faqs`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();

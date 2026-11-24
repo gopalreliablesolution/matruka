@@ -6,7 +6,7 @@ import { BACKEND_URL } from '@/lib/api';
 async function getAboutData() {
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/pages/about`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();
@@ -44,12 +44,21 @@ export default async function AboutPage() {
             <h2 className="text-2xl font-bold text-brand-slate-900 font-heading">
               Our Vision & Medical Approach
             </h2>
-            <p>
-              Matruka was founded with a clear, patient-centric mission: to provide every woman in Surat with dignified, comprehensive, and scientifically grounded healthcare. Led by <strong>Dr. Kairavi Yagnik</strong> and <strong>Dr. Rut Shah</strong>—both Consultant Obstetricians, Gynaecologists, and fellowship-trained laparoscopic surgeons—our clinic combines clinical rigor with deep empathy.
-            </p>
-            <p>
-              Whether guiding an expectant couple through the wonder of their first pregnancy, supporting high-risk pregnancies, performing minimally invasive keyhole surgeries, or counselling through the menopause transition, we provide an unhurried, reassuring clinical environment.
-            </p>
+            {page?.content ? (
+              <div
+                className="prose prose-slate max-w-none space-y-4"
+                dangerouslySetInnerHTML={{ __html: page.content }}
+              />
+            ) : (
+              <>
+                <p>
+                  Matruka was founded with a clear, patient-centric mission: to provide every woman in Surat with dignified, comprehensive, and scientifically grounded healthcare. Led by <strong>Dr. Kairavi Yagnik</strong> and <strong>Dr. Rut Shah</strong>—both Consultant Obstetricians, Gynaecologists, and fellowship-trained laparoscopic surgeons—our clinic combines clinical rigor with deep empathy.
+                </p>
+                <p>
+                  Whether guiding an expectant couple through the wonder of their first pregnancy, supporting high-risk pregnancies, performing minimally invasive keyhole surgeries, or counselling through the menopause transition, we provide an unhurried, reassuring clinical environment.
+                </p>
+              </>
+            )}
 
             <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 bg-brand-teal-50/60 rounded-xl border border-brand-teal-100">

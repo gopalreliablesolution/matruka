@@ -3,8 +3,8 @@ import Cookies from 'js-cookie';
 
 export const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5050').replace(/\/+$/, '');
 
-export function resolveImageUrl(url?: string | null): string {
-  if (!url) return '/images/hero/serene-maternity-moment-at-home.png';
+export function resolveImageUrl(url?: string | null, fallback: string = ''): string {
+  if (!url) return fallback;
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
   if (url.startsWith('/uploads')) {
     return `${BACKEND_URL}${url}`;

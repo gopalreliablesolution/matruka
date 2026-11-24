@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ChevronDown, Menu, Phone, X } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/api';
 
 export interface MenuItemData {
   _id?: string;
@@ -24,8 +25,10 @@ interface NavbarProps {
     appointmentPhone?: string;
     opdTimings?: string;
     address?: string;
+    logoUrl?: string;
   };
   menus?: MenuItemData[];
+  services?: any[];
 }
 
 const DEFAULT_SERVICES = [
@@ -74,9 +77,9 @@ function DesktopNavItem({
 }: DesktopNavItemProps) {
   const content = (
     <span
-      className={`flex items-center gap-1.5 whitespace-nowrap text-xs font-semibold uppercase tracking-[0.08em] transition-colors xl:text-sm xl:tracking-wide ${
+      className={`relative flex items-center gap-1.5 whitespace-nowrap text-xs font-bold uppercase tracking-[0.08em] transition-all duration-200 xl:text-[13px] xl:tracking-wider ${
         isActive || expanded
-          ? 'text-[#0496AC] font-bold'
+          ? 'text-[#0496AC]'
           : 'text-[#1A2C30] hover:text-[#0496AC]'
       }`}
     >
@@ -89,6 +92,12 @@ function DesktopNavItem({
           }`}
         />
       )}
+      {isActive && (
+        <span
+          className="absolute -bottom-2.5 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0496AC] to-[#037A8C] rounded-full shadow-[0_1px_6px_rgba(4,150,172,0.45)]"
+          aria-hidden="true"
+        />
+      )}
     </span>
   );
 
@@ -96,7 +105,7 @@ function DesktopNavItem({
     return (
       <Link
         href={href}
-        className="relative flex h-full items-center px-2 lg:px-3 transition-colors hover:bg-slate-50/50"
+        className="relative flex h-full items-center px-2.5 lg:px-3.5 transition-colors hover:bg-slate-50/60"
         aria-current={isActive ? 'page' : undefined}
       >
         {content}
@@ -109,7 +118,7 @@ function DesktopNavItem({
       type="button"
       onClick={onClick}
       onMouseEnter={onMouseEnter}
-      className="relative flex h-full cursor-pointer items-center px-2 lg:px-3 select-none transition-colors hover:bg-slate-50/50"
+      className="relative flex h-full cursor-pointer items-center px-2.5 lg:px-3.5 select-none transition-colors hover:bg-slate-50/60"
       aria-haspopup={hasDropdown ? 'menu' : undefined}
       aria-expanded={hasDropdown ? expanded : undefined}
     >
@@ -118,7 +127,7 @@ function DesktopNavItem({
   );
 }
 
-export default function Navbar({ settings, menus }: NavbarProps) {
+export default function Navbar({ settings, menus, services }: NavbarProps) {
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
   const [openMobileAccordions, setOpenMobileAccordions] = useState<string[]>([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -126,6 +135,7 @@ export default function Navbar({ settings, menus }: NavbarProps) {
   const navContainerRef = useRef<HTMLDivElement>(null);
 
   const phone = settings?.appointmentPhone || '7984882273';
+  const navLogo = (settings?.logoUrl && settings.logoUrl.trim()) ? resolveImageUrl(settings.logoUrl) : '/logo.png';
 
   const getParentIdStr = (item: MenuItemData): string | null => {
     if (!item.parentId) return null;
@@ -160,11 +170,19 @@ export default function Navbar({ settings, menus }: NavbarProps) {
         children.length === 0 &&
         (parent.url === '/services' || labelLower === 'services' || labelLower === 'specialities')
       ) {
-        children = DEFAULT_SERVICES.map((s, idx) => ({
-          label: s.label,
-          url: s.href,
-          sortOrder: idx + 1,
-        }));
+        if (services && services.length > 0) {
+          children = services.map((s: any, idx: number) => ({
+            label: s.name,
+            url: `/services/${s.slug}`,
+            sortOrder: s.sortOrder ?? idx + 1,
+          }));
+        } else {
+          children = DEFAULT_SERVICES.map((s, idx) => ({
+            label: s.label,
+            url: s.href,
+            sortOrder: idx + 1,
+          }));
+        }
       }
 
       // Fallback for default Media if no database children exist yet
@@ -205,7 +223,7 @@ export default function Navbar({ settings, menus }: NavbarProps) {
     }
 
     return built;
-  }, [menus]);
+  }, [menus, services]);
 
   // Keep desktop header clean: show primary items and group the rest under "More"
   const { primaryMenus, moreMenus } = useMemo(() => {
@@ -289,44 +307,48 @@ export default function Navbar({ settings, menus }: NavbarProps) {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-50 w-full bg-[#F4F8F9] shadow-[0_2px_12px_rgba(4,150,172,0.1)] lg:shadow-none">
+      <header className="fixed left-0 right-0 top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_4px_20px_rgba(4,150,172,0.06)] transition-all">
         <div className="relative z-50 flex h-[4.5rem] w-full items-center justify-between px-4 sm:px-6 lg:h-20 lg:px-8 xl:px-12">
           {/* Logo */}
           <Link
             href="/"
             translate="no"
-            className="notranslate relative h-[3.25rem] w-[8.125rem] shrink-0 lg:h-[3.125rem] lg:w-[9.375rem]"
+            className="notranslate relative h-[3.25rem] w-[8.125rem] shrink-0 transition-transform duration-200 hover:scale-[1.02] lg:h-[3.25rem] lg:w-[9.75rem]"
             aria-label="MatruKa home"
           >
             <Image
-              src="/logo.png"
+              src={navLogo}
               alt="MatruKa - Complete Care for Her"
               fill
               sizes="(max-width: 1024px) 130px, 150px"
               priority
+              unoptimized
               className="object-contain"
+              onError={(e) => {
+                e.currentTarget.src = '/logo.png';
+              }}
             />
           </Link>
 
           {/* Mobile actions */}
-          <div className="flex items-center gap-3 lg:hidden">
+          <div className="flex items-center gap-2.5 lg:hidden">
             <a
               href={`tel:+91${phone}`}
               translate="no"
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0496AC] transition-opacity hover:opacity-90"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-r from-[#0496AC] to-[#037A8C] text-white shadow-[0_2px_10px_rgba(4,150,172,0.35)] transition-all active:scale-95"
               aria-label={`Call MatruKa clinic on +91 ${phone}`}
             >
-              <Phone size={18} className="text-white" />
+              <Phone size={17} className="text-white" />
             </a>
 
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="p-1 pl-1 transition-opacity hover:opacity-80 cursor-pointer"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200/90 bg-slate-50 text-[#1A2C30] transition-colors hover:bg-slate-100 cursor-pointer"
               aria-label="Open navigation menu"
               aria-expanded={mobileMenuOpen}
             >
-              <Menu size={30} className="text-[#1A2C30]" />
+              <Menu size={24} />
             </button>
           </div>
 
@@ -336,7 +358,7 @@ export default function Navbar({ settings, menus }: NavbarProps) {
             className="hidden h-full flex-1 items-center justify-center lg:flex"
             aria-label="Main navigation"
           >
-            <div className="flex h-full items-center">
+            <div className="flex h-full items-center gap-1 xl:gap-2">
               {[...primaryMenus, ...(moreMenus.length ? [{ _id: '__more__', label: 'More', url: '#', children: moreMenus }] : [])].map((item: any) => {
                 const itemId = item._id || item.url || item.label;
                 const isMore = item._id === '__more__';
@@ -369,34 +391,36 @@ export default function Navbar({ settings, menus }: NavbarProps) {
                       {isDropdownOpen && (
                         <div
                           role="menu"
-                          className={`absolute ${isMore ? 'right-0 left-auto translate-x-0' : 'left-1/2 -translate-x-1/2'} top-[4.5rem] z-[60] flex max-h-[70vh] min-w-[15rem] max-w-[20rem] flex-col gap-1 overflow-y-auto rounded-xl border border-gray-100 bg-white py-3 shadow-[0_12px_45px_rgba(4,150,172,0.18)] animate-in fade-in slide-in-from-top-2 duration-150`}
+                          className={`absolute ${isMore ? 'right-0 left-auto translate-x-0' : 'left-1/2 -translate-x-1/2'} top-[4.75rem] z-[60] flex max-h-[72vh] min-w-[16rem] max-w-[22rem] flex-col gap-1 overflow-y-auto rounded-2xl border border-slate-100/90 bg-white/98 p-2.5 backdrop-blur-md shadow-[0_16px_45px_rgba(4,150,172,0.14)] ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-150`}
                         >
                           {item.children!.map((child: any) => {
                             const childHasNested = Boolean(child.children && child.children.length > 0);
                             if (childHasNested) {
                               return (
-                                <div key={child._id || child.url || child.label} className="px-2">
-                                  <div className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                <div key={child._id || child.url || child.label} className="px-1 py-1">
+                                  <div className="px-3 pb-1.5 pt-2 text-[10px] font-bold uppercase tracking-wider text-[#0496AC]">
                                     {child.label}
                                   </div>
-                                  {child.children.map((nested: any) => {
-                                    const isNestedCurrent = isPathActive(nested.url);
-                                    return (
-                                      <Link
-                                        key={nested._id || nested.url}
-                                        href={nested.url}
-                                        role="menuitem"
-                                        onClick={() => setActiveDropdownId(null)}
-                                        className={`block rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wide transition-colors ${
-                                          isNestedCurrent
-                                            ? 'bg-[#0496AC]/10 text-[#0496AC] font-bold'
-                                            : 'text-[#1A2C30] hover:bg-slate-50 hover:text-[#0496AC]'
-                                        }`}
-                                      >
-                                        {nested.label}
-                                      </Link>
-                                    );
-                                  })}
+                                  <div className="space-y-0.5">
+                                    {child.children.map((nested: any) => {
+                                      const isNestedCurrent = isPathActive(nested.url);
+                                      return (
+                                        <Link
+                                          key={nested._id || nested.url}
+                                          href={nested.url}
+                                          role="menuitem"
+                                          onClick={() => setActiveDropdownId(null)}
+                                          className={`block rounded-xl px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
+                                            isNestedCurrent
+                                              ? 'bg-[#0496AC]/10 text-[#0496AC] font-bold'
+                                              : 'text-[#1A2C30] hover:bg-slate-50 hover:text-[#0496AC]'
+                                          }`}
+                                        >
+                                          {nested.label}
+                                        </Link>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
                               );
                             }
@@ -407,10 +431,10 @@ export default function Navbar({ settings, menus }: NavbarProps) {
                                 href={child.url}
                                 role="menuitem"
                                 onClick={() => setActiveDropdownId(null)}
-                                className={`px-5 py-2.5 text-xs font-semibold uppercase tracking-wide transition-colors ${
+                                className={`rounded-xl px-4 py-2.5 text-xs font-semibold tracking-wide transition-all ${
                                   isChildCurrent
                                     ? 'bg-[#0496AC]/10 text-[#0496AC] font-bold border-l-2 border-[#0496AC]'
-                                    : 'text-[#1A2C30] hover:bg-slate-50 hover:text-[#0496AC]'
+                                    : 'text-[#1A2C30] hover:bg-slate-50 hover:text-[#0496AC] hover:translate-x-0.5'
                                 }`}
                               >
                                 {child.label}
@@ -440,10 +464,12 @@ export default function Navbar({ settings, menus }: NavbarProps) {
             <a
               href={`tel:+91${phone}`}
               translate="no"
-              className="notranslate flex items-center gap-2.5 rounded-full bg-[#0496AC] px-5 py-2.5 text-white transition-opacity hover:opacity-90"
+              className="notranslate group flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#0496AC] via-[#037A8C] to-[#025E6C] px-5 py-2.5 text-white shadow-[0_4px_14px_rgba(4,150,172,0.32)] transition-all duration-300 hover:shadow-[0_6px_22px_rgba(4,150,172,0.45)] hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Phone size={15} />
-              <span className="text-xs font-bold tracking-wide">+91 {phone}</span>
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 transition-transform duration-300 group-hover:rotate-12">
+                <Phone size={13} className="text-white" />
+              </span>
+              <span className="text-xs font-bold tracking-wider font-heading">+91 {phone}</span>
             </a>
           </div>
         </div>
@@ -471,11 +497,15 @@ export default function Navbar({ settings, menus }: NavbarProps) {
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <Link href="/" onClick={closeMobileMenu}>
             <Image
-              src="/logo.png"
+              src={navLogo}
               alt="MatruKa"
               width={120}
               height={35}
+              unoptimized
               className="h-7 w-auto object-contain"
+              onError={(e) => {
+                e.currentTarget.src = '/logo.png';
+              }}
             />
           </Link>
           <button

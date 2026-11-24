@@ -5,7 +5,7 @@ const bannerSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     subtitle: { type: String, required: true },
     badgeText: { type: String, default: 'Complete Care For Her' },
-    desktopImage: { type: String, required: true },
+    desktopImage: { type: String, default: '/images/hero/serene-maternity-moment-at-home.png' },
     mobileImage: { type: String, default: '' },
     primaryBtnText: { type: String, default: 'View Specialities' },
     primaryBtnLink: { type: String, default: '/services' },

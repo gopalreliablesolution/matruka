@@ -44,7 +44,21 @@ const settingSchema = new mongoose.Schema(
       type: String,
       default: '© 2026 Matruka — Complete Care for Her. All rights reserved.',
     },
-    logoUrl: { type: String, default: '/images/brand/matruka-logo.svg' },
+    footerAboutText: {
+      type: String,
+      default:
+        'Surat’s dedicated women’s healthcare, pregnancy, and advanced gynaecological laparoscopy clinic. Led with compassion and clinical rigor by Dr. Kairavi Yagnik & Dr. Rut Shah.',
+    },
+    footerBadge1: {
+      type: String,
+      default: 'FOGSI Certified Ultrasound',
+    },
+    footerBadge2: {
+      type: String,
+      default: 'Laparoscopic Surgeons',
+    },
+    logoUrl: { type: String, default: '/logo.png' },
+    logoWhiteUrl: { type: String, default: '/logo-white.png' },
     faviconUrl: { type: String, default: '/favicon.ico' },
     announcementBarText: {
       type: String,

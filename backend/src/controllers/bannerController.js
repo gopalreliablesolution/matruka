@@ -22,9 +22,13 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { title, subtitle, desktopImage } = req.body;
-    if (!title || !subtitle || !desktopImage) {
-      return res.status(400).json({ success: false, error: 'Title, subtitle, and desktop image are required' });
+    const { title, subtitle } = req.body;
+    if (!title || !subtitle) {
+      return res.status(400).json({ success: false, error: 'Title and subtitle are required' });
+    }
+
+    if (!req.body.desktopImage || !req.body.desktopImage.trim()) {
+      req.body.desktopImage = '/images/hero/serene-maternity-moment-at-home.png';
     }
 
     const banner = await Banner.create(req.body);
@@ -45,6 +49,9 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
+    if (req.body.desktopImage !== undefined && (!req.body.desktopImage || !req.body.desktopImage.trim())) {
+      req.body.desktopImage = '/images/hero/serene-maternity-moment-at-home.png';
+    }
     const banner = await Banner.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!banner) return res.status(404).json({ success: false, error: 'Banner not found' });
     res.json({ success: true, data: banner });

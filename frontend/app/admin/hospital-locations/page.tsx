@@ -139,15 +139,29 @@ export default function AdminHospitalLocationsPage() {
 
     try {
       setSubmitting(true);
+
+      // Clean up mapEmbedUrl in case user pasted full <iframe ...> tag from Google Maps
+      let cleanedMapUrl = formData.mapEmbedUrl?.trim() || '';
+      if (cleanedMapUrl.includes('<iframe') || cleanedMapUrl.includes('src=')) {
+        const match = cleanedMapUrl.match(/src=["']([^"']+)["']/i);
+        if (match && match[1]) {
+          cleanedMapUrl = match[1];
+        }
+      }
+      const payload = {
+        ...formData,
+        mapEmbedUrl: cleanedMapUrl,
+      };
+
       if (editingLocation) {
-        const res = await adminApi.put(`/hospital-locations/${editingLocation._id}`, formData);
+        const res = await adminApi.put(`/hospital-locations/${editingLocation._id}`, payload);
         if (res.data?.success) {
           toast.success('Hospital location updated');
           setIsModalOpen(false);
           fetchLocations();
         }
       } else {
-        const res = await adminApi.post('/hospital-locations', formData);
+        const res = await adminApi.post('/hospital-locations', payload);
         if (res.data?.success) {
           toast.success('Hospital location created');
           setIsModalOpen(false);
