@@ -1009,96 +1009,128 @@ function AdminSettingsContent() {
                     )}
 
                     {/* Pop-up Card */}
-                    <div className="relative w-full max-w-xs bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all text-left">
-                      {/* Optional Image */}
-                      {formData.popup.showImage && formData.popup.imageUrl && (
-                        <div className="relative w-full h-32 bg-slate-100 overflow-hidden">
-                          <SafeImage
-                            src={resolveImageUrl(formData.popup.imageUrl)}
-                            alt={formData.popup.title}
-                            fallbackSrc="/logo.png"
-                            className="w-full h-full object-cover"
-                            fallbackClassName="w-full h-full object-contain p-4 bg-slate-50"
-                          />
+                    {(() => {
+                      const hasPreviewInfo =
+                        formData.popup.showInfo && (formData.popup.showOpd || formData.popup.showAddress);
+                      const hasPreviewBody =
+                        formData.popup.showDescription ||
+                        hasPreviewInfo ||
+                        formData.popup.showWhatsapp ||
+                        formData.popup.showCall ||
+                        formData.popup.showDismiss;
+                      const isPreviewImageOnly =
+                        Boolean(formData.popup.showImage && formData.popup.imageUrl) &&
+                        !formData.popup.showHeader &&
+                        !hasPreviewBody;
+
+                      return (
+                        <div
+                          className={`relative w-full ${
+                            isPreviewImageOnly ? 'max-w-md bg-transparent' : 'max-w-xs bg-white'
+                          } rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all text-left`}
+                        >
+                          {/* Optional Image */}
+                          {formData.popup.showImage && formData.popup.imageUrl && (
+                            <div className="relative w-full bg-slate-50 overflow-hidden">
+                              <SafeImage
+                                src={resolveImageUrl(formData.popup.imageUrl)}
+                                alt={formData.popup.title}
+                                fallbackSrc="/logo.png"
+                                className={
+                                  isPreviewImageOnly
+                                    ? 'w-full h-auto max-h-96 object-contain block'
+                                    : 'w-full h-auto max-h-52 object-contain bg-slate-50 block'
+                                }
+                                fallbackClassName="w-full h-36 object-contain p-4 bg-slate-50 block"
+                              />
+                              {!formData.popup.showHeader && (
+                                <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-slate-900/70 text-white flex items-center justify-center">
+                                  <X size={13} />
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Header Bar */}
+                          {formData.popup.showHeader && (
+                            <div className="relative bg-[#0496AC] text-white px-4 py-3.5 flex items-center justify-between">
+                              <div className="pr-2">
+                                <h3 className="text-sm font-bold font-heading text-white leading-tight">
+                                  {formData.popup.title || 'Matruka Women’s Hospital'}
+                                </h3>
+                                <p className="text-[11px] text-white/85 mt-0.5">
+                                  {formData.popup.subtitle || 'Complete Care for Her • Surat'}
+                                </p>
+                              </div>
+                              <div className="w-6 h-6 rounded-full bg-white/20 text-white flex items-center justify-center shrink-0">
+                                <X size={13} />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Body Content */}
+                          {hasPreviewBody && (
+                            <div className="p-4 space-y-3">
+                              {formData.popup.showDescription && (
+                                <p className="text-[11px] text-slate-600 leading-relaxed">
+                                  {formData.popup.description || 'Welcome to Matruka...'}
+                                </p>
+                              )}
+
+                              {/* Quick Info Box */}
+                              {hasPreviewInfo && (
+                                <div className="space-y-1.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-[11px] text-slate-600">
+                                  {formData.popup.showOpd && (
+                                    <div className="flex items-center gap-1.5">
+                                      <Clock size={13} className="text-[#0496AC] shrink-0" />
+                                      <span>
+                                        OPD: <strong>{formData.popup.opdText}</strong>
+                                      </span>
+                                    </div>
+                                  )}
+                                  {formData.popup.showAddress && (
+                                    <div className="flex items-start gap-1.5">
+                                      <MapPin size={13} className="text-[#0496AC] shrink-0 mt-0.5" />
+                                      <span className="leading-snug">{formData.popup.addressText}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Action Buttons */}
+                              {(formData.popup.showWhatsapp || formData.popup.showCall) && (
+                                <div className="space-y-2 pt-0.5">
+                                  {formData.popup.showWhatsapp && (
+                                    <div className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#25D366] text-white font-bold text-[11px] shadow-xs">
+                                      <MessageCircle size={14} />
+                                      <span>{formData.popup.whatsappText || 'Connect on WhatsApp'}</span>
+                                    </div>
+                                  )}
+
+                                  {formData.popup.showCall && (
+                                    <div className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#0496AC] text-white font-bold text-[11px] shadow-xs">
+                                      <Phone size={13} />
+                                      <span>
+                                        {formData.popup.callText || 'Call Helpline'}: +91 {formData.popup.callNumber || '7984882273'}
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Dismiss */}
+                              {formData.popup.showDismiss && (
+                                <div className="pt-1.5 text-center border-t border-slate-100">
+                                  <span className="text-[11px] text-slate-400 font-medium">
+                                    {formData.popup.dismissText || 'Continue to website →'}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      )}
-
-                      {/* Header Bar */}
-                      {formData.popup.showHeader && (
-                        <div className="relative bg-[#0496AC] text-white px-4 py-3.5 flex items-center justify-between">
-                          <div className="pr-2">
-                            <h3 className="text-sm font-bold font-heading text-white leading-tight">
-                              {formData.popup.title || 'Matruka Women’s Hospital'}
-                            </h3>
-                            <p className="text-[11px] text-white/85 mt-0.5">
-                              {formData.popup.subtitle || 'Complete Care for Her • Surat'}
-                            </p>
-                          </div>
-                          <div className="w-6 h-6 rounded-full bg-white/20 text-white flex items-center justify-center shrink-0">
-                            <X size={13} />
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Body Content */}
-                      <div className="p-4 space-y-3">
-                        {formData.popup.showDescription && (
-                          <p className="text-[11px] text-slate-600 leading-relaxed">
-                            {formData.popup.description || 'Welcome to Matruka...'}
-                          </p>
-                        )}
-
-                        {/* Quick Info Box */}
-                        {formData.popup.showInfo && (formData.popup.showOpd || formData.popup.showAddress) && (
-                          <div className="space-y-1.5 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-[11px] text-slate-600">
-                            {formData.popup.showOpd && (
-                              <div className="flex items-center gap-1.5">
-                                <Clock size={13} className="text-[#0496AC] shrink-0" />
-                                <span>
-                                  OPD: <strong>{formData.popup.opdText}</strong>
-                                </span>
-                              </div>
-                            )}
-                            {formData.popup.showAddress && (
-                              <div className="flex items-start gap-1.5">
-                                <MapPin size={13} className="text-[#0496AC] shrink-0 mt-0.5" />
-                                <span className="leading-snug">{formData.popup.addressText}</span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Action Buttons */}
-                        {(formData.popup.showWhatsapp || formData.popup.showCall) && (
-                          <div className="space-y-2 pt-0.5">
-                            {formData.popup.showWhatsapp && (
-                              <div className="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#25D366] text-white font-bold text-[11px] shadow-xs">
-                                <MessageCircle size={14} />
-                                <span>{formData.popup.whatsappText || 'Connect on WhatsApp'}</span>
-                              </div>
-                            )}
-
-                            {formData.popup.showCall && (
-                              <div className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#0496AC] text-white font-bold text-[11px] shadow-xs">
-                                <Phone size={13} />
-                                <span>
-                                  {formData.popup.callText || 'Call Helpline'}: +91 {formData.popup.callNumber || '7984882273'}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Dismiss */}
-                        {formData.popup.showDismiss && (
-                          <div className="pt-1.5 text-center border-t border-slate-100">
-                            <span className="text-[11px] text-slate-400 font-medium">
-                              {formData.popup.dismissText || 'Continue to website →'}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
