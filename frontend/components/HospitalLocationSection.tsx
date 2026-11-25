@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Phone, Mail, Loader2, MapPin, Clock, User, Sparkles, Send } from 'lucide-react';
+import { Phone, Mail, Loader2, MapPin, Clock, User, Send } from 'lucide-react';
 import { publicApi } from '@/lib/api';
 
 const DEFAULT_MAP_EMBED_URL =
@@ -266,7 +266,7 @@ export default function HospitalLocationSection({
           {/* Newsletter Column */}
           <div className="lg:col-span-5 bg-gradient-to-br from-white via-slate-50/50 to-white rounded-3xl border border-slate-200/90 shadow-[0_4px_30px_rgba(4,150,172,0.06)] p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3 self-start">
-              <Sparkles size={12} />
+              <Mail size={12} />
               <span>{newsletterBadge}</span>
             </span>
             <h3 className="text-xl md:text-2xl font-bold font-heading text-[#1A2C30] mb-2">

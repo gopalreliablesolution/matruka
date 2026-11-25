@@ -9,7 +9,6 @@ import {
   Check,
   X,
   Loader2,
-  Sparkles,
   ExternalLink,
   Image as ImageIcon,
   Type,

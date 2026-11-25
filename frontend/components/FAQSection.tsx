@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { ChevronDown, ArrowRight, Sparkles, Phone, HelpCircle } from 'lucide-react';
+import { ChevronDown, ArrowRight, Phone, HelpCircle } from 'lucide-react';
 
 export interface FAQItemData {
   _id?: string;
@@ -53,7 +53,7 @@ export default function FAQSection({
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12 max-w-3xl mx-auto">
           <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3">
-            <Sparkles size={12} />
+            <HelpCircle size={12} />
             <span>{badgeText}</span>
           </span>
           <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-[#1A2C30] mt-2 leading-snug">

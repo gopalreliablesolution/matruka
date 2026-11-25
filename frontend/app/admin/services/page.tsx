@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Sparkles, Plus, Edit2, Trash2, X, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Activity, Plus, Edit2, Trash2, X, ToggleLeft, ToggleRight } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
@@ -305,7 +305,7 @@ export default function AdminServicesPage() {
       <AdminPageHeader
         title="Clinical Specialities & Services"
         description="Manage MatruKa specialities, procedures, patient benefits, clinical descriptions, and publication status."
-        icon={Sparkles}
+        icon={Activity}
         breadcrumb={[{ label: '14 Core Specialities' }]}
         actions={
           <button

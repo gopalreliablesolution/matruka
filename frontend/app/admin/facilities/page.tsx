@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Building2, Plus, Edit2, Trash2, Check, X, Loader2, Sparkles } from 'lucide-react';
+import { Building2, Plus, Edit2, Trash2, Check, X, Loader2 } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';

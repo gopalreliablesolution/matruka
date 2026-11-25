@@ -11,7 +11,6 @@ import {
   X,
   ExternalLink,
   Loader2,
-  Sparkles,
 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';

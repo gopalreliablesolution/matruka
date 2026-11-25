@@ -6,7 +6,6 @@ import {
   Baby,
   Heart,
   Stethoscope,
-  Sparkles,
   ShieldCheck,
   Calendar,
   CheckCircle2,

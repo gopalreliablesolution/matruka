@@ -16,7 +16,6 @@ import {
   MapPin,
   Heart,
   Shield,
-  Sparkles,
   ChevronRight,
   Stethoscope,
   Building2,
@@ -213,7 +212,7 @@ export default async function HomePage() {
                 <ScrollReveal animation="fade-right" duration={600}>
                   <div>
                     <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
-                      <Sparkles className="w-3.5 h-3.5 text-brand-teal-600" />
+                      <Shield className="w-3.5 h-3.5 text-brand-teal-600" />
                       <span>{aboutSection?.badgeText || 'Centre of Excellence in Women\'s Health'}</span>
                     </span>
                     <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">

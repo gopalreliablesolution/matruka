@@ -10,7 +10,7 @@ import {
   ExternalLink,
   BookOpen,
   ArrowRight,
-  Sparkles,
+  LayoutGrid,
 } from 'lucide-react';
 import { resolveImageUrl } from '@/lib/api';
 import GalleryLightbox from './GalleryLightbox';
@@ -59,7 +59,7 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
           }`}
         >
-          <Sparkles size={15} />
+          <LayoutGrid size={15} />
           <span>All Media</span>
         </button>
 

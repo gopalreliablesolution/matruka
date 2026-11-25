@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Home, Eye, EyeOff, Save, Loader2, Edit2, X, Check, Sparkles } from 'lucide-react';
+import { Home, Eye, EyeOff, Save, Loader2, Edit2, X, Check, Info } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import toast from 'react-hot-toast';
@@ -345,7 +345,7 @@ export default function AdminHomepagePage() {
               {editingSection.sectionKey === 'hero_slider' && (
                 <div className="pt-3 border-t border-slate-200 space-y-3">
                   <div className="p-3.5 bg-brand-teal-50 border border-brand-teal-200 rounded-xl text-xs text-brand-teal-900 flex items-start gap-2.5">
-                    <Sparkles className="w-4 h-4 text-brand-teal-600 shrink-0 mt-0.5" />
+                    <Info className="w-4 h-4 text-brand-teal-600 shrink-0 mt-0.5" />
                     <div>
                       <p className="font-bold">Dynamic Hero Banners & Images</p>
                       <p className="text-slate-600 mt-0.5">

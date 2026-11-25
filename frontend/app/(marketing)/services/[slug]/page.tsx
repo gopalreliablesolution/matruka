@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Sparkles, CheckCircle2, Phone, Clock, ArrowLeft, ArrowRight, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { CheckCircle2, Phone, Clock, ArrowLeft, ArrowRight, ShieldCheck, HeartHandshake } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
 
 const ALIAS_MAP: Record<string, string> = {
@@ -307,7 +307,7 @@ export default async function ServiceDetailPage({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {service.benefits.map((b: string, i: number) => (
                       <div key={i} className="flex items-start gap-2.5 p-3.5 bg-teal-50/50 border border-teal-100/80 rounded-xl text-xs sm:text-sm text-brand-teal-900">
-                        <Sparkles className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-4 h-4 text-[#0496AC] flex-shrink-0 mt-0.5" />
                         <span>{b}</span>
                       </div>
                     ))}

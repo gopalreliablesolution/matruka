@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Settings, Save, Loader2, Check, Globe, MapPin, Phone, Clock, Share2, Sparkles, AlertCircle } from 'lucide-react';
+import { Settings, Save, Loader2, Check, Globe, MapPin, Phone, Clock, Share2, Search, AlertCircle } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ImageUpload from '@/components/ImageUpload';
@@ -171,7 +171,7 @@ export default function AdminSettingsPage() {
           { key: 'general', label: 'General Identity', icon: Globe },
           { key: 'contact', label: 'Contact & Address', icon: MapPin },
           { key: 'timings', label: 'OPD & Emergency Hours', icon: Clock },
-          { key: 'seo', label: 'SEO Defaults', icon: Sparkles },
+          { key: 'seo', label: 'SEO Defaults', icon: Search },
           { key: 'social', label: 'Social Profiles', icon: Share2 },
         ].map((tab) => {
           const Icon = tab.icon;

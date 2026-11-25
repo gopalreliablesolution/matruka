@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Sparkles, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, CheckCircle2 } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
 
 async function getServicesData() {
@@ -49,7 +49,7 @@ export default async function ServicesPage() {
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-brand-teal-50 text-brand-teal-700">
                     {svc.category}
                   </span>
-                  <Sparkles className="w-4 h-4 text-brand-gold-500" />
+                  <CheckCircle2 className="w-4 h-4 text-[#0496AC]" />
                 </div>
 
                 <h3 className="text-lg font-bold text-brand-slate-900 font-heading group-hover:text-brand-teal-600 transition-colors">

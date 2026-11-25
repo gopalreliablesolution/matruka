@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { Sparkles } from 'lucide-react';
+import { Video } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
 import MediaClient from '@/components/MediaClient';
 
@@ -109,7 +109,7 @@ export default async function MediaPage() {
 
         <div className="max-w-4xl mx-auto text-center relative z-10 space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/15 text-white text-xs font-semibold uppercase tracking-wider shadow-xs">
-            <Sparkles className="w-4 h-4 text-[#F7CE6E]" />
+            <Video className="w-4 h-4 text-[#F7CE6E]" />
             <span>Hospital Media &amp; Resources</span>
           </div>
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading tracking-tight text-white">
