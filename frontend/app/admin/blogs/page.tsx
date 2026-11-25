@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { BookOpen, Plus, Edit2, Trash2, X, Calendar, User, Eye, Image as ImageIcon, FileText } from 'lucide-react';
+import { BookOpen, Plus, Edit2, Trash2, X, Calendar, User, Eye, Image as ImageIcon, FileText, Layers } from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import { parseBlogItem, BlogDisplayMode } from '@/lib/blogUtils';
 import ImageUpload from '@/components/ImageUpload';
@@ -247,7 +247,8 @@ export default function AdminBlogsPage() {
         }
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span>✨ Both</span>
+            <Layers size={12} />
+            <span>Both</span>
           </span>
         );
       },
@@ -413,7 +414,8 @@ export default function AdminBlogsPage() {
                     }`}
                   >
                     <div className="font-semibold text-xs text-gray-900 flex items-center gap-1.5">
-                      <span>✨ Both Image & Text</span>
+                      <Layers size={13} className="text-emerald-600" />
+                      <span>Both Image & Text</span>
                     </div>
                     <p className="text-[11px] text-gray-500 mt-1">
                       Standard card: Photo on top + title & excerpt below.
@@ -431,7 +433,7 @@ export default function AdminBlogsPage() {
                   >
                     <div className="font-semibold text-xs text-gray-900 flex items-center gap-1.5">
                       <ImageIcon size={13} className="text-blue-600" />
-                      <span>🖼️ Only Image</span>
+                      <span>Only Image</span>
                     </div>
                     <p className="text-[11px] text-gray-500 mt-1">
                       Full poster / infographic without text below.
@@ -449,7 +451,7 @@ export default function AdminBlogsPage() {
                   >
                     <div className="font-semibold text-xs text-gray-900 flex items-center gap-1.5">
                       <FileText size={13} className="text-amber-600" />
-                      <span>📝 Only Content</span>
+                      <span>Only Content</span>
                     </div>
                     <p className="text-[11px] text-gray-500 mt-1">
                       Text article card without any top image.
@@ -483,7 +485,7 @@ export default function AdminBlogsPage() {
                   />
                   {formData.displayMode === 'image_only' && (
                     <p className="text-[11px] text-blue-600 mt-1">
-                      💡 In "Only Image" format, this graphic will fill the whole card.
+                      In &quot;Only Image&quot; format, this graphic will fill the whole card.
                     </p>
                   )}
                 </div>

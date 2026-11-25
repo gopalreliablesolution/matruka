@@ -354,7 +354,7 @@ export default function AdminBannersPage() {
                   ) : (
                     <div className="py-1">
                       <span className="text-xs font-semibold text-purple-700 bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200">
-                        🎨 Pure Banner Graphic (Text Content Disabled)
+                        Pure Banner Graphic (Text Content Disabled)
                       </span>
                     </div>
                   )}
