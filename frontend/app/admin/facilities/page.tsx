@@ -7,6 +7,7 @@ import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
+import Pagination from '@/components/admin/Pagination';
 
 interface FacilityItem {
   _id: string;
@@ -24,6 +25,8 @@ interface FacilityItem {
 export default function AdminFacilitiesPage() {
   const [facilities, setFacilities] = useState<FacilityItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFacility, setEditingFacility] = useState<FacilityItem | null>(null);
 
@@ -173,8 +176,11 @@ export default function AdminFacilitiesPage() {
           <p className="text-sm text-gray-500 font-medium">Loading clinic facilities...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {facilities.map((fac) => (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {facilities
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((fac) => (
             <div
               key={fac._id}
               className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
@@ -201,9 +207,22 @@ export default function AdminFacilitiesPage() {
                   </span>
                 </div>
 
-                {fac.image && (
-                  <div className="w-full h-40 rounded-xl overflow-hidden mb-4 bg-gray-50 border border-gray-100">
-                    <img src={resolveImageUrl(fac.image)} alt={fac.name} className="w-full h-full object-cover" />
+                {fac.image ? (
+                  <div className="w-full h-40 rounded-xl overflow-hidden mb-4 bg-gray-50 border border-gray-100 flex items-center justify-center">
+                    <img
+                      src={resolveImageUrl(fac.image, '/logo.png')}
+                      alt={fac.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/logo.png';
+                        e.currentTarget.className = 'h-16 w-auto object-contain';
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-28 rounded-xl overflow-hidden mb-4 bg-gray-50 border border-gray-100 flex items-center justify-center p-3">
+                    <img src="/logo.png" alt={fac.name} className="h-10 w-auto object-contain opacity-70" />
                   </div>
                 )}
 
@@ -240,6 +259,19 @@ export default function AdminFacilitiesPage() {
             </div>
           ))}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(facilities.length / itemsPerPage) || 1}
+          totalItems={facilities.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={(limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          }}
+          className="mt-6 border border-gray-100 rounded-2xl"
+        />
+      </>
       )}
 
       {/* Modal */}

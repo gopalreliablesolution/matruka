@@ -79,9 +79,13 @@ export default function ImageUpload({
           <div className={`p-4 flex items-center justify-center min-w-[220px] min-h-[90px] ${isDarkPreview ? 'bg-[#0496AC]' : 'bg-slate-50'}`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={resolveImageUrl(preview)}
+              src={resolveImageUrl(preview, '/logo.png')}
               alt="Preview"
               className="h-16 w-auto max-w-[220px] object-contain"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/logo.png';
+              }}
             />
           </div>
 

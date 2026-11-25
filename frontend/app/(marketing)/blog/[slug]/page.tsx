@@ -81,7 +81,7 @@ export default async function BlogDetailPage({
           <div className="rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/80 flex items-center justify-center p-1 sm:p-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={resolveImageUrl(blog.featuredImage)}
+              src={resolveImageUrl(blog.featuredImage, '/logo.png')}
               alt={blog.title}
               className="w-full h-auto max-h-[700px] object-contain mx-auto block rounded-xl"
             />

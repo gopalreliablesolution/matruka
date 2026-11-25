@@ -18,6 +18,7 @@ import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
+import Pagination from '@/components/admin/Pagination';
 
 interface GalleryItem {
   _id: string;
@@ -53,6 +54,8 @@ export default function AdminGalleryPage() {
   const [albums, setAlbums] = useState<AlbumItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   // Modals
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -383,8 +386,11 @@ export default function AdminGalleryPage() {
               No photographs found in this category. Click &quot;Add New Photo&quot; to upload!
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
-              {filteredItems.map((img) => {
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+                {filteredItems
+                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((img) => {
                 const hasImage = Boolean(img.imageUrl && img.imageUrl.trim() !== '');
                 const hasText = Boolean(img.title?.trim() || img.caption?.trim());
                 const hasCategory = Boolean(img.category && img.category !== 'None' && img.category.trim() !== '');
@@ -400,11 +406,12 @@ export default function AdminGalleryPage() {
                       <div className={`overflow-hidden relative bg-slate-100 ${!hasText ? 'flex-1 w-full h-full min-h-[260px]' : 'aspect-[4/3] w-full'}`}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={resolveImageUrl(img.imageUrl)}
+                          src={resolveImageUrl(img.imageUrl, '/icon.png')}
                           alt={img.title || 'Hospital Photo'}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
-                            e.currentTarget.src = '/images/gallery/default-cover.jpg';
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/icon.png';
                           }}
                         />
 
@@ -510,6 +517,19 @@ export default function AdminGalleryPage() {
                 );
               })}
             </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.ceil(filteredItems.length / itemsPerPage) || 1}
+              totalItems={filteredItems.length}
+              itemsPerPage={itemsPerPage}
+              onPageChange={setCurrentPage}
+              onItemsPerPageChange={(limit) => {
+                setItemsPerPage(limit);
+                setCurrentPage(1);
+              }}
+              className="mt-6 border border-gray-100 rounded-2xl"
+            />
+          </>
           )
         ) : (
           /* ALBUMS GRID */

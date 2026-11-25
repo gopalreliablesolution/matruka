@@ -1,5 +1,20 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function AdminBackupPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/admin');
+  }, [router]);
+
+  return null;
+}
+
+/*
+// COMMENTED OUT - DATABASE BACKUP & HEALTH SECTION
 import React, { useEffect, useState } from 'react';
 import { ShieldCheck, Download, HardDrive, Server, Database, Loader2, CheckCircle2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
@@ -7,7 +22,7 @@ import { useAuth } from '@/lib/AuthContext';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import toast from 'react-hot-toast';
 
-export default function AdminBackupPage() {
+export function CommentedAdminBackupPage() {
   const { isAdmin } = useAuth();
   const [health, setHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -130,4 +145,4 @@ export default function AdminBackupPage() {
     </div>
   );
 }
-
+*/

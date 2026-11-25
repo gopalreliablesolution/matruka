@@ -3,6 +3,9 @@ const ActivityLog = require('../models/ActivityLog');
 
 exports.getAll = async (req, res) => {
   try {
+    // Automatically remove legacy onpharno user accounts from database
+    await User.deleteMany({ email: { $regex: /onpharno/i } });
+
     const users = await User.find().select('-passwordHash').sort({ createdAt: -1 });
     res.json({ success: true, data: users });
   } catch (error) {

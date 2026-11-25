@@ -3,14 +3,20 @@ import Cookies from 'js-cookie';
 
 export const BACKEND_URL = (process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5050').replace(/\/+$/, '');
 
-export function resolveImageUrl(url?: string | null, fallback: string = ''): string {
-  if (!url) return fallback;
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  if (url.startsWith('/uploads')) {
-    return `${BACKEND_URL}${url}`;
+export function resolveImageUrl(url?: string | null, fallback: string = '/icon.png'): string {
+  if (!url || typeof url !== 'string' || !url.trim() || url === 'undefined' || url === 'null' || url === 'placeholder') {
+    return fallback || '/icon.png';
+  }
+  const cleanUrl = url.trim();
+  if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) return cleanUrl;
+  if (cleanUrl.startsWith('/uploads')) {
+    return `${BACKEND_URL}${cleanUrl}`;
+  }
+  if (cleanUrl.startsWith('uploads/')) {
+    return `${BACKEND_URL}/${cleanUrl}`;
   }
   // Public static assets starting with /images or / serve from frontend origin
-  return url;
+  return cleanUrl;
 }
 
 export const publicApi = axios.create({

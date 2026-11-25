@@ -21,6 +21,8 @@ export default function AdminNewsletterPage() {
   const [entries, setEntries] = useState<SubscriberItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     item: SubscriberItem | null;
@@ -171,12 +173,26 @@ export default function AdminNewsletterPage() {
       {/* Table */}
       <DataTable
         columns={columns}
-        data={filteredEntries}
+        data={filteredEntries.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
         loading={loading}
         search={{
           value: searchTerm,
-          onChange: setSearchTerm,
+          onChange: (val) => {
+            setSearchTerm(val);
+            setCurrentPage(1);
+          },
           placeholder: 'Search by name, email, or source...',
+        }}
+        pagination={{
+          currentPage,
+          totalPages: Math.ceil(filteredEntries.length / itemsPerPage) || 1,
+          totalItems: filteredEntries.length,
+          itemsPerPage,
+          onPageChange: setCurrentPage,
+          onItemsPerPageChange: (limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          },
         }}
         emptyMessage="No newsletter signups found."
       />

@@ -17,6 +17,7 @@ import { adminApi } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
+import Pagination from '@/components/admin/Pagination';
 
 interface VideoItem {
   _id: string;
@@ -43,6 +44,8 @@ function extractYouTubeId(url: string) {
 export default function AdminVideosPage() {
   const [videos, setVideos] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVideo, setEditingVideo] = useState<VideoItem | null>(null);
 
@@ -205,8 +208,11 @@ export default function AdminVideosPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map((vid) => (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {videos
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((vid) => (
             <div
               key={vid._id}
               className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition"
@@ -219,6 +225,10 @@ export default function AdminVideosPage() {
                     src={vid.thumbnailUrl || `https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`}
                     alt={vid.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/icon.png';
+                    }}
                   />
                   <a
                     href={vid.youtubeUrl}
@@ -294,6 +304,19 @@ export default function AdminVideosPage() {
             </div>
           ))}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(videos.length / itemsPerPage) || 1}
+          totalItems={videos.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={(limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          }}
+          className="mt-6 border border-gray-100 rounded-2xl"
+        />
+      </>
       )}
 
       {/* Add / Edit Video Modal */}
@@ -353,6 +376,10 @@ export default function AdminVideosPage() {
                       src={`https://img.youtube.com/vi/${previewYtId}/hqdefault.jpg`}
                       alt="Thumbnail Preview"
                       className="w-20 h-12 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/icon.png';
+                      }}
                     />
                     <div className="text-[11px] text-gray-600">
                       <p className="font-bold text-emerald-600">Valid YouTube ID: {previewYtId}</p>

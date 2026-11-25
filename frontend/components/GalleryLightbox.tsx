@@ -120,9 +120,13 @@ export default function GalleryLightbox({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             key={currentItem.imageUrl}
-            src={resolveImageUrl(currentItem.imageUrl)}
+            src={resolveImageUrl(currentItem.imageUrl, '/icon.png')}
             alt={currentItem.altText || currentItem.title || 'Hospital Gallery Photo'}
             className="max-w-full max-h-[80vh] w-auto h-auto object-contain rounded-lg shadow-2xl transition-all duration-300 animate-in zoom-in-95"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/icon.png';
+            }}
           />
         </div>
 

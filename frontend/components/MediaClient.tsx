@@ -134,6 +134,10 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
                         src={thumb}
                         alt={v.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/icon.png';
+                        }}
                       />
                       <div className="absolute inset-0 bg-black/30 group-hover:bg-black/15 transition-colors flex items-center justify-center">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#0496AC] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
@@ -226,9 +230,13 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={resolveImageUrl(img.imageUrl, '/images/gallery/consultation-chamber.jpg')}
+                    src={resolveImageUrl(img.imageUrl, '/icon.png')}
                     alt={img.title || 'Hospital Photo'}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/icon.png';
+                    }}
                   />
                   {img.category && (
                     <span className="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-black/60 text-white px-2 py-0.5 rounded-md backdrop-blur-xs">

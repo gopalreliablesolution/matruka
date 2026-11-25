@@ -23,7 +23,6 @@ const pageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-pageSchema.index({ slug: 1 });
 
 module.exports = mongoose.model('Page', pageSchema);
 

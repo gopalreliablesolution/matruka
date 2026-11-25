@@ -16,6 +16,7 @@ import { adminApi } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
+import Pagination from '@/components/admin/Pagination';
 
 interface FAQItem {
   _id: string;
@@ -31,6 +32,8 @@ export default function AdminFAQsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFaq, setEditingFaq] = useState<FAQItem | null>(null);
 
@@ -55,6 +58,7 @@ export default function AdminFAQsPage() {
   });
 
   useEffect(() => {
+    setCurrentPage(1);
     fetchFaqs();
   }, [search, categoryFilter]);
 
@@ -204,7 +208,10 @@ export default function AdminFAQsPage() {
             No FAQs found matching your query.
           </div>
         ) : (
-          faqs.map((faq) => (
+          <>
+            {faqs
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((faq) => (
             <div
               key={faq._id}
               className="p-5 flex items-start justify-between gap-4 hover:bg-gray-50/60 transition"
@@ -242,7 +249,20 @@ export default function AdminFAQsPage() {
                 </button>
               </div>
             </div>
-          ))
+          ))}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(faqs.length / itemsPerPage) || 1}
+            totalItems={faqs.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={(limit) => {
+              setItemsPerPage(limit);
+              setCurrentPage(1);
+            }}
+            className="border-t border-gray-100 rounded-b-3xl"
+          />
+        </>
         )}
       </div>
 

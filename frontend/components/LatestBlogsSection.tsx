@@ -119,12 +119,13 @@ export default function LatestBlogsSection({
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={resolveImageUrl(b.featuredImage)}
+                        src={resolveImageUrl(b.featuredImage, '/logo.png')}
                         alt={b.title || 'Health Education Poster'}
                         loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         onError={(e) => {
-                          e.currentTarget.src = '/images/banners/maternity-hero.jpg';
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = '/logo.png';
                         }}
                       />
 
@@ -192,11 +193,12 @@ export default function LatestBlogsSection({
                       <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
-                          src={resolveImageUrl(b.featuredImage)}
+                          src={resolveImageUrl(b.featuredImage, '/logo.png')}
                           alt={b.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           onError={(e) => {
-                            e.currentTarget.src = '/images/banners/maternity-hero.jpg';
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/logo.png';
                           }}
                         />
                         {b.category && (

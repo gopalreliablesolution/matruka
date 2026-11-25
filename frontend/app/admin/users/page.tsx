@@ -46,7 +46,11 @@ export default function AdminUsersPage() {
     try {
       const res = await adminApi.get('/users');
       if (res.data.success) {
-        setUsers(res.data.data);
+        // Keep only genuine Matruka admin users and filter out legacy template accounts
+        const cleanUsers = (res.data.data || []).filter(
+          (u: UserItem) => !u.email.toLowerCase().includes('onpharno')
+        );
+        setUsers(cleanUsers);
       }
     } catch {
       toast.error('Failed to load admin users (Super Admin required)');

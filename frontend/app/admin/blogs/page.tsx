@@ -35,6 +35,8 @@ export default function AdminBlogsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogItem | null>(null);
 
@@ -64,6 +66,7 @@ export default function AdminBlogsPage() {
   });
 
   useEffect(() => {
+    setCurrentPage(1);
     fetchBlogs();
   }, [search, statusFilter]);
 
@@ -200,9 +203,18 @@ export default function AdminBlogsPage() {
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center shrink-0 overflow-hidden">
             {blog.featuredImage ? (
-              <img src={resolveImageUrl(blog.featuredImage)} alt={blog.title} className="w-full h-full object-cover" />
+              <img
+                src={resolveImageUrl(blog.featuredImage, '/logo.png')}
+                alt={blog.title}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/logo.png';
+                  e.currentTarget.className = 'w-8 h-8 object-contain';
+                }}
+              />
             ) : (
-              <BookOpen className="w-5 h-5 text-purple-600" />
+              <img src="/logo.png" alt="MatruKa" className="w-8 h-8 object-contain" />
             )}
           </div>
           <div>
@@ -324,11 +336,14 @@ export default function AdminBlogsPage() {
       {/* Jogi DataTable */}
       <DataTable
         columns={columns}
-        data={blogs}
+        data={blogs.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
         loading={loading}
         search={{
           value: search,
-          onChange: setSearch,
+          onChange: (val) => {
+            setSearch(val);
+            setCurrentPage(1);
+          },
           placeholder: 'Search articles by title or keyword...',
         }}
         filters={[
@@ -340,9 +355,23 @@ export default function AdminBlogsPage() {
               { label: 'Draft', value: 'draft' },
             ],
             value: statusFilter,
-            onChange: setStatusFilter,
+            onChange: (status) => {
+              setStatusFilter(status);
+              setCurrentPage(1);
+            },
           },
         ]}
+        pagination={{
+          currentPage,
+          totalPages: Math.ceil(blogs.length / itemsPerPage) || 1,
+          totalItems: blogs.length,
+          itemsPerPage,
+          onPageChange: setCurrentPage,
+          onItemsPerPageChange: (limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          },
+        }}
         emptyMessage="No healthcare articles found."
       />
 

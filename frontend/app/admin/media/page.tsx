@@ -6,6 +6,7 @@ import { adminApi, resolveImageUrl } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
+import Pagination from '@/components/admin/Pagination';
 
 interface MediaItem {
   _id: string;
@@ -22,6 +23,8 @@ export default function AdminMediaPage() {
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [uploading, setUploading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -36,6 +39,7 @@ export default function AdminMediaPage() {
   });
 
   useEffect(() => {
+    setCurrentPage(1);
     fetchMedia();
   }, [search]);
 
@@ -171,8 +175,11 @@ export default function AdminMediaPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {mediaList.map((item) => {
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {mediaList
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((item) => {
             const isImage = item.mimeType?.startsWith('image/');
             return (
               <div
@@ -182,9 +189,13 @@ export default function AdminMediaPage() {
                 <div className="h-32 bg-gray-50 flex items-center justify-center overflow-hidden relative">
                   {isImage ? (
                     <img
-                      src={resolveImageUrl(item.url)}
+                      src={resolveImageUrl(item.url, '/icon.png')}
                       alt={item.altText || item.originalName}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/icon.png';
+                      }}
                     />
                   ) : (
                     <FileText className="w-12 h-12 text-gray-400" />
@@ -222,6 +233,19 @@ export default function AdminMediaPage() {
             );
           })}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(mediaList.length / itemsPerPage) || 1}
+          totalItems={mediaList.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={(limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          }}
+          className="mt-6 border border-gray-100 rounded-2xl"
+        />
+      </>
       )}
 
       {/* Confirm Modal */}

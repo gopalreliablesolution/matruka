@@ -1,14 +1,35 @@
 import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { FileText, ArrowLeft, AlertCircle, Clock, MapPin, Phone } from 'lucide-react';
+import { FileText, ArrowLeft, AlertCircle } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions | MatruKa — Complete Care for Her',
   description:
     'Important website terms of use, informational guidelines, and clinical consultation disclaimers for MatruKa Women’s Hospital in Surat.',
 };
+
+const DEFAULT_TERMS_CONTENT = `### 1. Medical Disclaimer
+The content provided on this website is for informational and educational awareness only. It is not intended as a substitute for professional clinical medical advice, formal diagnosis, or individualized treatment plans. Always seek the advice of our qualified obstetricians and gynaecologists in person.
+
+### 2. Website Scope
+Matruka operates this website to provide transparent details regarding clinic infrastructure, qualified consultants Dr. Kairavi Yagnik and Dr. Rut Shah, medical specialities, and clinic hours. No clinical relationship is formed solely by browsing this website.
+
+### 3. In-Person OPD Consultations
+To receive medical consultations, prescriptions, examinations, or ultrasound diagnostics, patients must visit our clinic during regular OPD consultation hours:
+- Morning OPD: 10:00 AM - 1:00 PM (Monday to Saturday)
+- Evening OPD: 5:00 PM - 7:00 PM (Monday to Saturday)
+- Address: Solaris Cure, Beside Ratnajyoti Apartment, VIP Road, Surat - 395007
+
+### 4. Acute Obstetric & Gynecologic Emergencies
+In situations of sudden heavy vaginal bleeding, acute lower abdominal agony, reduced fetal movement, or spontaneous rupture of membranes, directly call our emergency care helpline: +91 79848 82273.
+
+### 5. Intellectual Property
+All website content, clinical photography, doctor profiles, and graphics belong exclusively to Matruka Women’s Hospital. Unauthorized duplication or commercial use without prior written consent is strictly prohibited.`;
 
 async function getTermsPageData() {
   try {
@@ -35,64 +56,98 @@ function renderFormattedContent(content: string) {
   if (content.includes('<') && content.includes('>')) {
     return (
       <div
-        className="prose prose-teal max-w-none text-slate-700 leading-relaxed space-y-4"
+        className="prose prose-teal max-w-none text-slate-600 leading-relaxed space-y-4"
         dangerouslySetInnerHTML={{ __html: content }}
       />
     );
   }
 
-  // Markdown parsing (sections separated by double linebreaks)
-  const paragraphs = content.split(/\n\s*\n/);
+  // Split line by line to separate headings from light paragraph text
+  const lines = content.split('\n');
+  const elements: React.ReactNode[] = [];
+  let currentParagraph: string[] = [];
+  let currentList: string[] = [];
 
-  return (
-    <div className="space-y-6 text-slate-700">
-      {paragraphs.map((block, idx) => {
-        const trimmed = block.trim();
-        if (!trimmed) return null;
-
-        // Heading detection (#, ##, ###)
-        if (trimmed.startsWith('#')) {
-          const title = trimmed.replace(/^#+\s*/, '');
-          return (
-            <h2 key={idx} className="text-xl sm:text-2xl font-bold text-slate-900 mt-6 mb-2 font-heading">
-              {title}
-            </h2>
-          );
-        }
-
-        // Bullet lists
-        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-          const items = trimmed.split('\n').filter((l) => l.trim().startsWith('- ') || l.trim().startsWith('* '));
-          return (
-            <ul key={idx} className="list-disc list-inside space-y-1.5 text-slate-600 text-sm sm:text-base">
-              {items.map((item, itemIdx) => (
-                <li key={itemIdx}>{item.replace(/^[-*]\s*/, '')}</li>
-              ))}
-            </ul>
-          );
-        }
-
-        return (
-          <p key={idx} className="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">
-            {trimmed}
+  const flushParagraph = () => {
+    if (currentParagraph.length > 0) {
+      const text = currentParagraph.join(' ').trim();
+      if (text) {
+        elements.push(
+          <p key={`p-${elements.length}`} className="text-slate-600 text-sm sm:text-base leading-relaxed font-normal mb-4">
+            {text}
           </p>
         );
-      })}
-    </div>
-  );
+      }
+      currentParagraph = [];
+    }
+  };
+
+  const flushList = () => {
+    if (currentList.length > 0) {
+      elements.push(
+        <ul key={`ul-${elements.length}`} className="list-disc list-inside space-y-2 my-3 text-slate-600 text-sm sm:text-base font-normal">
+          {currentList.map((item, idx) => (
+            <li key={idx} className="leading-relaxed">
+              {item}
+            </li>
+          ))}
+        </ul>
+      );
+      currentList = [];
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i];
+    const line = rawLine.trim();
+
+    if (!line) {
+      flushParagraph();
+      flushList();
+      continue;
+    }
+
+    // Detect markdown heading (###, ##, #) or clean numbered heading (e.g. "1. Heading Title")
+    const isMarkdownHeading = /^#{1,4}\s+/.test(line);
+    const isNumberedHeading = /^\d+\.\s+[A-Za-z][^.!?]{2,80}$/.test(line);
+
+    if (isMarkdownHeading || isNumberedHeading) {
+      flushParagraph();
+      flushList();
+      const headingText = isMarkdownHeading ? line.replace(/^#{1,4}\s+/, '') : line;
+      elements.push(
+        <h2
+          key={`h-${elements.length}`}
+          className="text-xl sm:text-2xl font-bold text-slate-900 font-heading mt-8 mb-3 first:mt-0"
+        >
+          {headingText}
+        </h2>
+      );
+      continue;
+    }
+
+    // Detect bullet points (- item or * item)
+    if (/^[-*]\s+/.test(line)) {
+      flushParagraph();
+      currentList.push(line.replace(/^[-*]\s+/, ''));
+      continue;
+    }
+
+    // Regular light body text
+    flushList();
+    currentParagraph.push(line);
+  }
+
+  flushParagraph();
+  flushList();
+
+  return <div className="space-y-2">{elements}</div>;
 }
 
 export default async function TermsPage() {
   const pageData = await getTermsPageData();
-
-  // Check if content is the legacy 3-line placeholder or genuinely custom
-  const isLegacyPlaceholder =
-    pageData?.content &&
-    pageData.content.includes('Clinic Consultations') &&
-    !pageData.content.includes('In-Person OPD Consultations') &&
-    !pageData.content.includes('Website Scope');
-
-  const hasCustomContent = pageData?.content && pageData.content.trim().length > 100 && !isLegacyPlaceholder;
+  const content = (pageData?.content && pageData.content.trim()) || DEFAULT_TERMS_CONTENT;
+  const heroSubtitle = pageData?.heroSubtitle?.trim();
 
   return (
     <div className="bg-white min-h-screen">
@@ -110,10 +165,11 @@ export default async function TermsPage() {
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading mb-3 tracking-tight">
             {pageData?.heroTitle || 'Terms and Conditions'}
           </h1>
-          <p className="text-white/90 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            {pageData?.heroSubtitle ||
-              'Important website terms of use, informational guidelines, and clinical consultation disclaimers.'}
-          </p>
+          {heroSubtitle ? (
+            <p className="text-white/90 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+              {heroSubtitle}
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -142,66 +198,8 @@ export default async function TermsPage() {
           </div>
         </div>
 
-        <article className="prose prose-teal max-w-none text-slate-700 leading-relaxed">
-          {hasCustomContent ? (
-            renderFormattedContent(pageData.content)
-          ) : (
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">1. Website Scope</h2>
-                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                  Matruka operates this website to provide transparent details regarding clinic infrastructure,
-                  qualified consultants Dr. Kairavi Yagnik and Dr. Rut Shah, medical specialities, and clinic hours.
-                  No clinical relationship is formed solely by browsing this website.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
-                  2. In-Person OPD Consultations
-                </h2>
-                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                  To receive medical consultations, prescriptions, examinations, or ultrasound diagnostics,
-                  patients must visit our clinic during regular OPD consultation hours:
-                </p>
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mt-3 space-y-2.5 text-xs sm:text-sm text-slate-700">
-                  <p className="flex items-center gap-2 font-medium">
-                    <Clock className="w-4 h-4 text-[#0496AC] shrink-0" />
-                    <span>Morning OPD: 10:00 AM - 1:00 PM (Monday to Saturday)</span>
-                  </p>
-                  <p className="flex items-center gap-2 font-medium">
-                    <Clock className="w-4 h-4 text-[#0496AC] shrink-0" />
-                    <span>Evening OPD: 5:00 PM - 7:00 PM (Monday to Saturday)</span>
-                  </p>
-                  <p className="flex items-center gap-2 font-medium">
-                    <MapPin className="w-4 h-4 text-[#0496AC] shrink-0" />
-                    <span>Solaris Cure, Beside Ratnajyoti Apartment, VIP Road, Surat - 395007</span>
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
-                  3. Acute Obstetric &amp; Gynecologic Emergencies
-                </h2>
-                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                  In situations of sudden heavy vaginal bleeding, acute lower abdominal agony, reduced fetal movement,
-                  or spontaneous rupture of membranes, directly call our emergency care helpline:
-                  <strong className="text-[#0496AC] ml-1.5 font-bold">+91 79848 82273</strong>.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
-                  4. Intellectual Property
-                </h2>
-                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                  All website content, clinical photography, doctor profiles, and graphics belong exclusively to
-                  Matruka Women’s Hospital. Unauthorized duplication or commercial use without prior written consent is strictly prohibited.
-                </p>
-              </div>
-            </div>
-          )}
+        <article className="max-w-none leading-relaxed">
+          {renderFormattedContent(content)}
         </article>
       </section>
     </div>

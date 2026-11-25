@@ -30,6 +30,8 @@ export default function AdminServicesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
 
@@ -203,6 +205,13 @@ export default function AdminServicesPage() {
     return matchSearch && matchCategory;
   });
 
+  const totalItems = filteredServices.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  const paginatedServices = filteredServices.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const columns: Column[] = [
     {
       header: 'Speciality & Service',
@@ -211,9 +220,17 @@ export default function AdminServicesPage() {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-brand-teal-50 border border-brand-teal-100 flex items-center justify-center shrink-0 overflow-hidden">
             {srv.featuredImage ? (
-              <img src={resolveImageUrl(srv.featuredImage)} alt={srv.name} className="w-full h-full object-cover" />
+              <img
+                src={resolveImageUrl(srv.featuredImage, '/icon.png')}
+                alt={srv.name}
+                className="w-full h-full object-contain p-1"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/icon.png';
+                }}
+              />
             ) : (
-              <Sparkles className="w-5 h-5 text-primary" />
+              <img src="/icon.png" alt={srv.name} className="w-6 h-6 object-contain" />
             )}
           </div>
           <div>
@@ -305,11 +322,14 @@ export default function AdminServicesPage() {
       {/* Jogi-Style Data Table */}
       <DataTable
         columns={columns}
-        data={filteredServices}
+        data={paginatedServices}
         loading={loading}
         search={{
           value: search,
-          onChange: setSearch,
+          onChange: (val) => {
+            setSearch(val);
+            setCurrentPage(1);
+          },
           placeholder: 'Search specialities by name or description...',
         }}
         filters={[
@@ -318,9 +338,23 @@ export default function AdminServicesPage() {
             label: 'All Categories',
             options: categories.map((c) => ({ label: c.name, value: c.name })),
             value: selectedCategory,
-            onChange: setSelectedCategory,
+            onChange: (cat) => {
+              setSelectedCategory(cat);
+              setCurrentPage(1);
+            },
           },
         ]}
+        pagination={{
+          currentPage,
+          totalPages,
+          totalItems,
+          itemsPerPage,
+          onPageChange: setCurrentPage,
+          onItemsPerPageChange: (limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          },
+        }}
         emptyMessage="No clinical specialities found."
       />
 

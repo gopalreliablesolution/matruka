@@ -84,7 +84,7 @@ export const menuItems: SidebarItem[] = [
     subLinks: [
       { name: 'Admin Users & Roles', href: '/admin/users', superAdminOnly: true },
       { name: 'Activity Audit Logs', href: '/admin/activity-logs' },
-      { name: 'Database Backup & Health', href: '/admin/backup' },
+      // { name: 'Database Backup & Health', href: '/admin/backup' },
     ],
   },
 ];

@@ -22,6 +22,7 @@ import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
+import Pagination from '@/components/admin/Pagination';
 
 interface BannerItem {
   _id: string;
@@ -98,6 +99,8 @@ function encodeBannerData(formData: any, fallbackImage: string) {
 export default function AdminBannersPage() {
   const [banners, setBanners] = useState<BannerItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBanner, setEditingBanner] = useState<BannerItem | null>(null);
   const [activeModalTab, setActiveModalTab] = useState<'image' | 'content'>('image');
@@ -281,8 +284,11 @@ export default function AdminBannersPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {banners.map((b) => (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {banners
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((b) => (
             <div
               key={b._id}
               className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition"
@@ -292,13 +298,18 @@ export default function AdminBannersPage() {
                   {b.desktopImage ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
-                      src={resolveImageUrl(b.desktopImage)}
+                      src={resolveImageUrl(b.desktopImage, '/images/brand/matruka-logo.png')}
                       alt={b.title || 'Hero Banner'}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/images/brand/matruka-logo.png';
+                        e.currentTarget.className = 'w-auto h-16 object-contain m-auto';
+                      }}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                      No Image Uploaded
+                    <div className="w-full h-full flex items-center justify-center bg-gray-50 p-4">
+                      <img src="/logo.png" alt="MatruKa" className="h-12 w-auto object-contain opacity-60" />
                     </div>
                   )}
 
@@ -385,6 +396,19 @@ export default function AdminBannersPage() {
             </div>
           ))}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(banners.length / itemsPerPage) || 1}
+          totalItems={banners.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={(limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          }}
+          className="mt-6 border border-gray-100 rounded-2xl"
+        />
+      </>
       )}
 
       {/* Add / Edit Banner Modal with Separate Flows */}

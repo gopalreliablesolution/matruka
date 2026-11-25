@@ -458,13 +458,13 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            <Link
+            {/* <Link
               href="/admin/backup"
               className="flex items-center justify-between rounded-lg border border-[#D8E1E4] px-3.5 py-2.5 text-xs font-semibold text-[#4D636B] transition hover:border-primary/30 hover:bg-primary-light/15 hover:text-primary"
             >
               Open system controls
               <ArrowRight size={14} />
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>

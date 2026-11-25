@@ -6,6 +6,7 @@ import { adminApi } from '@/lib/api';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
 import ConfirmModal from '@/components/admin/ConfirmModal';
 import toast from 'react-hot-toast';
+import Pagination from '@/components/admin/Pagination';
 
 interface TestimonialItem {
   _id: string;
@@ -23,6 +24,8 @@ interface TestimonialItem {
 export default function AdminTestimonialsPage() {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<TestimonialItem | null>(null);
 
@@ -166,8 +169,11 @@ export default function AdminTestimonialsPage() {
           <p className="text-sm text-gray-500 font-medium">Loading patient feedback...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {testimonials.map((t) => (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {testimonials
+              .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+              .map((t) => (
             <div
               key={t._id}
               className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
@@ -229,6 +235,19 @@ export default function AdminTestimonialsPage() {
             </div>
           ))}
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(testimonials.length / itemsPerPage) || 1}
+          totalItems={testimonials.length}
+          itemsPerPage={itemsPerPage}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={(limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          }}
+          className="mt-6 border border-gray-100 rounded-2xl"
+        />
+      </>
       )}
 
       {/* Modal */}

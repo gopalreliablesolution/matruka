@@ -48,6 +48,8 @@ export default function AdminDoctorsPage() {
   const [doctors, setDoctors] = useState<DoctorItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState<DoctorItem | null>(null);
 
@@ -332,12 +334,26 @@ export default function AdminDoctorsPage() {
       {/* Jogi-Style Data Table */}
       <DataTable
         columns={columns}
-        data={filteredDoctors}
+        data={filteredDoctors.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)}
         loading={loading}
         search={{
           value: search,
-          onChange: setSearch,
+          onChange: (val) => {
+            setSearch(val);
+            setCurrentPage(1);
+          },
           placeholder: 'Search doctor by name, qualification, or speciality...',
+        }}
+        pagination={{
+          currentPage,
+          totalPages: Math.ceil(filteredDoctors.length / itemsPerPage) || 1,
+          totalItems: filteredDoctors.length,
+          itemsPerPage,
+          onPageChange: setCurrentPage,
+          onItemsPerPageChange: (limit) => {
+            setItemsPerPage(limit);
+            setCurrentPage(1);
+          },
         }}
         emptyMessage="No doctor profiles found."
       />

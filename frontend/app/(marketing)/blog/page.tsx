@@ -62,7 +62,7 @@ export default async function BlogPage() {
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
-                      src={resolveImageUrl(b.featuredImage, '/images/banners/maternity-hero.jpg')}
+                      src={resolveImageUrl(b.featuredImage, '/logo.png')}
                       alt={b.title || 'Health Education Poster'}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -137,7 +137,7 @@ export default async function BlogPage() {
                     <div className="h-48 bg-slate-100 overflow-hidden relative">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={resolveImageUrl(b.featuredImage)}
+                        src={resolveImageUrl(b.featuredImage, '/logo.png')}
                         alt={b.title}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

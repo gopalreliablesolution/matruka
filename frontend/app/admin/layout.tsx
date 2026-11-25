@@ -27,7 +27,7 @@ const ADMIN_ROUTES: Array<{ prefix: string; title: string }> = [
   { prefix: '/admin/settings', title: 'Hospital Settings' },
   { prefix: '/admin/users', title: 'Admin Users & Roles' },
   { prefix: '/admin/activity-logs', title: 'Activity Audit Logs' },
-  { prefix: '/admin/backup', title: 'System & Database' },
+  // { prefix: '/admin/backup', title: 'System & Database' },
 ];
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
