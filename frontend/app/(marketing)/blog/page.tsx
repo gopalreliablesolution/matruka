@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { BookOpen, User, Calendar, Clock, ArrowRight } from 'lucide-react';
 import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
 import { parseBlogItem } from '@/lib/blogUtils';
+import SafeImage from '@/components/SafeImage';
 
 async function getBlogsData() {
   try {
@@ -60,12 +61,13 @@ export default async function BlogPage() {
                     className="relative w-full h-full flex-1 overflow-hidden block"
                     title={b.title}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <SafeImage
                       src={resolveImageUrl(b.featuredImage, '/logo.png')}
+                      fallbackSrc="/logo.png"
                       alt={b.title || 'Health Education Poster'}
                       loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      fallbackClassName="w-full h-full object-contain p-6 bg-slate-50"
                     />
 
                     {b.category && (
@@ -135,12 +137,13 @@ export default async function BlogPage() {
                 >
                   <div className="space-y-3">
                     <div className="h-48 bg-slate-100 overflow-hidden relative">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <SafeImage
                         src={resolveImageUrl(b.featuredImage, '/logo.png')}
+                        fallbackSrc="/logo.png"
                         alt={b.title}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        fallbackClassName="w-full h-full object-contain p-6 bg-slate-50"
                       />
                       {b.category && (
                         <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider bg-white/90 text-brand-teal-800 px-2.5 py-1 rounded-md backdrop-blur-xs">

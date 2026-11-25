@@ -66,6 +66,45 @@ const settingSchema = new mongoose.Schema(
         'OPD Timings: 10:00 AM - 1:00 PM & 5:00 PM - 7:00 PM (Mon-Sat) | 24*7 Emergency Care Available',
     },
     isAnnouncementActive: { type: Boolean, default: true },
+    popup: {
+      isActive: { type: Boolean, default: true },
+      title: { type: String, default: 'Matruka Women’s Hospital' },
+      subtitle: { type: String, default: 'Complete Care for Her • Surat' },
+      showHeader: { type: Boolean, default: true },
+      description: {
+        type: String,
+        default:
+          'Welcome to Matruka. For any clinical inquiries, maternity care, or emergency help, contact our care desk directly:',
+      },
+      showDescription: { type: Boolean, default: true },
+      imageUrl: { type: String, default: '' },
+      showImage: { type: Boolean, default: false },
+      showInfo: { type: Boolean, default: true },
+      showOpd: { type: Boolean, default: true },
+      opdText: {
+        type: String,
+        default: '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Monday to Saturday)',
+      },
+      showAddress: { type: Boolean, default: true },
+      addressText: {
+        type: String,
+        default: '303-306, Solaris Cure, Besides Ratnajyoti Apartment, VIP Road, Surat - 395007',
+      },
+      showWhatsapp: { type: Boolean, default: true },
+      whatsappText: { type: String, default: 'Connect on WhatsApp' },
+      whatsappNumber: { type: String, default: '917984882273' },
+      whatsappMessage: {
+        type: String,
+        default: 'Hello Matruka, I would like to inquire regarding clinic consultation and facilities.',
+      },
+      showCall: { type: Boolean, default: true },
+      callText: { type: String, default: 'Call Helpline' },
+      callNumber: { type: String, default: '7984882273' },
+      showDismiss: { type: Boolean, default: true },
+      dismissText: { type: String, default: 'Continue to website →' },
+      delaySeconds: { type: Number, default: 3.5 },
+      showOncePerSession: { type: Boolean, default: true },
+    },
     seoDefaults: {
       metaTitle: {
         type: String,
@@ -84,7 +123,7 @@ const settingSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 module.exports = mongoose.model('Setting', settingSchema);

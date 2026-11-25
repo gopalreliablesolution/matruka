@@ -185,23 +185,24 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
         }
       }
 
-      // Fallback for default Media if no database children exist yet
-      if (
-        children.length === 0 &&
-        (parent.url === '/media' || labelLower === 'media')
-      ) {
-        children = DEFAULT_MEDIA.map((m, idx) => ({
-          label: m.label,
-          url: m.href,
-          sortOrder: idx + 1,
-        }));
-      }
-
       return {
         ...parent,
         children,
       };
     });
+
+    // Ensure Media is always available in header (opens /media)
+    const hasMedia = built.some(
+      (item) => item.url === '/media' || item.label.trim().toLowerCase() === 'media'
+    );
+    if (!hasMedia) {
+      built.push({
+        label: 'Media',
+        url: '/media',
+        sortOrder: 15,
+        children: [] as MenuItemData[],
+      });
+    }
 
     // Ensure Book Appointment is always available in header (without breaking dynamic menus)
     const hasBookAppointment = built.some(
@@ -227,25 +228,58 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
 
   // Keep desktop header clean: show primary items and group the rest under "More"
   const { primaryMenus, moreMenus } = useMemo(() => {
-    const priority = ['home', 'about us', 'about', 'services', 'specialities', 'doctors', 'facilities', 'media', 'book appointment', 'book consultation', 'gallery', 'blog', 'blogs', 'testimonials', 'faqs', 'contact us', 'contact'];
-    const scored = processedMenus.map((item, idx) => {
-      const key = item.label.trim().toLowerCase();
-      const p = priority.indexOf(key);
-      return { item, idx, score: p === -1 ? 100 + idx : p };
-    });
-    const ordered = [...scored].sort((a, b) => a.score - b.score || a.idx - b.idx).map((s) => s.item);
+    // Primary items intended for the main top bar
+    const primaryPriority = ['home', 'about us', 'about', 'services', 'specialities', 'doctors', 'facilities', 'contact us', 'contact'];
 
-    // If contact exists, prefer keeping it visible as primary CTA target; otherwise cap at 6
-    const contactIndex = ordered.findIndex((i) => ['contact', 'contact us'].includes(i.label.trim().toLowerCase()));
-    let primaryCount = ordered.length <= 7 ? ordered.length : 6;
-    if (contactIndex >= 6 && ordered.length > 7) {
-      // include contact by swapping into last primary slot
-      const copy = [...ordered];
-      const [contactItem] = copy.splice(contactIndex, 1);
-      copy.splice(5, 0, contactItem);
-      return { primaryMenus: copy.slice(0, 6), moreMenus: copy.slice(6) };
+    const primaryItems: MenuItemData[] = [];
+    const secondaryItems: MenuItemData[] = [];
+
+    processedMenus.forEach((item) => {
+      const key = item.label.trim().toLowerCase();
+      // Ensure Media is placed in the "More" dropdown
+      if (key === 'media' || item.url === '/media') {
+        secondaryItems.push({
+          ...item,
+          url: '/media',
+          children: [], // Clear any sub-items so clicking directly opens /media
+        });
+      } else if (primaryPriority.includes(key)) {
+        primaryItems.push(item);
+      } else {
+        secondaryItems.push(item);
+      }
+    });
+
+    primaryItems.sort((a, b) => {
+      const aKey = a.label.trim().toLowerCase();
+      const bKey = b.label.trim().toLowerCase();
+      return primaryPriority.indexOf(aKey) - primaryPriority.indexOf(bKey);
+    });
+
+    // Make sure contact is visible in primary bar if present
+    const contactIndex = primaryItems.findIndex((i) => ['contact', 'contact us'].includes(i.label.trim().toLowerCase()));
+    if (contactIndex > 5) {
+      const [contactItem] = primaryItems.splice(contactIndex, 1);
+      primaryItems.splice(5, 0, contactItem);
     }
-    return { primaryMenus: ordered.slice(0, primaryCount), moreMenus: ordered.slice(primaryCount) };
+
+    // Limit primary bar to at most 6 items to keep header clean and spacious
+    const finalPrimary = primaryItems.slice(0, 6);
+    const overflowFromPrimary = primaryItems.slice(6);
+
+    const finalMore = [...secondaryItems, ...overflowFromPrimary];
+
+    // Ensure Media is in finalMore and not duplicate
+    const mediaExistsInMore = finalMore.some(m => m.url === '/media' || m.label.trim().toLowerCase() === 'media');
+    if (!mediaExistsInMore) {
+      finalMore.unshift({
+        label: 'Media',
+        url: '/media',
+        children: [],
+      });
+    }
+
+    return { primaryMenus: finalPrimary, moreMenus: finalMore };
   }, [processedMenus]);
 
   const isPathActive = (href: string) => {

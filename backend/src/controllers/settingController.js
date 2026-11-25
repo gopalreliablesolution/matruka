@@ -15,11 +15,21 @@ exports.getSettings = async (req, res) => {
 
 exports.updateSettings = async (req, res) => {
   try {
+    const updateData = { ...req.body };
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+    delete updateData.__v;
+
     let settings = await Setting.findOne();
     if (!settings) {
-      settings = await Setting.create(req.body);
+      settings = await Setting.create(updateData);
     } else {
-      settings = await Setting.findByIdAndUpdate(settings._id, req.body, { new: true, runValidators: true });
+      settings = await Setting.findByIdAndUpdate(
+        settings._id,
+        { $set: updateData },
+        { new: true, runValidators: false }
+      );
     }
 
     await ActivityLog.create({

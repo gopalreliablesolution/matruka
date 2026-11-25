@@ -1,6 +1,7 @@
 import React from 'react';
 import { Building2, ShieldCheck, CheckCircle2, Phone } from 'lucide-react';
-import { BACKEND_URL } from '@/lib/api';
+import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
+import SafeImage from '@/components/SafeImage';
 
 async function getFacilitiesData() {
   try {
@@ -39,21 +40,34 @@ export default async function FacilitiesPage() {
           {facilities.map((fac: any) => (
             <div
               key={fac._id}
-              className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4 hover:border-brand-teal-300 transition"
+              className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-4 hover:border-brand-teal-300 transition flex flex-col justify-between"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-brand-teal-50 text-brand-teal-700 flex items-center justify-center font-bold">
-                  <Building2 className="w-6 h-6" />
+              <div className="space-y-4">
+                {fac.image && (
+                  <div className="w-full h-48 sm:h-56 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
+                    <SafeImage
+                      src={resolveImageUrl(fac.image, '/logo.png')}
+                      fallbackSrc="/logo.png"
+                      alt={fac.name}
+                      className="w-full h-full object-cover"
+                      fallbackClassName="w-full h-full object-contain p-6 bg-slate-50"
+                    />
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-brand-teal-50 text-brand-teal-700 flex items-center justify-center font-bold shrink-0">
+                    <Building2 className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold font-heading text-brand-slate-900">{fac.name}</h2>
+                    <p className="text-xs text-brand-teal-700 font-medium">Matruka Solaris Cure, Surat</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xl font-bold font-heading text-brand-slate-900">{fac.name}</h2>
-                  <p className="text-xs text-brand-teal-700 font-medium">Matruka Solaris Cure, Surat</p>
-                </div>
-              </div>
 
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                {fac.fullDescription || fac.shortDescription}
-              </p>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  {fac.fullDescription || fac.shortDescription}
+                </p>
+              </div>
 
               {fac.features && fac.features.length > 0 && (
                 <div className="pt-3 border-t border-slate-100">

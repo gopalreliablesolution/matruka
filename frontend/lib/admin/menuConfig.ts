@@ -76,6 +76,7 @@ export const menuItems: SidebarItem[] = [
       { name: 'Dynamic Pages', href: '/admin/pages' },
       { name: 'Local Media Library', href: '/admin/media' },
       { name: 'Hospital Settings & Hours', href: '/admin/settings' },
+      { name: 'Pop-up Modal Setting', href: '/admin/settings?tab=popup' },
     ],
   },
   {

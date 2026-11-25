@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
+import SafeImage from '@/components/SafeImage';
 import HospitalLocationSection from '@/components/HospitalLocationSection';
 import FAQSection from '@/components/FAQSection';
 import HeroSlider from '@/components/HeroSlider';
@@ -620,9 +621,21 @@ export default async function HomePage() {
                     className="card-hover-lift bg-white rounded-3xl border border-slate-200/90 p-6 shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:border-brand-teal-300 transition-all duration-300 flex flex-col justify-between h-full"
                   >
                     <div className="space-y-4">
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-teal-500 to-brand-teal-700 text-white flex items-center justify-center font-bold shadow-xs">
-                        <Building2 className="w-6 h-6" />
-                      </div>
+                      {fac.image ? (
+                        <div className="w-full h-40 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
+                          <SafeImage
+                            src={resolveImageUrl(fac.image, '/logo.png')}
+                            fallbackSrc="/logo.png"
+                            alt={fac.name}
+                            className="w-full h-full object-cover"
+                            fallbackClassName="w-full h-full object-contain p-4 bg-slate-50"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-teal-500 to-brand-teal-700 text-white flex items-center justify-center font-bold shadow-xs">
+                          <Building2 className="w-6 h-6" />
+                        </div>
+                      )}
                       <h3 className="font-bold text-brand-slate-900 text-base font-heading">{fac.name}</h3>
                       <p className="text-xs text-slate-600 leading-relaxed">{fac.shortDescription}</p>
 

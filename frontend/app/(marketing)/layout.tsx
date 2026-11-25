@@ -28,10 +28,17 @@ async function getLayoutData() {
     const footerBadge1 = contactSec?.settings?.footerBadge1 || settingsData?.data?.footerBadge1 || '';
     const footerBadge2 = contactSec?.settings?.footerBadge2 || settingsData?.data?.footerBadge2 || '';
     const featuredServices = homeData?.data?.featuredServices || [];
+    const rawSettings = settingsData?.data || homeData?.data?.settings || {};
+    const popupFromSec = contactSec?.settings?.popup;
+    const finalPopup =
+      settingsData?.data?.popup?.isActive !== undefined
+        ? settingsData.data.popup
+        : (popupFromSec?.isActive !== undefined ? popupFromSec : (homeData?.data?.settings?.popup || rawSettings.popup));
 
     return {
       settings: {
-        ...(settingsData?.data || homeData?.data?.settings || {}),
+        ...rawSettings,
+        popup: finalPopup,
         logoWhiteUrl: footerLogo,
         footerAboutText,
         footerBadge1,
