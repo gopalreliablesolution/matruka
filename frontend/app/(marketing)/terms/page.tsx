@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { FileText, ArrowLeft, AlertCircle, Clock, MapPin } from 'lucide-react';
+import { FileText, ArrowLeft, AlertCircle, Clock, MapPin, Phone } from 'lucide-react';
+import { BACKEND_URL } from '@/lib/api';
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions | MatruKa — Complete Care for Her',
@@ -9,7 +10,90 @@ export const metadata: Metadata = {
     'Important website terms of use, informational guidelines, and clinical consultation disclaimers for MatruKa Women’s Hospital in Surat.',
 };
 
-export default function TermsPage() {
+async function getTermsPageData() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/v1/public/pages/terms`, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(4000),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.success && data?.data) {
+        return data.data;
+      }
+    }
+  } catch {
+    // Graceful fallback to static clinic defaults
+  }
+  return null;
+}
+
+function renderFormattedContent(content: string) {
+  if (!content || !content.trim()) return null;
+
+  // HTML format support
+  if (content.includes('<') && content.includes('>')) {
+    return (
+      <div
+        className="prose prose-teal max-w-none text-slate-700 leading-relaxed space-y-4"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
+  }
+
+  // Markdown parsing (sections separated by double linebreaks)
+  const paragraphs = content.split(/\n\s*\n/);
+
+  return (
+    <div className="space-y-6 text-slate-700">
+      {paragraphs.map((block, idx) => {
+        const trimmed = block.trim();
+        if (!trimmed) return null;
+
+        // Heading detection (#, ##, ###)
+        if (trimmed.startsWith('#')) {
+          const title = trimmed.replace(/^#+\s*/, '');
+          return (
+            <h2 key={idx} className="text-xl sm:text-2xl font-bold text-slate-900 mt-6 mb-2 font-heading">
+              {title}
+            </h2>
+          );
+        }
+
+        // Bullet lists
+        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          const items = trimmed.split('\n').filter((l) => l.trim().startsWith('- ') || l.trim().startsWith('* '));
+          return (
+            <ul key={idx} className="list-disc list-inside space-y-1.5 text-slate-600 text-sm sm:text-base">
+              {items.map((item, itemIdx) => (
+                <li key={itemIdx}>{item.replace(/^[-*]\s*/, '')}</li>
+              ))}
+            </ul>
+          );
+        }
+
+        return (
+          <p key={idx} className="text-slate-600 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+            {trimmed}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+export default async function TermsPage() {
+  const pageData = await getTermsPageData();
+
+  // Check if content is the legacy 3-line placeholder or genuinely custom
+  const isLegacyPlaceholder =
+    pageData?.content &&
+    pageData.content.includes('Clinic Consultations') &&
+    !pageData.content.includes('In-Person OPD Consultations') &&
+    !pageData.content.includes('Website Scope');
+
+  const hasCustomContent = pageData?.content && pageData.content.trim().length > 100 && !isLegacyPlaceholder;
+
   return (
     <div className="bg-white min-h-screen">
       {/* Hero Banner with Matruka Signature Teal Gradient */}
@@ -24,10 +108,11 @@ export default function TermsPage() {
             <span>Legal Notice &amp; Terms</span>
           </div>
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading mb-3 tracking-tight">
-            Terms and Conditions
+            {pageData?.heroTitle || 'Terms and Conditions'}
           </h1>
           <p className="text-white/90 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Important website terms of use, informational guidelines, and clinical consultation disclaimers.
+            {pageData?.heroSubtitle ||
+              'Important website terms of use, informational guidelines, and clinical consultation disclaimers.'}
           </p>
         </div>
       </section>
@@ -58,61 +143,65 @@ export default function TermsPage() {
         </div>
 
         <article className="prose prose-teal max-w-none text-slate-700 leading-relaxed">
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">1. Website Scope</h2>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                Matruka operates this website to provide transparent details regarding clinic infrastructure,
-                qualified consultants Dr. Kairavi Yagnik and Dr. Rut Shah, medical specialities, and clinic hours.
-                No clinical relationship is formed solely by browsing this website.
-              </p>
-            </div>
+          {hasCustomContent ? (
+            renderFormattedContent(pageData.content)
+          ) : (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">1. Website Scope</h2>
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                  Matruka operates this website to provide transparent details regarding clinic infrastructure,
+                  qualified consultants Dr. Kairavi Yagnik and Dr. Rut Shah, medical specialities, and clinic hours.
+                  No clinical relationship is formed solely by browsing this website.
+                </p>
+              </div>
 
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
-                2. In-Person OPD Consultations
-              </h2>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                To receive medical consultations, prescriptions, examinations, or ultrasound diagnostics,
-                patients must visit our clinic during regular OPD consultation hours:
-              </p>
-              <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mt-3 space-y-2.5 text-xs sm:text-sm text-slate-700">
-                <p className="flex items-center gap-2 font-medium">
-                  <Clock className="w-4 h-4 text-[#0496AC] shrink-0" />
-                  <span>Morning OPD: 10:00 AM - 1:00 PM (Monday to Saturday)</span>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
+                  2. In-Person OPD Consultations
+                </h2>
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                  To receive medical consultations, prescriptions, examinations, or ultrasound diagnostics,
+                  patients must visit our clinic during regular OPD consultation hours:
                 </p>
-                <p className="flex items-center gap-2 font-medium">
-                  <Clock className="w-4 h-4 text-[#0496AC] shrink-0" />
-                  <span>Evening OPD: 5:00 PM - 7:00 PM (Monday to Saturday)</span>
+                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 mt-3 space-y-2.5 text-xs sm:text-sm text-slate-700">
+                  <p className="flex items-center gap-2 font-medium">
+                    <Clock className="w-4 h-4 text-[#0496AC] shrink-0" />
+                    <span>Morning OPD: 10:00 AM - 1:00 PM (Monday to Saturday)</span>
+                  </p>
+                  <p className="flex items-center gap-2 font-medium">
+                    <Clock className="w-4 h-4 text-[#0496AC] shrink-0" />
+                    <span>Evening OPD: 5:00 PM - 7:00 PM (Monday to Saturday)</span>
+                  </p>
+                  <p className="flex items-center gap-2 font-medium">
+                    <MapPin className="w-4 h-4 text-[#0496AC] shrink-0" />
+                    <span>Solaris Cure, Beside Ratnajyoti Apartment, VIP Road, Surat - 395007</span>
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
+                  3. Acute Obstetric &amp; Gynecologic Emergencies
+                </h2>
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                  In situations of sudden heavy vaginal bleeding, acute lower abdominal agony, reduced fetal movement,
+                  or spontaneous rupture of membranes, directly call our emergency care helpline:
+                  <strong className="text-[#0496AC] ml-1.5 font-bold">+91 79848 82273</strong>.
                 </p>
-                <p className="flex items-center gap-2 font-medium">
-                  <MapPin className="w-4 h-4 text-[#0496AC] shrink-0" />
-                  <span>Solaris Cure, Beside Ratnajyoti Apartment, VIP Road, Surat - 395007</span>
+              </div>
+
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
+                  4. Intellectual Property
+                </h2>
+                <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+                  All website content, clinical photography, doctor profiles, and graphics belong exclusively to
+                  Matruka Women’s Hospital. Unauthorized duplication or commercial use without prior written consent is strictly prohibited.
                 </p>
               </div>
             </div>
-
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
-                3. Acute Obstetric &amp; Gynecologic Emergencies
-              </h2>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                In situations of sudden heavy vaginal bleeding, acute lower abdominal agony, reduced fetal movement,
-                or spontaneous rupture of membranes, directly call our emergency care helpline:
-                <strong className="text-[#0496AC] ml-1.5 font-bold">+91 79848 82273</strong>.
-              </p>
-            </div>
-
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 font-heading">
-                4. Intellectual Property
-              </h2>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                All website content, clinical photography, doctor profiles, and graphics belong exclusively to
-                Matruka Women’s Hospital. Unauthorized duplication or commercial use without prior written consent is strictly prohibited.
-              </p>
-            </div>
-          </div>
+          )}
         </article>
       </section>
     </div>
