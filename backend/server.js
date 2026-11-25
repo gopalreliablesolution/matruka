@@ -5,6 +5,13 @@ if (process.env.NODE_ENV !== 'test') {
   require('dotenv').config();
 }
 
+// Sanitize MongoDB URIs to remove any enclosing quotes (e.g. from environment managers or .env)
+for (const key of ['MONGODB_URI', 'MONGO_URI']) {
+  if (process.env[key]) {
+    process.env[key] = process.env[key].trim().replace(/^["']|["']$/g, '').trim();
+  }
+}
+
 const app = require('./app');
 const connectDB = require('./src/config/db');
 
