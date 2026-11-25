@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { User, Clock, ArrowLeft, ArrowRight, Share2, Eye } from 'lucide-react';
 import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
+import SafeImage from '@/components/SafeImage';
 import { parseBlogItem } from '@/lib/blogUtils';
 
 async function getBlogDetail(slug: string) {
@@ -79,11 +80,12 @@ export default async function BlogDetailPage({
       {blog.showImage && blog.featuredImage && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl overflow-hidden bg-slate-50 border border-slate-200/80 flex items-center justify-center p-1 sm:p-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <SafeImage
               src={resolveImageUrl(blog.featuredImage, '/logo.png')}
+              fallbackSrc="/logo.png"
               alt={blog.title}
               className="w-full h-auto max-h-[700px] object-contain mx-auto block rounded-xl"
+              fallbackClassName="w-full h-48 object-contain p-6 bg-slate-50 mx-auto block rounded-xl"
             />
           </div>
         </div>

@@ -6,6 +6,7 @@ import { BookOpen, Calendar, Clock, ArrowRight, User } from 'lucide-react';
 import { resolveImageUrl } from '@/lib/api';
 import { parseBlogItem, ParsedBlog } from '@/lib/blogUtils';
 import ScrollReveal from './ScrollReveal';
+import SafeImage from './SafeImage';
 
 export interface BlogPostData {
   _id?: string;
@@ -117,16 +118,13 @@ export default function LatestBlogsSection({
                       className="relative w-full h-full flex-1 overflow-hidden block"
                       title={b.title}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <SafeImage
                         src={resolveImageUrl(b.featuredImage, '/logo.png')}
+                        fallbackSrc="/logo.png"
                         alt={b.title || 'Health Education Poster'}
                         loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = '/logo.png';
-                        }}
+                        fallbackClassName="w-full h-full object-contain p-6 bg-slate-50"
                       />
 
                       {b.category && (
@@ -191,15 +189,12 @@ export default function LatestBlogsSection({
                   <article className="group rounded-2xl overflow-hidden bg-white border border-slate-200/90 shadow-xs hover:border-brand-teal-300 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full">
                     <div>
                       <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <SafeImage
                           src={resolveImageUrl(b.featuredImage, '/logo.png')}
+                          fallbackSrc="/logo.png"
                           alt={b.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = '/logo.png';
-                          }}
+                          fallbackClassName="w-full h-full object-contain p-6 bg-slate-50"
                         />
                         {b.category && (
                           <span className="absolute top-3 left-3 bg-white/95 text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs">
