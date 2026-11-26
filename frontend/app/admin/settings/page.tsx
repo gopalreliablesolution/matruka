@@ -1037,26 +1037,32 @@ function AdminSettingsContent() {
 
                       return (
                         <div
-                          className={`relative w-full ${
-                            isPreviewImageOnly ? 'max-w-md bg-transparent' : 'max-w-xs bg-white'
-                          } rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all text-left`}
+                          className={`relative ${
+                            isPreviewImageOnly
+                              ? 'w-fit max-w-full bg-transparent border-0'
+                              : 'w-full max-w-xs bg-white border border-slate-200'
+                          } rounded-2xl shadow-2xl overflow-hidden transform transition-all text-left`}
                         >
                           {/* Optional Image */}
                           {formData.popup.showImage && formData.popup.imageUrl && (
-                            <div className="relative w-full bg-slate-50 overflow-hidden">
+                            <div
+                              className={`relative overflow-hidden ${
+                                isPreviewImageOnly ? 'w-fit max-w-full bg-transparent' : 'w-full bg-slate-50'
+                              }`}
+                            >
                               <SafeImage
                                 src={resolveImageUrl(formData.popup.imageUrl)}
                                 alt={formData.popup.title}
                                 fallbackSrc="/logo.png"
                                 className={
                                   isPreviewImageOnly
-                                    ? 'w-full h-auto max-h-96 object-contain block'
-                                    : 'w-full h-auto max-h-52 object-contain bg-slate-50 block'
+                                    ? 'w-auto max-w-full h-auto max-h-96 object-contain block'
+                                    : 'w-full h-auto max-h-52 object-cover bg-slate-50 block'
                                 }
-                                fallbackClassName="w-full h-36 object-contain p-4 bg-slate-50 block"
+                                fallbackClassName="w-56 h-36 object-contain p-4 bg-slate-50 block"
                               />
                               {!formData.popup.showHeader && (
-                                <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-slate-900/70 text-white flex items-center justify-center">
+                                <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-slate-900/75 text-white flex items-center justify-center">
                                   <X size={13} />
                                 </div>
                               )}

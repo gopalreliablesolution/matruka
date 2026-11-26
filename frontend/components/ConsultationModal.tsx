@@ -161,40 +161,42 @@ export default function ConsultationModal({ settings }: ConsultationModalProps) 
   if (!isOpen || !isPopupActive || !hasAnyVisibleContent) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
+    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
       {/* Dimmed Backdrop */}
       <div
         onClick={handleClose}
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-slate-900/55 backdrop-blur-xs transition-opacity"
         aria-hidden="true"
       />
 
       {/* Dynamic Pop-up Card */}
       <div
-        className={`relative z-10 w-full ${
-          isImageOnly ? 'max-w-lg sm:max-w-2xl bg-transparent' : 'max-w-sm bg-white'
-        } rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden my-auto transform transition-all`}
+        className={`relative z-10 ${
+          isImageOnly
+            ? 'w-fit max-w-[92vw] sm:max-w-2xl bg-transparent border-0'
+            : 'w-full max-w-sm bg-white border border-slate-200/80'
+        } rounded-2xl shadow-2xl overflow-hidden my-auto transform transition-all`}
       >
         {/* Optional Banner Image */}
         {showImage && imageUrl && (
-          <div className={`relative w-full overflow-hidden ${isImageOnly ? 'bg-transparent' : 'bg-slate-50'}`}>
+          <div className={`relative overflow-hidden ${isImageOnly ? 'w-fit max-w-full bg-transparent' : 'w-full bg-slate-50'}`}>
             <SafeImage
               src={imageUrl}
               alt={title}
               fallbackSrc="/logo.png"
               className={
                 isImageOnly
-                  ? 'w-full h-auto max-h-[85vh] object-contain block'
-                  : 'w-full h-auto max-h-72 object-contain bg-slate-50 block'
+                  ? 'w-auto max-w-full h-auto max-h-[85vh] object-contain block'
+                  : 'w-full h-auto max-h-72 object-cover bg-slate-50 block'
               }
-              fallbackClassName="w-full h-48 object-contain p-6 bg-slate-50 block"
+              fallbackClassName="w-64 h-48 object-contain p-6 bg-slate-50 block"
             />
             {!showHeader && (
               <button
                 type="button"
                 onClick={handleClose}
                 aria-label="Close"
-                className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-slate-900/70 hover:bg-slate-900/90 text-white flex items-center justify-center transition cursor-pointer active:scale-95 shadow-md"
+                className="absolute top-2.5 right-2.5 z-20 w-8 h-8 rounded-full bg-slate-900/75 hover:bg-slate-900/95 text-white flex items-center justify-center transition cursor-pointer active:scale-95 shadow-md"
               >
                 <X size={17} />
               </button>
