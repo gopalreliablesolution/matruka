@@ -64,12 +64,35 @@ export default async function DoctorsPage() {
                     <p className="text-xs text-brand-teal-700 font-medium mt-1">
                       {doc.designation}
                     </p>
+                    <p className="text-[11px] font-semibold text-slate-500 mt-0.5">
+                      {doc.experienceYears || 10}+ Years Clinical Experience
+                    </p>
                   </div>
                 </div>
 
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {doc.bio}
                 </p>
+
+                {Array.isArray(doc.experienceJourney) && doc.experienceJourney.length > 0 && (
+                  <div className="p-3.5 bg-teal-50/40 rounded-xl border border-teal-100 space-y-2">
+                    <p className="text-[11px] font-bold text-brand-teal-800 uppercase tracking-wider">
+                      Experience &amp; Journey:
+                    </p>
+                    <div className="relative pl-4 space-y-2 before:content-[''] before:absolute before:left-[5px] before:top-1.5 before:bottom-1.5 before:w-0.5 before:bg-brand-teal-300">
+                      {doc.experienceJourney.map((step: any, i: number) => (
+                        <div key={i} className="relative text-xs">
+                          <span className="absolute -left-4 top-1.5 w-2.5 h-2.5 rounded-full bg-brand-teal-600" />
+                          <span className="font-bold text-brand-slate-800">{step.year ? `${step.year}: ` : ''}</span>
+                          <span className="font-semibold text-slate-700">{step.role}</span>
+                          {step.institution && (
+                            <span className="text-slate-500"> — {step.institution}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="p-3 bg-slate-50 rounded-xl space-y-1">
                   <p className="text-[11px] font-bold text-brand-slate-800 uppercase tracking-wider">

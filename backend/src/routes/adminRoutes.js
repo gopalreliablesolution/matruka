@@ -78,6 +78,7 @@ router.get('/services', serviceCtrl.getAll);
 router.get('/services/categories', serviceCtrl.getCategories);
 router.post('/services/categories', serviceCtrl.createCategory);
 router.delete('/services/categories/:id', serviceCtrl.deleteCategory);
+router.put('/services/reorder', serviceCtrl.reorder);
 router.get('/services/:id', serviceCtrl.getById);
 router.post('/services', serviceCtrl.create);
 router.put('/services/:id', serviceCtrl.update);

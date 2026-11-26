@@ -590,8 +590,46 @@ export default function AdminHomepagePage() {
                     Clinical Standards &amp; Quality Pillars (4 Items)
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {(editingSection.settings?.items || []).map((item: any, iIdx: number) => (
-                      <div key={iIdx} className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+                    {(editingSection.settings?.items || []).map((item: any, iIdx: number) => {
+                      const isVisible = item.isVisible !== false;
+                      return (
+                      <div
+                        key={iIdx}
+                        className={`p-3 border rounded-xl space-y-2 transition ${
+                          isVisible
+                            ? 'bg-slate-50 border-slate-200'
+                            : 'bg-rose-50/40 border-rose-200/80 opacity-75'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between pb-1 border-b border-slate-200/70">
+                          <span className="text-[11px] font-bold text-slate-700">
+                            Card #{iIdx + 1}
+                          </span>
+                          <label className="flex items-center gap-1.5 cursor-pointer text-[11px] font-semibold">
+                            <input
+                              type="checkbox"
+                              checked={isVisible}
+                              onChange={(e) => {
+                                const updated = [...(editingSection.settings?.items || [])];
+                                updated[iIdx] = { ...updated[iIdx], isVisible: e.target.checked };
+                                setEditingSection({
+                                  ...editingSection,
+                                  settings: { ...editingSection.settings, items: updated },
+                                });
+                              }}
+                              className="rounded border-gray-300 text-primary focus:ring-primary"
+                            />
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                isVisible
+                                  ? 'bg-emerald-100 text-emerald-700'
+                                  : 'bg-rose-100 text-rose-700'
+                              }`}
+                            >
+                              {isVisible ? 'Show' : 'Hidden'}
+                            </span>
+                          </label>
+                        </div>
                         <div className="flex gap-2">
                           <input
                             type="text"
@@ -637,7 +675,8 @@ export default function AdminHomepagePage() {
                           placeholder="Description of standard..."
                         />
                       </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}

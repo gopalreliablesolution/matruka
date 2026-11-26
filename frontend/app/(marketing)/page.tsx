@@ -34,12 +34,21 @@ import {
 
 async function getHomeData() {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/v1/public/home-data`, {
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      const json = await res.json();
-      return json.data;
+    const [homeRes, servicesRes] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/v1/public/home-data`, { cache: 'no-store' }),
+      fetch(`${BACKEND_URL}/api/v1/public/services`, { cache: 'no-store' }).catch(() => null),
+    ]);
+    if (homeRes.ok) {
+      const json = await homeRes.json();
+      const homeData = json.data || {};
+      if (servicesRes && servicesRes.ok) {
+        const svcJson = await servicesRes.json();
+        const allServices = svcJson?.data?.services;
+        if (Array.isArray(allServices) && allServices.length > 0) {
+          homeData.featuredServices = allServices;
+        }
+      }
+      return homeData;
     }
   } catch (err) {
     console.error('Failed to fetch home data:', err);
@@ -356,12 +365,22 @@ export default async function HomePage() {
             </ScrollReveal>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-              {featuredServices.map((svc: any, idx: number) => (
+              {featuredServices.slice(0, 6).map((svc: any, idx: number) => (
                 <ScrollReveal key={svc._id} animation="fade-up" delay={(idx % 3) * 100} duration={550}>
                   <div
                     className="card-hover-lift bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-brand-teal-300 transition-all duration-300 flex flex-col justify-between group relative h-full"
                   >
                     <div className="space-y-4">
+                      <div className="w-full h-40 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
+                        <SafeImage
+                          src={resolveImageUrl(svc.featuredImage, '/logo.png')}
+                          fallbackSrc="/logo.png"
+                          alt={svc.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          fallbackClassName="w-full h-full object-contain p-5 bg-slate-50"
+                        />
+                      </div>
+
                       <div className="flex items-center justify-between">
                         <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-100/80">
                           {svc.category}
@@ -444,36 +463,50 @@ export default async function HomePage() {
               </div>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {qualityStandards.map((std: any, idx: number) => {
-                const icons = [Stethoscope, Activity, Heart, ShieldCheck];
-                const StdIcon = icons[idx % icons.length];
-                return (
-                  <ScrollReveal key={idx} animation="fade-up" delay={idx * 100} duration={500}>
-                    <div className="card-hover-lift rounded-3xl border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/50 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-brand-teal-300 transition-all duration-300 flex flex-col justify-between h-full">
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-teal-50 to-brand-teal-100/70 text-brand-teal-700 flex items-center justify-center font-bold shadow-2xs">
-                            <StdIcon className="w-6 h-6" />
+            {(() => {
+              const visibleStandards = qualityStandards.filter((std: any) => std?.isVisible !== false);
+              if (visibleStandards.length === 0) return null;
+              const gridCols =
+                visibleStandards.length === 1
+                  ? 'grid-cols-1 max-w-md mx-auto'
+                  : visibleStandards.length === 2
+                    ? 'grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto'
+                    : visibleStandards.length === 3
+                      ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                      : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4';
+              return (
+                <div className={`grid ${gridCols} gap-6`}>
+                  {visibleStandards.map((std: any, idx: number) => {
+                    const icons = [Stethoscope, Activity, Heart, ShieldCheck];
+                    const StdIcon = icons[idx % icons.length];
+                    return (
+                      <ScrollReveal key={idx} animation="fade-up" delay={idx * 100} duration={500}>
+                        <div className="card-hover-lift rounded-3xl border border-slate-200/90 bg-gradient-to-b from-white to-slate-50/50 p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-brand-teal-300 transition-all duration-300 flex flex-col justify-between h-full">
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-teal-50 to-brand-teal-100/70 text-brand-teal-700 flex items-center justify-center font-bold shadow-2xs">
+                                <StdIcon className="w-6 h-6" />
+                              </div>
+                              {std.badge && (
+                                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
+                                  {std.badge}
+                                </span>
+                              )}
+                            </div>
+                            <h3 className="font-bold text-brand-slate-900 text-base font-heading">
+                              {std.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                              {std.desc}
+                            </p>
                           </div>
-                          {std.badge && (
-                            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
-                              {std.badge}
-                            </span>
-                          )}
                         </div>
-                        <h3 className="font-bold text-brand-slate-900 text-base font-heading">
-                          {std.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                          {std.desc}
-                        </p>
-                      </div>
-                    </div>
-                  </ScrollReveal>
-                );
-              })}
-            </div>
+                      </ScrollReveal>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
         </section>
       )}
@@ -540,12 +573,37 @@ export default async function HomePage() {
                           <p className="text-xs text-brand-teal-700 font-semibold mt-1">
                             {doc.designation}
                           </p>
+                          <p className="text-[11px] font-semibold text-slate-500 mt-0.5">
+                            {doc.experienceYears || 10}+ Years Clinical Experience
+                          </p>
                         </div>
                       </div>
 
                       <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                         {doc.bio}
                       </p>
+
+                      {/* Experience & Journey Timeline Preview */}
+                      {Array.isArray(doc.experienceJourney) && doc.experienceJourney.length > 0 && (
+                        <div className="p-4 bg-teal-50/40 rounded-2xl border border-teal-100/80 space-y-2.5">
+                          <p className="text-[11px] font-bold text-brand-teal-800 uppercase tracking-wider flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-brand-teal-600" />
+                            <span>Experience &amp; Journey:</span>
+                          </p>
+                          <div className="relative pl-4 space-y-2 before:content-[''] before:absolute before:left-[5px] before:top-1.5 before:bottom-1.5 before:w-0.5 before:bg-brand-teal-300">
+                            {doc.experienceJourney.slice(0, 3).map((step: any, i: number) => (
+                              <div key={i} className="relative text-xs">
+                                <span className="absolute -left-4 top-1.5 w-2.5 h-2.5 rounded-full bg-brand-teal-600" />
+                                <span className="font-bold text-brand-slate-900">{step.year ? `${step.year}: ` : ''}</span>
+                                <span className="font-semibold text-slate-700">{step.role}</span>
+                                {step.institution && (
+                                  <span className="text-slate-500"> — {step.institution}</span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                       {/* Fellowships */}
                       <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/60 space-y-2">
@@ -767,13 +825,30 @@ export default async function HomePage() {
         <ScrollReveal animation="fade-up" duration={600}>
           <HospitalLocationSection
             initialLocations={hospitalLocations}
-            newsletterBadge={contactSection?.settings?.newsletterBadge || 'MATRUKA HEALTH BULLETIN'}
-            newsletterTitle={contactSection?.settings?.newsletterTitle || 'Subscribe to Health Updates'}
-            newsletterSubtitle={
-              contactSection?.settings?.newsletterSubtitle ||
-              'Receive verified gynaecology advice, trimester wellness tips, and clinic updates directly in your inbox.'
+            newsletterBadge={
+              contactSection?.settings?.newsletterBadge &&
+              contactSection.settings.newsletterBadge !== 'MATRUKA HEALTH BULLETIN'
+                ? contactSection.settings.newsletterBadge
+                : 'CLINIC INQUIRY'
             }
-            newsletterBtnText={contactSection?.settings?.newsletterBtnText || 'Join Our Newsletter'}
+            newsletterTitle={
+              contactSection?.settings?.newsletterTitle &&
+              contactSection.settings.newsletterTitle !== 'Subscribe to Health Updates'
+                ? contactSection.settings.newsletterTitle
+                : 'Quick Clinic Inquiry'
+            }
+            newsletterSubtitle={
+              contactSection?.settings?.newsletterSubtitle &&
+              !contactSection.settings.newsletterSubtitle.includes('trimester wellness tips, and clinic updates directly in your inbox')
+                ? contactSection.settings.newsletterSubtitle
+                : 'Have a question about pregnancy care, OPD timings, or treatments? Send us an inquiry and our team will reach out.'
+            }
+            newsletterBtnText={
+              contactSection?.settings?.newsletterBtnText &&
+              contactSection.settings.newsletterBtnText !== 'Join Our Newsletter'
+                ? contactSection.settings.newsletterBtnText
+                : 'Submit Inquiry'
+            }
           />
         </ScrollReveal>
       )}

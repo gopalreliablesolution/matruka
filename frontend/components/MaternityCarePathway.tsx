@@ -109,7 +109,12 @@ export default function MaternityCarePathway({
   phone = '7984882273',
 }: MaternityCarePathwayProps) {
   const [activeTab, setActiveTab] = useState(0);
-  const activeStage = stages[activeTab] || stages[0];
+  const safeStages = Array.isArray(stages) && stages.length > 0 ? stages : DEFAULT_STAGES;
+  const activeStage = safeStages[activeTab] || safeStages[0] || DEFAULT_STAGES[0];
+  const activeHighlights =
+    Array.isArray(activeStage?.highlights) && activeStage.highlights.length > 0
+      ? activeStage.highlights
+      : DEFAULT_STAGES[activeTab]?.highlights || DEFAULT_STAGES[0].highlights;
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-white via-teal-50/25 to-white border-t border-slate-100 relative overflow-hidden">
@@ -132,7 +137,7 @@ export default function MaternityCarePathway({
 
         {/* 4-Step Interactive Nav Tabs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-8">
-          {stages.map((stg, idx) => {
+          {safeStages.map((stg, idx) => {
             const isActive = activeTab === idx;
             return (
               <button
@@ -197,19 +202,21 @@ export default function MaternityCarePathway({
                   {activeStage.description}
                 </p>
 
-                <div className="space-y-2.5 pt-2 border-t border-slate-100">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-brand-slate-800">
-                    Key Clinical Inclusions:
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {activeStage.highlights.map((item, i) => (
-                      <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                        <CheckCircle2 className="w-4 h-4 text-brand-teal-600 shrink-0 mt-0.5" />
-                        <span>{item}</span>
-                      </div>
-                    ))}
+                {activeHighlights.length > 0 && (
+                  <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-brand-slate-800">
+                      Key Clinical Inclusions:
+                    </h4>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {activeHighlights.map((item, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                          <CheckCircle2 className="w-4 h-4 text-brand-teal-600 shrink-0 mt-0.5" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <a

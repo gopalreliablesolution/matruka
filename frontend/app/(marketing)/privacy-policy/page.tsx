@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | MatruKa — Complete Care for Her',
+  title: 'Privacy Policy | Matruka — Complete Care for Her',
   description:
-    'Patient confidentiality, data privacy, and online inquiry handling guidelines at MatruKa Women’s Hospital in Surat.',
+    'Patient confidentiality, data privacy, and online inquiry handling guidelines at Matruka Women’s Hospital in Surat.',
 };
 
 const DEFAULT_PRIVACY_CONTENT = `### 1. Informational Purpose & Online Requests

@@ -8,7 +8,7 @@ import DoctorAvatar from '@/components/DoctorAvatar';
 async function getDoctorDetail(slug: string) {
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/doctors/${slug}`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();
@@ -99,7 +99,7 @@ export default async function DoctorProfilePage({
           {doctor.fellowshipsAndCertifications && doctor.fellowshipsAndCertifications.length > 0 && (
             <div className="space-y-3 pt-4 border-t border-slate-100">
               <h3 className="text-base font-bold font-heading text-brand-slate-900">
-                Specialized Fellowships & Certifications
+                Specialized Fellowships &amp; Certifications
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {doctor.fellowshipsAndCertifications.map((cert: string, i: number) => (
@@ -111,6 +111,51 @@ export default async function DoctorProfilePage({
               </div>
             </div>
           )}
+
+          {/* Experience & Medical Journey Timeline */}
+          <div className="space-y-4 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h3 className="text-base font-bold font-heading text-brand-slate-900">
+                Experience &amp; Clinical Journey
+              </h3>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-teal-50 text-brand-teal-800 border border-teal-200/80">
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-teal-600" />
+                <span>{doctor.experienceYears || 10}+ Years Clinical Experience</span>
+              </span>
+            </div>
+
+            {Array.isArray(doctor.experienceJourney) && doctor.experienceJourney.length > 0 ? (
+              <div className="relative pl-6 space-y-5 before:content-[''] before:absolute before:left-[9px] before:top-2 before:bottom-2 before:w-0.5 before:bg-gradient-to-b before:from-brand-teal-500 before:to-teal-100">
+                {doctor.experienceJourney.map((step: any, i: number) => (
+                  <div key={i} className="relative">
+                    <span className="absolute -left-6 top-1.5 w-4 h-4 rounded-full bg-white border-[3px] border-brand-teal-600 shadow-xs" />
+                    <div className="p-4 rounded-2xl bg-slate-50/90 border border-slate-200/80 hover:border-brand-teal-300 transition space-y-1">
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <h4 className="font-bold text-sm sm:text-base text-brand-slate-900 font-heading">
+                          {step.role}
+                        </h4>
+                        {step.year && (
+                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
+                            {step.year}
+                          </span>
+                        )}
+                      </div>
+                      {step.institution && (
+                        <p className="text-xs font-semibold text-brand-teal-700">{step.institution}</p>
+                      )}
+                      {step.description && (
+                        <p className="text-xs text-slate-600 leading-relaxed pt-1">{step.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-600">
+                {doctor.experienceYears || 10}+ years of dedicated clinical practice in {doctor.specialization}.
+              </div>
+            )}
+          </div>
 
           <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-600">

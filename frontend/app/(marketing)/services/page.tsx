@@ -1,12 +1,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { ChevronRight, CheckCircle2 } from 'lucide-react';
-import { BACKEND_URL } from '@/lib/api';
+import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
+import SafeImage from '@/components/SafeImage';
 
 async function getServicesData() {
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/services`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();
@@ -45,6 +46,16 @@ export default async function ServicesPage() {
               className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:border-brand-teal-400 hover:shadow-md transition-all flex flex-col justify-between group"
             >
               <div className="space-y-3">
+                <div className="w-full h-44 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
+                  <SafeImage
+                    src={resolveImageUrl(svc.featuredImage, '/logo.png')}
+                    fallbackSrc="/logo.png"
+                    alt={svc.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    fallbackClassName="w-full h-full object-contain p-5 bg-slate-50"
+                  />
+                </div>
+
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-md bg-brand-teal-50 text-brand-teal-700">
                     {svc.category}

@@ -3,7 +3,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { CheckCircle2, Phone, Clock, ArrowLeft, ArrowRight, ShieldCheck, HeartHandshake } from 'lucide-react';
-import { BACKEND_URL } from '@/lib/api';
+import { BACKEND_URL, resolveImageUrl } from '@/lib/api';
+import SafeImage from '@/components/SafeImage';
 
 const ALIAS_MAP: Record<string, string> = {
   'gynecological-endoscopic-surgeries': 'gynec-laparoscopic-surgeries',
@@ -275,6 +276,16 @@ export default async function ServiceDetailPage({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Main Info */}
           <div className="lg:col-span-8 space-y-8">
+            <div className="w-full h-56 sm:h-72 rounded-3xl overflow-hidden bg-slate-50 border border-slate-200 flex items-center justify-center shadow-xs">
+              <SafeImage
+                src={resolveImageUrl(service.featuredImage, '/logo.png')}
+                fallbackSrc="/logo.png"
+                alt={service.name}
+                className="w-full h-full object-cover"
+                fallbackClassName="w-full h-full object-contain p-8 bg-slate-50"
+              />
+            </div>
+
             <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6">
               <h2 className="text-xl sm:text-2xl font-bold font-heading text-slate-900">
                 Clinical Overview &amp; Care Methodology

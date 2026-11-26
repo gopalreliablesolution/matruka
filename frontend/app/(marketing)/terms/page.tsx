@@ -8,9 +8,9 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: 'Terms & Conditions | MatruKa — Complete Care for Her',
+  title: 'Terms & Conditions | Matruka — Complete Care for Her',
   description:
-    'Important website terms of use, informational guidelines, and clinical consultation disclaimers for MatruKa Women’s Hospital in Surat.',
+    'Important website terms of use, informational guidelines, and clinical consultation disclaimers for Matruka Women’s Hospital in Surat.',
 };
 
 const DEFAULT_TERMS_CONTENT = `### 1. Medical Disclaimer

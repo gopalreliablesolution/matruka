@@ -1,28 +1,51 @@
 import React from 'react';
 import { Phone, MapPin, Clock, Mail, ShieldAlert, ExternalLink, MessageCircle } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
+import { sanitizeMapEmbedUrl } from '@/components/HospitalLocationSection';
 
 async function getContactSettings() {
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/v1/public/settings`, {
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data.data;
-    }
-  } catch (e) {
-    console.error(e);
-  }
-  return {
+  const defaults = {
     appointmentPhone: '7984882273',
     emergencyPhone: '7984882273',
     whatsappNumber: '917984882273',
-    email: 'info@matruka.in',
+    email: 'Info.matruka@gmail.com',
     address: '303-306, Solaris Cure, Besides Ratnajyoti Apartment, VIP Road, Surat - 395007',
     opdTimings: '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Monday to Saturday)',
     sundayTimings: 'Emergency Only (24*7)',
   };
+
+  try {
+    const [settingsRes, locRes] = await Promise.all([
+      fetch(`${BACKEND_URL}/api/v1/public/settings`, { cache: 'no-store' }),
+      fetch(`${BACKEND_URL}/api/v1/public/hospital-locations`, { cache: 'no-store' }).catch(() => null),
+    ]);
+
+    const settingsJson = settingsRes.ok ? await settingsRes.json() : null;
+    const locJson = locRes && locRes.ok ? await locRes.json() : null;
+    const baseSettings = settingsJson?.data || defaults;
+    const activeLoc = Array.isArray(locJson?.data) && locJson.data.length > 0 ? locJson.data[0] : null;
+
+    if (activeLoc) {
+      const fullAddress = [activeLoc.address, activeLoc.city, activeLoc.state, activeLoc.pincode]
+        .filter(Boolean)
+        .join(', ');
+      return {
+        ...baseSettings,
+        address: fullAddress || baseSettings.address,
+        googleMapsEmbedUrl: activeLoc.mapEmbedUrl || baseSettings.googleMapsEmbedUrl,
+        appointmentPhone: activeLoc.phone || baseSettings.appointmentPhone,
+        email: activeLoc.email || baseSettings.email,
+        opdTimings: activeLoc.hours
+          ? `${activeLoc.hours}${activeLoc.days ? ` (${activeLoc.days})` : ''}`
+          : baseSettings.opdTimings,
+      };
+    }
+
+    return baseSettings;
+  } catch (e) {
+    console.error(e);
+  }
+  return defaults;
 }
 
 export default async function ContactPage() {
@@ -80,7 +103,7 @@ export default async function ContactPage() {
                   <div>
                     <p className="font-semibold text-brand-slate-900">WhatsApp Inquiries:</p>
                     <a
-                      href={`https://wa.me/91${phone}?text=Hello%20MatruKa%2C%20I%20would%20like%20information%20regarding%20OPD%20timings.`}
+                      href={`https://wa.me/91${phone}?text=Hello%20Matruka%2C%20I%20would%20like%20information%20regarding%20OPD%20timings.`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm font-bold text-emerald-700 hover:text-emerald-800"
@@ -179,14 +202,11 @@ export default async function ContactPage() {
 
               <div className="rounded-2xl border border-slate-200 overflow-hidden h-[450px]">
                 <iframe
-                  src={
-                    settings.googleMapsEmbedUrl ||
-                    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.2223847847953!2d72.825!3d21.145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04f4c!2sSolaris+Cure+VIP+Road+Surat!5e0!3m2!1sen!2sin!4v1680000000000!5m2!1sen!2sin'
-                  }
+                  src={sanitizeMapEmbedUrl(settings.googleMapsEmbedUrl, settings.address)}
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
-                  allowFullScreen={false}
+                  allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="Matruka Location on Google Maps"

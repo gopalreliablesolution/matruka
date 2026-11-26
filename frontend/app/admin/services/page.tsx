@@ -1,7 +1,21 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Activity, Plus, Edit2, Trash2, X, ToggleLeft, ToggleRight } from 'lucide-react';
+import {
+  Activity,
+  Plus,
+  Edit2,
+  Trash2,
+  X,
+  ToggleLeft,
+  ToggleRight,
+  GripVertical,
+  ArrowUp,
+  ArrowDown,
+  Save,
+  ListOrdered,
+  Loader2,
+} from 'lucide-react';
 import { adminApi, resolveImageUrl } from '@/lib/api';
 import ImageUpload from '@/components/ImageUpload';
 import AdminPageHeader from '@/components/admin/AdminPageHeader';
@@ -34,6 +48,11 @@ export default function AdminServicesPage() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<ServiceItem | null>(null);
+  const [isReorderMode, setIsReorderMode] = useState(false);
+  const [reorderList, setReorderList] = useState<ServiceItem[]>([]);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
 
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -196,6 +215,74 @@ export default function AdminServicesPage() {
     }
   };
 
+  const enterReorderMode = async () => {
+    try {
+      setLoading(true);
+      const res = await adminApi.get('/services');
+      if (res.data?.success) {
+        const all: ServiceItem[] = res.data.data.services || res.data.data || [];
+        setReorderList([...all].sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0)));
+        setIsReorderMode(true);
+      }
+    } catch {
+      toast.error('Failed to load full specialities list');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDropReorder = (dropIdx: number) => {
+    if (dragIndex === null || dragIndex === dropIdx) {
+      setDragIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+    setReorderList((prev) => {
+      const copy = [...prev];
+      const [moved] = copy.splice(dragIndex, 1);
+      copy.splice(dropIdx, 0, moved);
+      return copy;
+    });
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const moveItem = (idx: number, dir: -1 | 1) => {
+    const target = idx + dir;
+    if (target < 0 || target >= reorderList.length) return;
+    setReorderList((prev) => {
+      const copy = [...prev];
+      const [moved] = copy.splice(idx, 1);
+      copy.splice(target, 0, moved);
+      return copy;
+    });
+  };
+
+  const handleSaveSequence = async () => {
+    try {
+      setSavingOrder(true);
+      const items = reorderList.map((item, idx) => ({
+        _id: item._id,
+        sortOrder: idx + 1,
+      }));
+      try {
+        await adminApi.put('/services/reorder', { items });
+      } catch {
+        // Fallback when live backend hasn't deployed /services/reorder route yet
+        await Promise.all(
+          items.map((it) => adminApi.put(`/services/${it._id}`, { sortOrder: it.sortOrder }))
+        );
+      }
+      toast.success('Specialities sequence saved! Top 6 will now show on Homepage.');
+      setIsReorderMode(false);
+      fetchServices();
+    } catch {
+      toast.error('Failed to save sequence');
+    } finally {
+      setSavingOrder(false);
+    }
+  };
+
   const filteredServices = services.filter((srv) => {
     const matchSearch =
       srv.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -304,23 +391,150 @@ export default function AdminServicesPage() {
     <div className="space-y-6 pb-12">
       <AdminPageHeader
         title="Clinical Specialities & Services"
-        description="Manage MatruKa specialities, procedures, patient benefits, clinical descriptions, and publication status."
+        description="Manage Matruka specialities, procedures, patient benefits, clinical descriptions, and publication status."
         icon={Activity}
         breadcrumb={[{ label: '14 Core Specialities' }]}
         actions={
-          <button
-            type="button"
-            onClick={() => handleOpenModal()}
-            className="admin-btn-primary"
-          >
-            <Plus size={18} />
-            <span>Add Speciality</span>
-          </button>
+          <div className="flex items-center gap-2.5 flex-wrap">
+            {isReorderMode ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsReorderMode(false)}
+                  disabled={savingOrder}
+                  className="px-4 py-2 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-semibold text-gray-700 transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveSequence}
+                  disabled={savingOrder}
+                  className="admin-btn-primary"
+                >
+                  {savingOrder ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                  <span>{savingOrder ? 'Saving Sequence...' : 'Save Sequence'}</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={enterReorderMode}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#0496AC]/30 bg-teal-50/70 hover:bg-teal-100/70 text-[#0496AC] font-semibold text-xs sm:text-sm transition cursor-pointer"
+                >
+                  <ListOrdered size={17} />
+                  <span>Rearrange Sequence</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleOpenModal()}
+                  className="admin-btn-primary"
+                >
+                  <Plus size={18} />
+                  <span>Add Speciality</span>
+                </button>
+              </>
+            )}
+          </div>
         }
       />
 
-      {/* Jogi-Style Data Table */}
-      <DataTable
+      {isReorderMode ? (
+        <div className="admin-card p-5 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-gray-100">
+            <div>
+              <h2 className="text-sm font-bold text-gray-900">
+                Drag &amp; Drop Specialities Sequence ({reorderList.length} total)
+              </h2>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Drag rows up/down (or use arrows) to change display order. The <strong>first 6 published specialities</strong> appear on the Home Page; the full order appears on the Specialities page.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {reorderList.map((srv, idx) => {
+              const publishedBefore = reorderList
+                .slice(0, idx + 1)
+                .filter((s) => s.isPublished).length;
+              const isTop6Home = srv.isPublished && publishedBefore <= 6;
+              const isDragging = dragIndex === idx;
+              const isDragOver = dragOverIndex === idx && dragIndex !== idx;
+
+              return (
+                <div
+                  key={srv._id}
+                  draggable
+                  onDragStart={() => setDragIndex(idx)}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (dragOverIndex !== idx) setDragOverIndex(idx);
+                  }}
+                  onDrop={() => handleDropReorder(idx)}
+                  onDragEnd={() => {
+                    setDragIndex(null);
+                    setDragOverIndex(null);
+                  }}
+                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-all cursor-grab active:cursor-grabbing ${
+                    isDragging
+                      ? 'opacity-50 border-[#0496AC] bg-teal-50/40'
+                      : isDragOver
+                        ? 'border-[#0496AC] bg-teal-50/60 ring-2 ring-[#0496AC]/20'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <GripVertical size={18} className="text-gray-400 shrink-0" />
+                    <span className="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
+                      #{idx + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-bold text-sm text-gray-900 truncate">{srv.name}</p>
+                        {isTop6Home && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                            Homepage Top 6
+                          </span>
+                        )}
+                        {!srv.isPublished && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
+                            Draft
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 truncate">{srv.category}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => moveItem(idx, -1)}
+                      disabled={idx === 0}
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30 cursor-pointer"
+                      title="Move Up"
+                    >
+                      <ArrowUp size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveItem(idx, 1)}
+                      disabled={idx === reorderList.length - 1}
+                      className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-30 cursor-pointer"
+                      title="Move Down"
+                    >
+                      <ArrowDown size={14} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        /* Jogi-Style Data Table */
+        <DataTable
         columns={columns}
         data={paginatedServices}
         loading={loading}
@@ -357,6 +571,7 @@ export default function AdminServicesPage() {
         }}
         emptyMessage="No clinical specialities found."
       />
+      )}
 
       {/* Create / Edit Modal */}
       {isModalOpen && (

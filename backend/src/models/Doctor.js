@@ -11,6 +11,17 @@ const doctorSchema = new mongoose.Schema(
     bio: { type: String, required: true },
     areasOfExpertise: { type: [String], default: [] },
     fellowshipsAndCertifications: { type: [String], default: [] },
+    experienceJourney: {
+      type: [
+        {
+          year: { type: String, trim: true, default: '' },
+          role: { type: String, trim: true, default: '' },
+          institution: { type: String, trim: true, default: '' },
+          description: { type: String, trim: true, default: '' },
+        },
+      ],
+      default: [],
+    },
     opdTimings: { type: String, default: '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Mon - Sat)' },
     profileImage: { type: String, default: '/images/doctors/default-doctor.jpg' },
     phone: { type: String },
@@ -21,7 +32,7 @@ const doctorSchema = new mongoose.Schema(
     seoTitle: { type: String },
     seoDescription: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 doctorSchema.index({ sortOrder: 1, isPublished: 1 });

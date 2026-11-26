@@ -1,36 +1,47 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Phone, Mail, Loader2, MapPin, Clock, User, Send } from 'lucide-react';
+import { Phone, Mail, Loader2, MapPin, Clock, User, Send, MessageSquare } from 'lucide-react';
 import { publicApi } from '@/lib/api';
 
-const DEFAULT_MAP_EMBED_URL =
-  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.1557991965564!2d72.7797779759714!3d21.146200283737225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be05307bdfbcdd7%3A0xe54e1f7481ba2aa6!2sSolaris%20Cure!5e0!3m2!1sen!2sin!4v1711200000000!5m2!1sen!2sin';
+export function buildPinnedMapEmbedUrl(address?: string): string {
+  const raw = (address || 'Solaris Cure, VIP Road, Vesu, Surat, Gujarat 395007').trim();
+  const cleaned = raw
+    .replace(/^\d+[-–]\d+\s*,\s*/i, '')
+    .replace(/beside[s]?\s+[^,]+,\s*/i, '')
+    .trim();
+  // "Solaris Cure, VIP Road, Vesu, Surat" resolves cleanly as a pinned place in Google Maps
+  const finalQuery =
+    cleaned.toLowerCase().includes('solaris cure') && !cleaned.toLowerCase().includes('vesu')
+      ? cleaned.replace(/vip road/i, 'VIP Road, Vesu')
+      : cleaned || raw;
+  return `https://maps.google.com/maps?q=${encodeURIComponent(finalQuery)}&t=k&z=17&ie=UTF8&output=embed`;
+}
 
-export function sanitizeMapEmbedUrl(raw?: string): string {
-  if (!raw) return DEFAULT_MAP_EMBED_URL;
+export function sanitizeMapEmbedUrl(raw?: string, addressFallback?: string): string {
+  const pinnedFallback = buildPinnedMapEmbedUrl(addressFallback);
+  if (!raw) return pinnedFallback;
   const str = raw.trim();
 
-  // If a full <iframe ... src="..." ...> HTML snippet was entered
+  // Only replace empty or leftover Jogi URLs; otherwise respect the exact URL saved in Admin
   if (str.includes('<iframe') || str.includes('src=')) {
     const match = str.match(/src=["']([^"']+)["']/i);
     if (match && match[1] && (match[1].startsWith('http://') || match[1].startsWith('https://'))) {
       if (match[1].toLowerCase().includes('jogi')) {
-        return DEFAULT_MAP_EMBED_URL;
+        return pinnedFallback;
       }
       return match[1];
     }
   }
 
-  // If it's a valid web URL
   if (str.startsWith('https://') || str.startsWith('http://')) {
     if (str.toLowerCase().includes('jogi')) {
-      return DEFAULT_MAP_EMBED_URL;
+      return pinnedFallback;
     }
     return str;
   }
 
-  return DEFAULT_MAP_EMBED_URL;
+  return pinnedFallback;
 }
 
 export interface HospitalLocationData {
@@ -59,23 +70,31 @@ interface HospitalLocationSectionProps {
 
 export default function HospitalLocationSection({
   initialLocations,
-  newsletterBadge = 'MATRUKA HEALTH BULLETIN',
-  newsletterTitle = 'Subscribe to Health Updates',
-  newsletterSubtitle = 'Receive verified gynaecology advice, trimester wellness tips, and clinic updates directly in your inbox.',
-  newsletterBtnText = 'Join Our Newsletter',
+  newsletterBadge = 'CLINIC INQUIRY',
+  newsletterTitle = 'Quick Clinic Inquiry',
+  newsletterSubtitle = 'Have a question about pregnancy care, OPD timings, or treatments? Send us an inquiry and our team will reach out.',
+  newsletterBtnText = 'Submit Inquiry',
 }: HospitalLocationSectionProps) {
   const [locations, setLocations] = useState<HospitalLocationData[]>(
     initialLocations || []
   );
   const [locationsLoading, setLocationsLoading] = useState(!initialLocations || initialLocations.length === 0);
-  const [newsletterData, setNewsletterData] = useState({ name: '', email: '' });
-  const [newsletterStatus, setNewsletterStatus] = useState<
+  const [inquiryData, setInquiryData] = useState({
+    name: '',
+    contact: '',
+    email: '',
+    description: '',
+  });
+  const [inquiryStatus, setInquiryStatus] = useState<
     'idle' | 'loading' | 'success' | 'error'
   >('idle');
-  const [newsletterMessage, setNewsletterMessage] = useState('');
+  const [inquiryMessage, setInquiryMessage] = useState('');
 
   useEffect(() => {
-    if (!initialLocations || initialLocations.length === 0) {
+    if (initialLocations && initialLocations.length > 0) {
+      setLocations(initialLocations);
+      setLocationsLoading(false);
+    } else {
       fetchLocations();
     }
   }, [initialLocations]);
@@ -96,37 +115,57 @@ export default function HospitalLocationSection({
 
   // Auto-hide success message after 6 seconds
   useEffect(() => {
-    if (newsletterStatus === 'success') {
+    if (inquiryStatus === 'success') {
       const timer = setTimeout(() => {
-        setNewsletterStatus('idle');
-        setNewsletterMessage('');
+        setInquiryStatus('idle');
+        setInquiryMessage('');
       }, 6000);
       return () => clearTimeout(timer);
     }
-  }, [newsletterStatus]);
+  }, [inquiryStatus]);
 
-  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+  const handleInquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newsletterData.name || !newsletterData.email) {
-      setNewsletterMessage('Please fill in all fields.');
-      setNewsletterStatus('error');
+    const cleanName = inquiryData.name.trim();
+    const cleanPhone = inquiryData.contact.replace(/\D/g, '');
+    const cleanEmail = inquiryData.email.trim();
+    const cleanDesc = inquiryData.description.trim();
+
+    if (!cleanName || cleanName.length < 2) {
+      setInquiryMessage('Please enter your full name.');
+      setInquiryStatus('error');
       return;
     }
-    setNewsletterStatus('loading');
-    setNewsletterMessage('');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setInquiryMessage('Please enter a valid 10-digit mobile number.');
+      setInquiryStatus('error');
+      return;
+    }
+    if (cleanEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      setInquiryMessage('Please enter a valid email address.');
+      setInquiryStatus('error');
+      return;
+    }
+
+    setInquiryStatus('loading');
+    setInquiryMessage('');
     try {
-      await publicApi.post('/newsletter', {
-        name: newsletterData.name,
-        email: newsletterData.email,
-        sourcePath: '/hospital-location',
+      await publicApi.post('/appointments', {
+        patientName: cleanName,
+        phone: cleanPhone,
+        email: cleanEmail,
+        message: cleanDesc,
+        department: 'Website Inquiry',
+        doctor: 'Any Available Specialist',
+        city: 'Surat',
       });
 
-      setNewsletterStatus('success');
-      setNewsletterMessage('Thank you for subscribing to our updates!');
-      setNewsletterData({ name: '', email: '' });
+      setInquiryStatus('success');
+      setInquiryMessage('Thank you! Your inquiry has been received. Our care desk will contact you shortly.');
+      setInquiryData({ name: '', contact: '', email: '', description: '' });
     } catch (error: any) {
-      setNewsletterStatus('error');
-      setNewsletterMessage(
+      setInquiryStatus('error');
+      setInquiryMessage(
         error.response?.data?.error || 'Something went wrong. Please try again.'
       );
     }
@@ -243,10 +282,15 @@ export default function HospitalLocationSection({
         {/* LOWER SECTION: Map + Newsletter */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Map Column */}
-          <div className="lg:col-span-7 bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_30px_rgba(4,150,172,0.06)] overflow-hidden min-h-[380px]">
+          <div className="lg:col-span-7 relative bg-white rounded-3xl border border-slate-200/90 shadow-[0_4px_30px_rgba(4,150,172,0.06)] overflow-hidden min-h-[380px]">
             {activeLocation ? (
               <iframe
-                src={sanitizeMapEmbedUrl(activeLocation.mapEmbedUrl)}
+                src={sanitizeMapEmbedUrl(
+                  activeLocation.mapEmbedUrl,
+                  [activeLocation.address, activeLocation.city, activeLocation.state, activeLocation.pincode]
+                    .filter(Boolean)
+                    .join(', ')
+                )}
                 width="100%"
                 height="100%"
                 style={{ border: 0, minHeight: '380px' }}
@@ -263,36 +307,51 @@ export default function HospitalLocationSection({
             )}
           </div>
 
-          {/* Newsletter Column */}
-          <div className="lg:col-span-5 bg-gradient-to-br from-white via-slate-50/50 to-white rounded-3xl border border-slate-200/90 shadow-[0_4px_30px_rgba(4,150,172,0.06)] p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+          {/* Inquiry Form Column */}
+          <div className="lg:col-span-5 bg-gradient-to-br from-white via-slate-50/50 to-white rounded-3xl border border-slate-200/90 shadow-[0_4px_30px_rgba(4,150,172,0.06)] p-6 sm:p-8 flex flex-col justify-center">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3 self-start">
-              <Mail size={12} />
+              <MessageSquare size={12} />
               <span>{newsletterBadge}</span>
             </span>
-            <h3 className="text-xl md:text-2xl font-bold font-heading text-[#1A2C30] mb-2">
+            <h3 className="text-xl md:text-2xl font-bold font-heading text-[#1A2C30] mb-1.5">
               {newsletterTitle}
             </h3>
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
+            <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-5">
               {newsletterSubtitle}
             </p>
 
-            {newsletterStatus === 'success' ? (
+            {inquiryStatus === 'success' ? (
               <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 text-center animate-in fade-in duration-200">
-                <p className="text-emerald-700 font-bold text-sm">{newsletterMessage}</p>
-                <p className="text-emerald-600/80 text-xs mt-1">We respect your privacy and never spam.</p>
+                <p className="text-emerald-700 font-bold text-sm">{inquiryMessage}</p>
+                <p className="text-emerald-600/80 text-xs mt-1">We respect your privacy and will reach out soon.</p>
               </div>
             ) : (
-              <form onSubmit={handleNewsletterSubmit} className="flex flex-col gap-3.5">
+              <form onSubmit={handleInquirySubmit} className="flex flex-col gap-3">
                 <div className="relative">
                   <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                   <input
                     type="text"
-                    placeholder="Your Full Name"
-                    value={newsletterData.name}
+                    placeholder="Your Full Name *"
+                    value={inquiryData.name}
                     onChange={(e) =>
-                      setNewsletterData({ ...newsletterData, name: e.target.value })
+                      setInquiryData({ ...inquiryData, name: e.target.value })
                     }
-                    className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/20 outline-none text-slate-800 placeholder:text-slate-400 bg-white text-sm font-medium transition"
+                    className="w-full h-11 pl-11 pr-4 rounded-xl border border-slate-200 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/20 outline-none text-slate-800 placeholder:text-slate-400 bg-white text-sm font-medium transition"
+                    required
+                  />
+                </div>
+                <div className="relative">
+                  <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={14}
+                    placeholder="Contact Number (10 digits) *"
+                    value={inquiryData.contact}
+                    onChange={(e) =>
+                      setInquiryData({ ...inquiryData, contact: e.target.value })
+                    }
+                    className="w-full h-11 pl-11 pr-4 rounded-xl border border-slate-200 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/20 outline-none text-slate-800 placeholder:text-slate-400 bg-white text-sm font-medium transition"
                     required
                   />
                 </div>
@@ -300,27 +359,38 @@ export default function HospitalLocationSection({
                   <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                   <input
                     type="email"
-                    placeholder="Your Email Address"
-                    value={newsletterData.email}
+                    placeholder="Email Address (Optional)"
+                    value={inquiryData.email}
                     onChange={(e) =>
-                      setNewsletterData({ ...newsletterData, email: e.target.value })
+                      setInquiryData({ ...inquiryData, email: e.target.value })
                     }
-                    className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/20 outline-none text-slate-800 placeholder:text-slate-400 bg-white text-sm font-medium transition"
-                    required
+                    className="w-full h-11 pl-11 pr-4 rounded-xl border border-slate-200 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/20 outline-none text-slate-800 placeholder:text-slate-400 bg-white text-sm font-medium transition"
                   />
                 </div>
-                {newsletterMessage && (
-                  <p className="text-rose-500 text-xs font-semibold">{newsletterMessage}</p>
+                <div>
+                  <textarea
+                    rows={3}
+                    maxLength={500}
+                    placeholder="Description / Your Inquiry..."
+                    value={inquiryData.description}
+                    onChange={(e) =>
+                      setInquiryData({ ...inquiryData, description: e.target.value })
+                    }
+                    className="w-full p-3.5 rounded-xl border border-slate-200 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/20 outline-none text-slate-800 placeholder:text-slate-400 bg-white text-sm font-medium transition resize-none"
+                  />
+                </div>
+                {inquiryMessage && (
+                  <p className="text-rose-500 text-xs font-semibold">{inquiryMessage}</p>
                 )}
                 <button
                   type="submit"
-                  disabled={newsletterStatus === 'loading'}
-                  className="w-full h-12 bg-gradient-to-r from-[#0496AC] to-[#037A8C] hover:from-[#037A8C] hover:to-[#025E6C] text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 shadow-[0_4px_14px_rgba(4,150,172,0.3)] hover:shadow-[0_6px_20px_rgba(4,150,172,0.4)] active:scale-[0.99] cursor-pointer"
+                  disabled={inquiryStatus === 'loading'}
+                  className="w-full h-11 bg-gradient-to-r from-[#0496AC] to-[#037A8C] hover:from-[#037A8C] hover:to-[#025E6C] text-white font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-70 shadow-[0_4px_14px_rgba(4,150,172,0.3)] hover:shadow-[0_6px_20px_rgba(4,150,172,0.4)] active:scale-[0.99] cursor-pointer"
                 >
-                  {newsletterStatus === 'loading' ? (
+                  {inquiryStatus === 'loading' ? (
                     <>
                       <Loader2 className="animate-spin" size={17} />
-                      <span>Subscribing...</span>
+                      <span>Submitting...</span>
                     </>
                   ) : (
                     <>

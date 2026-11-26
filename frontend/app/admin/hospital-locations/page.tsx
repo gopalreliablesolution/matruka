@@ -102,8 +102,7 @@ export default function AdminHospitalLocationsPage() {
       email: 'info@matruka.in',
       days: 'Monday to Saturday',
       hours: '10:00 AM to 1:00 PM | 5:00 PM to 7:00 PM',
-      mapEmbedUrl:
-        'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3721.1557991965564!2d72.7797779759714!3d21.146200283737225!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be05307bdfbcdd7%3A0xe54e1f7481ba2aa6!2sSolaris%20Cure!5e0!3m2!1sen!2sin!4v1711200000000!5m2!1sen!2sin',
+      mapEmbedUrl: '',
       isActive: true,
       order: locations.length + 1,
     });
@@ -148,6 +147,7 @@ export default function AdminHospitalLocationsPage() {
           cleanedMapUrl = match[1];
         }
       }
+
       const payload = {
         ...formData,
         mapEmbedUrl: cleanedMapUrl,

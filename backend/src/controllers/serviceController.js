@@ -97,6 +97,39 @@ exports.remove = async (req, res) => {
   }
 };
 
+exports.reorder = async (req, res) => {
+  try {
+    const { items } = req.body;
+    if (!Array.isArray(items)) {
+      return res.status(400).json({ success: false, error: 'Items array is required' });
+    }
+
+    const bulkOps = items.map((item, idx) => ({
+      updateOne: {
+        filter: { _id: item._id },
+        update: { $set: { sortOrder: item.sortOrder ?? idx + 1 } },
+      },
+    }));
+
+    if (bulkOps.length > 0) {
+      await Service.bulkWrite(bulkOps);
+    }
+
+    await ActivityLog.create({
+      userId: req.user?._id?.toString() || 'admin',
+      userName: req.user?.name || 'Admin',
+      action: 'update',
+      module: 'services',
+      description: `Reordered ${items.length} clinical specialities`,
+    });
+
+    const updated = await Service.find().sort({ sortOrder: 1, createdAt: -1 });
+    res.json({ success: true, data: updated, message: 'Specialities sequence updated' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message || 'Failed to reorder services' });
+  }
+};
+
 // Categories
 exports.getCategories = async (req, res) => {
   try {

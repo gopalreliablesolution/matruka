@@ -145,9 +145,7 @@ export default function HeroSlider({
 
   return (
     <section
-      className={`relative bg-gradient-to-b from-[#F0FBFB]/80 via-[#F7FBFC] to-white overflow-hidden ${
-        !isContentEnabled ? 'py-2 sm:py-4 lg:py-5' : 'pt-6 pb-8 sm:pt-8 sm:pb-12 lg:pt-10 lg:pb-14'
-      } border-b border-slate-100`}
+      className="relative bg-gradient-to-b from-[#F0FBFB]/80 via-[#F7FBFC] to-white overflow-hidden pt-6 pb-8 sm:pt-8 sm:pb-12 lg:pt-10 lg:pb-14 border-b border-slate-100"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       aria-label="Hero showcase"
@@ -180,6 +178,8 @@ export default function HeroSlider({
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Fixed-height stage prevents page from jumping up/down when slides auto-switch */}
+        <div className={total > 1 ? 'h-[520px] sm:h-[540px] lg:h-[440px] flex items-center' : ''}>
         {/* CASE 1: IMAGE-ONLY BANNER (No Text / Graphics Only) */}
         {!isContentEnabled ? (
           <div className="w-full">
@@ -198,8 +198,8 @@ export default function HeroSlider({
                   <img
                     key={heroImageSrc + currentIndex}
                     src={heroImageSrc}
-                    alt={current.title || 'MatruKa Hospital Banner'}
-                    className="w-full h-[180px] sm:h-[260px] md:h-[320px] lg:h-[360px] xl:h-[380px] object-cover object-center group-hover:scale-[1.01] transition-transform duration-500"
+                    alt={current.title || 'Matruka Hospital Banner'}
+                    className={`w-full ${total > 1 ? 'h-[480px] sm:h-[500px] lg:h-[420px]' : 'h-[180px] sm:h-[260px] md:h-[320px] lg:h-[360px] xl:h-[380px]'} object-cover object-center group-hover:scale-[1.01] transition-transform duration-500`}
                     onError={(e) => {
                       e.currentTarget.src = fallbackImage;
                     }}
@@ -216,8 +216,8 @@ export default function HeroSlider({
                   <img
                     key={heroImageSrc + currentIndex}
                     src={heroImageSrc}
-                    alt={current.title || 'MatruKa Hospital Banner'}
-                    className="w-full h-[180px] sm:h-[260px] md:h-[320px] lg:h-[360px] xl:h-[380px] object-cover object-center"
+                    alt={current.title || 'Matruka Hospital Banner'}
+                    className={`w-full ${total > 1 ? 'h-[480px] sm:h-[500px] lg:h-[420px]' : 'h-[180px] sm:h-[260px] md:h-[320px] lg:h-[360px] xl:h-[380px]'} object-cover object-center`}
                     onError={(e) => {
                       e.currentTarget.src = fallbackImage;
                     }}
@@ -228,7 +228,7 @@ export default function HeroSlider({
           </div>
         ) : (
           /* CASE 2: SPLIT LAYOUT WITH TEXT CONTENT + GRAPHIC */
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center min-h-[360px] sm:min-h-[400px] lg:min-h-[440px]">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
             {/* Left: Dynamic Content Update Section */}
             <div className="order-2 lg:order-1 lg:col-span-7 space-y-4 text-left">
               {/* Live Pill Badge */}
@@ -250,7 +250,7 @@ export default function HeroSlider({
               {current.title && (
                 <h1
                   key={`title-${currentIndex}`}
-                  className="text-2xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 leading-snug transition-all duration-300"
+                  className="text-2xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 leading-snug line-clamp-3 transition-all duration-300"
                 >
                   {current.title}
                 </h1>
@@ -260,7 +260,7 @@ export default function HeroSlider({
               {hasSubtitle && (
                 <p
                   key={`sub-${currentIndex}`}
-                  className="text-sm sm:text-base text-slate-600 max-w-xl leading-relaxed transition-all duration-300"
+                  className="text-sm sm:text-base text-slate-600 max-w-xl leading-relaxed line-clamp-3 transition-all duration-300"
                 >
                   {current.subtitle}
                 </p>
@@ -283,7 +283,7 @@ export default function HeroSlider({
                     <a
                       href={
                         current.secondaryBtnLink ||
-                        `https://wa.me/${whatsappNumber}?text=Hello%20MatruKa%20Team%2C%20I%20would%20like%20information%20about%20your%20services.`
+                        `https://wa.me/${whatsappNumber}?text=Hello%20Matruka%20Team%2C%20I%20would%20like%20information%20about%20your%20services.`
                       }
                       target={current.secondaryBtnLink?.startsWith('http') ? '_blank' : undefined}
                       rel={current.secondaryBtnLink?.startsWith('http') ? 'noopener noreferrer' : undefined}
@@ -337,8 +337,8 @@ export default function HeroSlider({
                     <img
                       key={heroImageSrc + currentIndex}
                       src={heroImageSrc}
-                      alt={current.title || 'MatruKa Maternity & Gynaecology Care Surat'}
-                      className="relative z-10 h-[260px] sm:h-[340px] lg:h-[400px] xl:h-[440px] w-auto max-w-full object-contain drop-shadow-[0_16px_30px_rgba(4,150,172,0.14)] group-hover:scale-105 transition-transform duration-300"
+                      alt={current.title || 'Matruka Maternity & Gynaecology Care Surat'}
+                      className="relative z-10 h-[220px] sm:h-[280px] lg:h-[390px] xl:h-[410px] w-auto max-w-full object-contain drop-shadow-[0_16px_30px_rgba(4,150,172,0.14)] group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
                         e.currentTarget.src = fallbackImage;
                       }}
@@ -349,8 +349,8 @@ export default function HeroSlider({
                   <img
                     key={heroImageSrc + currentIndex}
                     src={heroImageSrc}
-                    alt={current.title || 'MatruKa Maternity & Gynaecology Care Surat'}
-                    className="relative z-10 h-[260px] sm:h-[340px] lg:h-[400px] xl:h-[440px] w-auto max-w-full object-contain drop-shadow-[0_16px_30px_rgba(4,150,172,0.14)] transition-opacity duration-500"
+                    alt={current.title || 'Matruka Maternity & Gynaecology Care Surat'}
+                    className="relative z-10 h-[220px] sm:h-[280px] lg:h-[390px] xl:h-[410px] w-auto max-w-full object-contain drop-shadow-[0_16px_30px_rgba(4,150,172,0.14)] transition-opacity duration-500"
                     onError={(e) => {
                       e.currentTarget.src = fallbackImage;
                     }}
@@ -360,6 +360,7 @@ export default function HeroSlider({
             </div>
           </div>
         )}
+        </div>
 
         {/* Bottom Dot Indicators (Shown ONLY if multiple slides exist) */}
         {total > 1 && (

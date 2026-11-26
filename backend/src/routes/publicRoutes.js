@@ -18,6 +18,7 @@ const Video = require('../models/Video');
 const HospitalLocation = require('../models/HospitalLocation');
 const hospitalLocationCtrl = require('../controllers/hospitalLocationController');
 const newsletterCtrl = require('../controllers/newsletterController');
+const { sendLeadNotificationEmails } = require('../utils/mailer');
 
 // 1. Aggregated Homepage & Navigation Data
 router.get('/home-data', async (req, res) => {
@@ -44,7 +45,7 @@ router.get('/home-data', async (req, res) => {
       MenuItem.find({ isHeader: true, isActive: true }).sort({ sortOrder: 1 }),
       MenuItem.find({ isFooter: true, isActive: true }).sort({ sortOrder: 1 }),
       Doctor.find({ isPublished: true, isFeatured: true }).sort({ sortOrder: 1 }),
-      Service.find({ isPublished: true, isFeatured: true }).sort({ sortOrder: 1 }),
+      Service.find({ isPublished: true }).sort({ sortOrder: 1, createdAt: -1 }),
       Facility.find({ isPublished: true }).sort({ sortOrder: 1 }).limit(6),
       Testimonial.find({ isPublished: true, isFeatured: true }).sort({ sortOrder: 1 }).limit(6),
       Blog.find({ status: 'published' }).sort({ publishedAt: -1 }).limit(3),
@@ -412,6 +413,11 @@ router.post('/appointments', async (req, res) => {
       preferredTime,
       message,
       status: 'Pending',
+    });
+
+    // Fire-and-forget email notification to clinic & patient
+    sendLeadNotificationEmails(appointment).catch((mailErr) => {
+      console.error('Lead email dispatch error:', mailErr);
     });
 
     res.status(201).json({

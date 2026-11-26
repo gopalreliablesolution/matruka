@@ -24,6 +24,13 @@ import ConfirmModal from '@/components/admin/ConfirmModal';
 import DoctorAvatar from '@/components/DoctorAvatar';
 import toast from 'react-hot-toast';
 
+interface JourneyItem {
+  year: string;
+  role: string;
+  institution: string;
+  description?: string;
+}
+
 interface DoctorItem {
   _id: string;
   name: string;
@@ -35,6 +42,7 @@ interface DoctorItem {
   bio: string;
   areasOfExpertise: string[];
   fellowshipsAndCertifications: string[];
+  experienceJourney?: JourneyItem[];
   opdTimings: string;
   profileImage: string;
   phone?: string;
@@ -74,6 +82,7 @@ export default function AdminDoctorsPage() {
     bio: '',
     areasOfExpertise: '',
     fellowshipsAndCertifications: '',
+    experienceJourney: [] as JourneyItem[],
     opdTimings: '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Mon-Sat)',
     profileImage: '',
     phone: '7984882273',
@@ -114,6 +123,7 @@ export default function AdminDoctorsPage() {
         bio: doc.bio || '',
         areasOfExpertise: (doc.areasOfExpertise || []).join(', '),
         fellowshipsAndCertifications: (doc.fellowshipsAndCertifications || []).join(', '),
+        experienceJourney: Array.isArray(doc.experienceJourney) ? doc.experienceJourney : [],
         opdTimings: doc.opdTimings || '',
         profileImage: doc.profileImage || '',
         phone: doc.phone || '7984882273',
@@ -133,6 +143,7 @@ export default function AdminDoctorsPage() {
         bio: '',
         areasOfExpertise: '',
         fellowshipsAndCertifications: 'Fellowship in Advanced Laparoscopic Surgery',
+        experienceJourney: [],
         opdTimings: '10:00 AM - 1:00 PM | 5:00 PM - 7:00 PM (Mon-Sat)',
         profileImage: '',
         phone: '7984882273',
@@ -162,6 +173,9 @@ export default function AdminDoctorsPage() {
         .split(',')
         .map((s) => s.trim())
         .filter(Boolean),
+      experienceJourney: (formData.experienceJourney || []).filter(
+        (j) => j.year.trim() || j.role.trim() || j.institution.trim()
+      ),
     };
 
     try {
@@ -508,6 +522,110 @@ export default function AdminDoctorsPage() {
                   placeholder="Comprehensive clinical background and patient care philosophy..."
                   className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                 />
+              </div>
+
+              {/* Experience & Career Journey Builder */}
+              <div className="p-4 rounded-2xl border border-teal-100 bg-teal-50/40 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-900 uppercase tracking-wider">
+                      Experience &amp; Medical Journey (Year-wise)
+                    </label>
+                    <p className="text-[11px] text-gray-500">
+                      Add year-by-year milestones (degrees, hospital roles, fellowships) to show as a timeline on the doctor profile.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        experienceJourney: [
+                          ...(formData.experienceJourney || []),
+                          { year: '', role: '', institution: '', description: '' },
+                        ],
+                      })
+                    }
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#0496AC] text-white text-xs font-semibold hover:bg-[#037A8C] transition shrink-0 cursor-pointer"
+                  >
+                    <Plus size={14} />
+                    <span>Add Year</span>
+                  </button>
+                </div>
+
+                {(formData.experienceJourney || []).length === 0 ? (
+                  <p className="text-xs text-gray-400 italic py-2 text-center bg-white/70 rounded-xl border border-dashed border-gray-200">
+                    No journey milestones added yet. Click &ldquo;Add Year&rdquo; to add experience timeline.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {(formData.experienceJourney || []).map((j, jIdx) => (
+                      <div key={jIdx} className="p-3 bg-white rounded-xl border border-gray-200 space-y-2 relative">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] font-bold text-[#0496AC]">Milestone #{jIdx + 1}</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const next = [...(formData.experienceJourney || [])];
+                              next.splice(jIdx, 1);
+                              setFormData({ ...formData, experienceJourney: next });
+                            }}
+                            className="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50 transition cursor-pointer"
+                            title="Remove Milestone"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                          <input
+                            type="text"
+                            value={j.year}
+                            onChange={(e) => {
+                              const next = [...(formData.experienceJourney || [])];
+                              next[jIdx] = { ...next[jIdx], year: e.target.value };
+                              setFormData({ ...formData, experienceJourney: next });
+                            }}
+                            placeholder="Year (e.g. 2016 - 2019)"
+                            className="px-2.5 py-2 rounded-lg border border-gray-200 text-xs font-semibold outline-none focus:border-primary"
+                          />
+                          <input
+                            type="text"
+                            value={j.role}
+                            onChange={(e) => {
+                              const next = [...(formData.experienceJourney || [])];
+                              next[jIdx] = { ...next[jIdx], role: e.target.value };
+                              setFormData({ ...formData, experienceJourney: next });
+                            }}
+                            placeholder="Role / Degree (e.g. MS OBGYN)"
+                            className="sm:col-span-2 px-2.5 py-2 rounded-lg border border-gray-200 text-xs font-semibold outline-none focus:border-primary"
+                          />
+                        </div>
+                        <input
+                          type="text"
+                          value={j.institution}
+                          onChange={(e) => {
+                            const next = [...(formData.experienceJourney || [])];
+                            next[jIdx] = { ...next[jIdx], institution: e.target.value };
+                            setFormData({ ...formData, experienceJourney: next });
+                          }}
+                          placeholder="Hospital / College (e.g. Civil Hospital, Surat)"
+                          className="w-full px-2.5 py-2 rounded-lg border border-gray-200 text-xs outline-none focus:border-primary"
+                        />
+                        <input
+                          type="text"
+                          value={j.description || ''}
+                          onChange={(e) => {
+                            const next = [...(formData.experienceJourney || [])];
+                            next[jIdx] = { ...next[jIdx], description: e.target.value };
+                            setFormData({ ...formData, experienceJourney: next });
+                          }}
+                          placeholder="Brief highlight (optional)"
+                          className="w-full px-2.5 py-2 rounded-lg border border-gray-200 text-xs outline-none focus:border-primary"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-6 pt-2">

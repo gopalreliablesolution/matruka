@@ -113,7 +113,7 @@ export default async function MediaPage() {
             <span>Hospital Media &amp; Resources</span>
           </div>
           <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading tracking-tight text-white">
-            {pageData?.heroTitle || 'MatruKa Media Centre'}
+            {pageData?.heroTitle || 'Matruka Media Centre'}
           </h1>
           <p className="text-white/90 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
             {pageData?.heroSubtitle ||

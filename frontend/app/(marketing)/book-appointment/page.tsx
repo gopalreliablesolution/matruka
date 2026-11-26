@@ -1,28 +1,17 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { CalendarDays, CheckCircle2, Clock, Loader2, Phone, ShieldCheck, Stethoscope, User } from 'lucide-react';
+import { CalendarDays, CheckCircle2, Clock, Loader2, Phone, ShieldCheck, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { publicApi } from '@/lib/api';
 
 type Doctor = { _id?: string; name: string; specialization?: string };
-type Service = { _id?: string; name: string; category?: string };
 
 const TIME_SLOTS = [
   'Morning OPD (10:00 AM - 1:00 PM)',
   'Evening OPD (5:00 PM - 7:00 PM)',
   'Flexible / Call to Confirm',
-];
-
-const DEPARTMENTS = [
-  'Obstetrics & Normal Delivery',
-  'High Risk Pregnancy',
-  'Gynecology Consultation',
-  'Laparoscopic Surgery Consultation',
-  'Infertility Evaluation',
-  'Antenatal / Postnatal Care',
-  'General Women Health',
 ];
 
 function isValidEmail(email: string) {
@@ -41,14 +30,12 @@ export default function BookAppointmentPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     patientName: '',
     phone: '',
     email: '',
     city: 'Surat',
-    department: DEPARTMENTS[0],
     doctor: 'Any Available Specialist',
     preferredDate: '',
     preferredTime: TIME_SLOTS[0],
@@ -59,20 +46,10 @@ export default function BookAppointmentPage() {
     let mounted = true;
     (async () => {
       try {
-        const [docRes, svcRes] = await Promise.allSettled([
-          publicApi.get('/doctors'),
-          publicApi.get('/services'),
-        ]);
+        const docRes = await publicApi.get('/doctors');
         if (!mounted) return;
-        if (docRes.status === 'fulfilled') {
-          const list = docRes.value?.data?.data || docRes.value?.data || [];
-          setDoctors(Array.isArray(list) ? list : []);
-        }
-        if (svcRes.status === 'fulfilled') {
-          const payload = svcRes.value?.data?.data;
-          const list = Array.isArray(payload) ? payload : (payload?.services || []);
-          setServices(Array.isArray(list) ? list : []);
-        }
+        const list = docRes?.data?.data || docRes?.data || [];
+        setDoctors(Array.isArray(list) ? list : []);
       } catch {
         // optional data; form still works without it
       }
@@ -81,12 +58,6 @@ export default function BookAppointmentPage() {
       mounted = false;
     };
   }, []);
-
-  const departmentOptions = useMemo(() => {
-    const fromServices = services.map((s) => s?.name).filter(Boolean);
-    const merged = [...DEPARTMENTS, ...fromServices];
-    return Array.from(new Set(merged));
-  }, [services]);
 
   const validate = () => {
     const next: Record<string, string> = {};
@@ -107,8 +78,6 @@ export default function BookAppointmentPage() {
     else if (email.length > 120) next.email = 'Email must be 120 characters or less.';
 
     if (city.length > 60) next.city = 'City must be 60 characters or less.';
-
-    if (!form.department.trim()) next.department = 'Please select a department/service.';
 
     if (form.preferredDate) {
       const min = todayYMD();
@@ -148,7 +117,7 @@ export default function BookAppointmentPage() {
         phone: form.phone.replace(/\D/g, ''),
         email: form.email.trim().toLowerCase(),
         city: form.city.trim() || 'Surat',
-        department: form.department.trim(),
+        department: 'Obstetrics & Normal Delivery',
         doctor: form.doctor.trim() || 'Any Available Specialist',
         preferredDate: form.preferredDate,
         preferredTime: form.preferredTime,
@@ -164,7 +133,6 @@ export default function BookAppointmentPage() {
           phone: '',
           email: '',
           city: 'Surat',
-          department: DEPARTMENTS[0],
           doctor: 'Any Available Specialist',
           preferredDate: '',
           preferredTime: TIME_SLOTS[0],
@@ -315,43 +283,22 @@ export default function BookAppointmentPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="department">Department / Service *</label>
-                    <div className="relative">
-                      <Stethoscope className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                      <select
-                        id="department"
-                        name="department"
-                        value={form.department}
-                        onChange={onChange}
-                        className={`w-full rounded-xl border bg-white py-2.5 pl-10 pr-3 text-sm outline-none transition ${errors.department ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100' : 'border-slate-300 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/15'}`}
-                      >
-                        {departmentOptions.map((opt) => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {errors.department && <p className="mt-1 text-xs text-red-600">{errors.department}</p>}
-                  </div>
-
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="doctor">Preferred Doctor</label>
-                    <select
-                      id="doctor"
-                      name="doctor"
-                      value={form.doctor}
-                      onChange={onChange}
-                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/15"
-                    >
-                      <option value="Any Available Specialist">Any Available Specialist</option>
-                      {doctors.map((d) => (
-                        <option key={d._id || d.name} value={d.name}>
-                          {d.name}{d.specialization ? ` — ${d.specialization}` : ''}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="doctor">Preferred Doctor</label>
+                  <select
+                    id="doctor"
+                    name="doctor"
+                    value={form.doctor}
+                    onChange={onChange}
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/15"
+                  >
+                    <option value="Any Available Specialist">Any Available Specialist</option>
+                    {doctors.map((d) => (
+                      <option key={d._id || d.name} value={d.name}>
+                        {d.name}{d.specialization ? ` — ${d.specialization}` : ''}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
