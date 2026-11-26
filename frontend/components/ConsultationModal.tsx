@@ -104,10 +104,22 @@ export default function ConsultationModal({ settings }: ConsultationModalProps) 
   const delaySeconds = typeof popup?.delaySeconds === 'number' ? popup.delaySeconds : 3.5;
   const showOncePerSession = popup?.showOncePerSession !== undefined ? popup.showOncePerSession : true;
 
+  const hasHeaderContent = showHeader && (Boolean(title) || Boolean(subtitle));
+  const hasImageContent = Boolean(showImage && imageUrl);
+  const hasInfoContent = showInfo && ((showOpd && Boolean(opdTimings)) || (showAddress && Boolean(address)));
+  const hasButtons = showWhatsapp || showCall;
+  const hasBodyContent =
+    (showDescription && Boolean(description)) ||
+    hasInfoContent ||
+    hasButtons ||
+    showDismiss;
+  const hasAnyVisibleContent = hasHeaderContent || hasImageContent || hasBodyContent;
+  const isImageOnly = Boolean(hasImageContent && !hasHeaderContent && !hasBodyContent);
+
   // Auto-open logic
   useEffect(() => {
-    // If popup is disabled in admin settings, never auto-open
-    if (!isPopupActive) {
+    // If popup is disabled in admin settings or has nothing visible, never open
+    if (!isPopupActive || !hasAnyVisibleContent) {
       setIsOpen(false);
       return;
     }
@@ -125,8 +137,8 @@ export default function ConsultationModal({ settings }: ConsultationModalProps) 
     }
 
     const handleOpenEvent = () => {
-      // Manual trigger only opens if popup is active
-      if (isPopupActive) {
+      // Manual trigger only opens if popup is active and has visible content
+      if (isPopupActive && hasAnyVisibleContent) {
         setIsOpen(true);
       }
     };
@@ -136,7 +148,7 @@ export default function ConsultationModal({ settings }: ConsultationModalProps) 
       clearTimeout(timer);
       window.removeEventListener('open-consultation-modal', handleOpenEvent);
     };
-  }, [isPopupActive, delaySeconds, showOncePerSession]);
+  }, [isPopupActive, hasAnyVisibleContent, delaySeconds, showOncePerSession]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -145,17 +157,8 @@ export default function ConsultationModal({ settings }: ConsultationModalProps) 
     }
   };
 
-  // If popup is not open, or popup is globally disabled
-  if (!isOpen || !isPopupActive) return null;
-
-  const hasInfoContent = showInfo && ((showOpd && Boolean(opdTimings)) || (showAddress && Boolean(address)));
-  const hasButtons = showWhatsapp || showCall;
-  const hasBodyContent =
-    (showDescription && Boolean(description)) ||
-    hasInfoContent ||
-    hasButtons ||
-    showDismiss;
-  const isImageOnly = Boolean(showImage && imageUrl && !showHeader && !hasBodyContent);
+  // If popup is not open, disabled, or has no visible content at all
+  if (!isOpen || !isPopupActive || !hasAnyVisibleContent) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">

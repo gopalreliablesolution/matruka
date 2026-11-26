@@ -1010,6 +1010,8 @@ function AdminSettingsContent() {
 
                     {/* Pop-up Card */}
                     {(() => {
+                      const hasPreviewHeader = formData.popup.showHeader;
+                      const hasPreviewImage = Boolean(formData.popup.showImage && formData.popup.imageUrl);
                       const hasPreviewInfo =
                         formData.popup.showInfo && (formData.popup.showOpd || formData.popup.showAddress);
                       const hasPreviewBody =
@@ -1018,10 +1020,20 @@ function AdminSettingsContent() {
                         formData.popup.showWhatsapp ||
                         formData.popup.showCall ||
                         formData.popup.showDismiss;
-                      const isPreviewImageOnly =
-                        Boolean(formData.popup.showImage && formData.popup.imageUrl) &&
-                        !formData.popup.showHeader &&
-                        !hasPreviewBody;
+                      const hasAnyPreviewContent = hasPreviewHeader || hasPreviewImage || hasPreviewBody;
+                      const isPreviewImageOnly = hasPreviewImage && !hasPreviewHeader && !hasPreviewBody;
+
+                      if (!hasAnyPreviewContent) {
+                        return (
+                          <div className="bg-white/95 rounded-2xl p-6 text-center max-w-xs border border-slate-200 shadow-lg space-y-2">
+                            <EyeOff className="w-7 h-7 text-slate-400 mx-auto" />
+                            <p className="text-xs font-bold text-slate-700">No Content Selected</p>
+                            <p className="text-[11px] text-slate-500">
+                              All sections are hidden (or no image is uploaded). Nothing will appear on the website.
+                            </p>
+                          </div>
+                        );
+                      }
 
                       return (
                         <div
