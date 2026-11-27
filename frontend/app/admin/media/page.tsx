@@ -142,8 +142,8 @@ export default function AdminMediaPage() {
       />
 
       {/* Search Toolbar */}
-      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
-        <div className="relative w-full max-w-md">
+      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={17} />
           <input
             type="text"
@@ -153,7 +153,7 @@ export default function AdminMediaPage() {
             className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition"
           />
         </div>
-        <span className="text-xs text-gray-500 font-medium">
+        <span className="text-xs text-gray-500 font-medium whitespace-nowrap shrink-0">
           Total Assets: <strong className="text-gray-900">{mediaList.length}</strong>
         </span>
       </div>
@@ -176,7 +176,7 @@ export default function AdminMediaPage() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {mediaList
               .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
               .map((item) => {
@@ -214,7 +214,7 @@ export default function AdminMediaPage() {
                   <div className="flex items-center gap-2 mt-3 pt-2 border-t border-gray-100">
                     <button
                       onClick={() => copyUrl(item._id, item.url)}
-                      className="flex-1 py-1.5 px-2 bg-gray-50 hover:bg-brand-teal-50 hover:text-primary text-gray-600 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1 border border-gray-200"
+                      className="flex-1 py-1.5 px-2 bg-gray-50 hover:bg-brand-teal-50 hover:text-primary text-gray-600 rounded text-[11px] font-semibold transition flex items-center justify-center gap-1 border border-gray-200 whitespace-nowrap"
                       title="Copy Local URL"
                     >
                       {copiedId === item._id ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}

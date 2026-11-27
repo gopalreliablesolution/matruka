@@ -122,8 +122,8 @@ export default function MaternityCarePathway({
         {/* Section Header */}
         <ScrollReveal animation="fade-up" duration={600}>
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
-              <Baby className="w-3.5 h-3.5 text-brand-teal-600" />
+            <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+              <Baby className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
               <span>{badgeText}</span>
             </span>
             <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 mt-2 leading-snug">
@@ -136,7 +136,7 @@ export default function MaternityCarePathway({
         </ScrollReveal>
 
         {/* 4-Step Interactive Nav Tabs */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {safeStages.map((stg, idx) => {
             const isActive = activeTab === idx;
             return (
@@ -144,30 +144,30 @@ export default function MaternityCarePathway({
                 key={idx}
                 type="button"
                 onClick={() => setActiveTab(idx)}
-                className={`p-3.5 sm:p-4 rounded-2xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+                className={`p-3.5 sm:p-4 rounded-2xl text-left border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-2 ${
                   isActive
-                    ? 'bg-brand-teal-600 text-white border-brand-teal-600 shadow-[0_6px_20px_rgba(4,150,172,0.25)] scale-[1.02]'
+                    ? 'bg-brand-teal-600 text-white border-brand-teal-600 shadow-[0_6px_20px_rgba(4,150,172,0.25)] sm:scale-[1.02]'
                     : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/90'
                 }`}
               >
-                <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
                   <span
-                    className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${
+                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-md whitespace-nowrap shrink-0 ${
                       isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     Step {stg.step}
                   </span>
                   <span
-                    className={`text-[10px] font-medium truncate ${
-                      isActive ? 'text-teal-100' : 'text-slate-400'
+                    className={`text-[11px] font-medium ${
+                      isActive ? 'text-teal-100' : 'text-slate-500'
                     }`}
                   >
                     {stg.duration}
                   </span>
                 </div>
                 <h3
-                  className={`text-xs sm:text-sm font-bold leading-snug line-clamp-2 ${
+                  className={`text-sm font-bold leading-snug ${
                     isActive ? 'text-white' : 'text-brand-slate-900'
                   }`}
                 >

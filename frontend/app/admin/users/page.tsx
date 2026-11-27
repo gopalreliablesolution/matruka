@@ -122,66 +122,116 @@ export default function AdminUsersPage() {
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[42rem] text-left text-xs sm:text-sm divide-y divide-slate-200">
-              <thead className="sticky top-0 z-10 bg-[#F6F8F9] text-slate-700 font-semibold uppercase tracking-wider text-[11px]">
-                <tr>
-                  <th className="py-3.5 px-4">Name</th>
-                  <th className="py-3.5 px-4">Email Address</th>
-                  <th className="py-3.5 px-4 text-center">Assigned Role</th>
-                  <th className="py-3.5 px-4 text-center">Status</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {users.map((u) => {
-                  const uid = u._id || u.id;
-                  return (
-                    <tr key={uid} className="hover:bg-slate-50/80 transition">
-                      <td className="py-3.5 px-4 font-bold text-brand-slate-900">{u.name}</td>
-                      <td className="py-3.5 px-4 font-mono text-slate-600">{u.email}</td>
-                      <td className="py-3.5 px-4 text-center">
-                        <span
-                          className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
-                            u.role === 'super_admin'
-                              ? 'bg-purple-100 text-purple-800'
-                              : u.role === 'admin'
-                              ? 'bg-brand-teal-100 text-brand-teal-800'
-                              : 'bg-slate-100 text-slate-700'
-                          }`}
-                        >
-                          {u.role.replace('_', ' ')}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <span
-                          className={`inline-block rounded-full px-2.5 py-1 text-[10px] font-semibold ${
-                            u.isActive
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              : 'bg-slate-100 text-slate-600 border border-slate-200'
-                          }`}
-                        >
-                          {u.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-right">
-                        <button
-                          onClick={() =>
-                            setDeleteModal({ isOpen: true, user: u, loading: false })
-                          }
-                          className="p-1.5 text-red-600 hover:bg-red-50 rounded"
-                          title="Delete User"
-                          aria-label={`Delete ${u.name}`}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <>
+            {/* Mobile Card Stack (< md) */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {users.map((u) => {
+                const uid = u._id || u.id;
+                return (
+                  <div key={`${uid}-m`} className="p-4 space-y-2.5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-bold text-sm text-brand-slate-900 truncate">{u.name}</p>
+                        <p className="font-mono text-xs text-slate-600 break-all mt-0.5">{u.email}</p>
+                      </div>
+                      <button
+                        onClick={() => setDeleteModal({ isOpen: true, user: u, loading: false })}
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded shrink-0"
+                        title="Delete User"
+                        aria-label={`Delete ${u.name}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span
+                        className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
+                          u.role === 'super_admin'
+                            ? 'bg-purple-100 text-purple-800'
+                            : u.role === 'admin'
+                            ? 'bg-brand-teal-100 text-brand-teal-800'
+                            : 'bg-slate-100 text-slate-700'
+                        }`}
+                      >
+                        {u.role.replace('_', ' ')}
+                      </span>
+                      <span
+                        className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
+                          u.isActive
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-slate-100 text-slate-600 border border-slate-200'
+                        }`}
+                      >
+                        {u.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table (>= md) */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full min-w-[42rem] text-left text-xs sm:text-sm divide-y divide-slate-200">
+                <thead className="sticky top-0 z-10 bg-[#F6F8F9] text-slate-700 font-semibold uppercase tracking-wider text-[11px]">
+                  <tr>
+                    <th className="py-3.5 px-4">Name</th>
+                    <th className="py-3.5 px-4">Email Address</th>
+                    <th className="py-3.5 px-4 text-center">Assigned Role</th>
+                    <th className="py-3.5 px-4 text-center">Status</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {users.map((u) => {
+                    const uid = u._id || u.id;
+                    return (
+                      <tr key={uid} className="hover:bg-slate-50/80 transition">
+                        <td className="py-3.5 px-4 font-bold text-brand-slate-900">{u.name}</td>
+                        <td className="py-3.5 px-4 font-mono text-slate-600">{u.email}</td>
+                        <td className="py-3.5 px-4 text-center">
+                          <span
+                            className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider ${
+                              u.role === 'super_admin'
+                                ? 'bg-purple-100 text-purple-800'
+                                : u.role === 'admin'
+                                ? 'bg-brand-teal-100 text-brand-teal-800'
+                                : 'bg-slate-100 text-slate-700'
+                            }`}
+                          >
+                            {u.role.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <span
+                            className={`inline-block rounded-full px-2.5 py-1 text-[10px] font-semibold ${
+                              u.isActive
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-slate-100 text-slate-600 border border-slate-200'
+                            }`}
+                          >
+                            {u.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <button
+                            onClick={() =>
+                              setDeleteModal({ isOpen: true, user: u, loading: false })
+                            }
+                            className="p-1.5 text-red-600 hover:bg-red-50 rounded"
+                            title="Delete User"
+                            aria-label={`Delete ${u.name}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 

@@ -234,12 +234,12 @@ export default function HeroSlider({
               {/* Live Pill Badge */}
               {hasBadge && (
                 <div className="flex items-center gap-3 flex-wrap">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-teal-50 border border-brand-teal-200/80">
-                    <span className="relative flex h-2 w-2">
+                  <div className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full px-2.5 sm:px-3 py-1 rounded-full bg-brand-teal-50 border border-brand-teal-200/80">
+                    <span className="relative flex h-2 w-2 shrink-0">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-teal-600" />
                     </span>
-                    <span className="text-xs font-semibold tracking-wider uppercase text-brand-teal-700">
+                    <span className="text-[10px] sm:text-xs font-semibold tracking-wide sm:tracking-wider uppercase text-brand-teal-700 leading-snug">
                       {current.badgeText}
                     </span>
                   </div>

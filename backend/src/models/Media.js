@@ -10,6 +10,7 @@ const mediaSchema = new mongoose.Schema(
     size: { type: Number, required: true },
     altText: { type: String, default: '' },
     uploadedBy: { type: String, default: 'Admin' },
+    data: { type: Buffer, select: false },
   },
   { timestamps: true }
 );

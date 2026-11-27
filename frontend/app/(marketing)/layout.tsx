@@ -12,7 +12,7 @@ async function getLayoutData() {
       fetch(`${BACKEND_URL}/api/v1/public/settings`, { cache: 'no-store' }),
       fetch(`${BACKEND_URL}/api/v1/public/navigation`, { cache: 'no-store' }),
       fetch(`${BACKEND_URL}/api/v1/public/home-data`, { cache: 'no-store' }),
-      fetch(`${BACKEND_URL}/api/v1/public/services`, { cache: 'no-store' }),
+      fetch(`${BACKEND_URL}/api/v1/public/services?limit=100`, { cache: 'no-store' }),
     ]);
 
     const settingsData = settingsRes.ok ? await settingsRes.json() : null;

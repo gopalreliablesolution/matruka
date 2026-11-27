@@ -164,19 +164,17 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
         .filter((child) => parentId && getParentIdStr(child) === parentId)
         .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-      // Fallback for default Services if no database children exist yet
+      // Always populate Services / Specialities dropdown dynamically from live services when available
       const labelLower = parent.label.trim().toLowerCase();
-      if (
-        children.length === 0 &&
-        (parent.url === '/services' || labelLower === 'services' || labelLower === 'specialities')
-      ) {
+      if (parent.url === '/services' || labelLower === 'services' || labelLower === 'specialities') {
         if (services && services.length > 0) {
           children = services.map((s: any, idx: number) => ({
+            _id: s._id || s.slug,
             label: s.name,
             url: `/services/${s.slug}`,
             sortOrder: s.sortOrder ?? idx + 1,
           }));
-        } else {
+        } else if (children.length === 0) {
           children = DEFAULT_SERVICES.map((s, idx) => ({
             label: s.label,
             url: s.href,
@@ -426,7 +424,7 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
                         <div
                           role="menu"
                           style={{ backgroundColor: '#ffffff', opacity: 1 }}
-                          className={`absolute ${isMore ? 'right-0 left-auto translate-x-0' : 'left-1/2 -translate-x-1/2'} top-[4.75rem] z-[100] flex max-h-[72vh] min-w-[16rem] max-w-[22rem] flex-col gap-1 overflow-y-auto rounded-2xl border border-slate-200 bg-white p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.18)] ring-1 ring-black/10 animate-in fade-in slide-in-from-top-2 duration-150`}
+                          className={`absolute ${isMore ? 'right-0 left-auto translate-x-0' : 'left-1/2 -translate-x-1/2'} top-[4.75rem] z-[100] flex max-h-[min(68vh,28rem)] min-w-[16rem] max-w-[22rem] flex-col gap-1 overflow-y-auto overscroll-contain rounded-2xl border border-slate-200 bg-white p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.18)] ring-1 ring-black/10 animate-in fade-in slide-in-from-top-2 duration-150`}
                         >
                           {item.children!.map((child: any) => {
                             const childHasNested = Boolean(child.children && child.children.length > 0);
@@ -588,8 +586,8 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
                     </button>
 
                     <div
-                      className={`overflow-hidden transition-all duration-300 ${
-                        isOpen ? 'max-h-[30rem] opacity-100' : 'max-h-0 opacity-0'
+                      className={`transition-all duration-300 ${
+                        isOpen ? 'max-h-[55vh] overflow-y-auto overscroll-contain opacity-100' : 'max-h-0 overflow-hidden opacity-0'
                       }`}
                     >
                       <div className="mt-1 flex flex-col rounded-lg bg-gray-50/80 px-2 py-2 space-y-1">

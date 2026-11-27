@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LogOut,
   ChevronDown,
@@ -18,10 +18,29 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
-export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
+function SidebarContent({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { user, logout } = useAuth();
   const [openMenus, setOpenMenus] = useState<string[]>([]);
+
+  const isHrefActive = (href?: string) => {
+    if (!href) return false;
+    const [targetPath, targetQuery] = href.split('?');
+    if (pathname !== targetPath) return false;
+    if (targetQuery) {
+      const targetParams = new URLSearchParams(targetQuery);
+      for (const [k, v] of targetParams.entries()) {
+        if (searchParams.get(k) !== v) return false;
+      }
+      return true;
+    }
+    // For /admin/settings without query, only mark active when not on the Pop-up Modal tab
+    if (targetPath === '/admin/settings' && searchParams.get('tab') === 'popup') {
+      return false;
+    }
+    return true;
+  };
 
   const visibleMenuItems = useMemo(
     () =>
@@ -137,7 +156,7 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
             const Icon = item.icon;
 
             if (!item.subLinks) {
-              const isActive = pathname === item.href;
+              const isActive = isHrefActive(item.href);
 
               return (
                 <Link
@@ -240,5 +259,13 @@ export default function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         </div>
       </aside>
     </>
+  );
+}
+
+export default function Sidebar(props: SidebarProps) {
+  return (
+    <Suspense fallback={null}>
+      <SidebarContent {...props} />
+    </Suspense>
   );
 }

@@ -134,7 +134,7 @@ const DataTable: React.FC<DataTableProps> = ({
           value={filter.value || ''}
           onChange={(event) => filter.onChange(event.target.value)}
           placeholder={filter.label}
-          className="min-w-[12rem] rounded-lg border border-[#D8E1E4] bg-white px-3.5 py-2.5 text-sm text-[#344B53] outline-none transition placeholder:text-[#8AA3AD] focus:border-primary focus:ring-2 focus:ring-primary/15"
+          className="w-full sm:w-auto sm:min-w-[12rem] rounded-lg border border-[#D8E1E4] bg-white px-3.5 py-2.5 text-xs sm:text-sm text-[#344B53] outline-none transition placeholder:text-[#8AA3AD] focus:border-primary focus:ring-2 focus:ring-primary/15"
         />
       );
     }
@@ -143,7 +143,7 @@ const DataTable: React.FC<DataTableProps> = ({
       <select
         value={filter.value || ''}
         onChange={(event) => filter.onChange(event.target.value)}
-        className="min-w-[10.5rem] rounded-lg border border-[#D8E1E4] bg-white px-3.5 py-2.5 text-sm font-medium text-[#344B53] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15"
+        className="w-full sm:w-auto sm:min-w-[10.5rem] rounded-lg border border-[#D8E1E4] bg-white px-3.5 py-2.5 text-xs sm:text-sm font-medium text-[#344B53] outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/15 cursor-pointer"
         aria-label={filter.label}
       >
         <option value="">{filter.label}</option>
@@ -173,7 +173,9 @@ const DataTable: React.FC<DataTableProps> = ({
                     placeholder={search.placeholder || 'Search records...'}
                     value={search.value}
                     onChange={(event) => search.onChange(event.target.value)}
-                    className="w-full rounded-lg border border-[#D8E1E4] bg-[#F8FAFB] py-2.5 pl-10 pr-9 text-sm text-[#27393F] outline-none transition placeholder:text-[#8AA3AD] focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/15"
+                    className={`w-full rounded-lg border border-[#D8E1E4] bg-[#F8FAFB] py-2.5 pl-9 ${
+                      search.value ? 'pr-9' : 'pr-3'
+                    } text-xs sm:text-sm text-[#27393F] outline-none transition placeholder:text-[#8AA3AD] focus:border-primary focus:bg-white focus:ring-2 focus:ring-primary/15`}
                   />
                   {search.value && (
                     <button
@@ -189,7 +191,7 @@ const DataTable: React.FC<DataTableProps> = ({
               )}
 
               {filters?.map((filter) => (
-                <div key={filter.name} className="shrink-0">
+                <div key={filter.name} className="w-full sm:w-auto sm:shrink-0">
                   {renderFilter(filter)}
                 </div>
               ))}
@@ -199,7 +201,62 @@ const DataTable: React.FC<DataTableProps> = ({
       )}
 
       <div className="flex flex-col overflow-hidden rounded-xl border border-[#E1E9EB] bg-white shadow-sm">
-        <div className="overflow-x-auto rounded-t-xl">
+        {/* Mobile Card Stack (< md) */}
+        <div className="md:hidden divide-y divide-[#EDF1F2]">
+          {loading ? (
+            <div className="p-10 text-center">
+              <div className="flex flex-col items-center justify-center gap-3 text-[#637C85]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-light/20">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-[#344B53]">Loading records</p>
+                  <p className="mt-0.5 text-xs text-[#8AA3AD]">
+                    Please wait while we prepare the latest data.
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : data.length === 0 ? (
+            <div className="p-10 text-center">
+              <div className="mx-auto flex max-w-sm flex-col items-center">
+                <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-[#F0F4F5] text-[#8AA3AD]">
+                  <Inbox size={23} />
+                </span>
+                <p className="text-sm font-semibold text-[#344B53]">{emptyMessage}</p>
+                <p className="mt-1 text-xs leading-relaxed text-[#8AA3AD]">
+                  Try adjusting your filters or add a new record to get started.
+                </p>
+              </div>
+            </div>
+          ) : (
+            data.map((item, rowIndex) => (
+              <div
+                key={item._id || item.id || rowIndex}
+                onClick={() => onRowClick?.(item)}
+                className={`p-4 space-y-2.5 transition-colors ${
+                  onRowClick ? 'cursor-pointer hover:bg-primary-light/[0.15]' : ''
+                }`}
+              >
+                {columns.map((column, columnIndex) => (
+                  <div key={`${column.accessor}-m-${columnIndex}`} className="space-y-1">
+                    {column.header && (
+                      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-[#8AA3AD]">
+                        {column.header}
+                      </p>
+                    )}
+                    <div className="text-sm text-[#4D636B] break-words">
+                      {column.render ? column.render(item) : item[column.accessor] ?? 'N/A'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Table (>= md) */}
+        <div className="hidden md:block overflow-x-auto rounded-t-xl">
           <div className="admin-sidebar-scroll max-h-[calc(100vh-17rem)] min-h-[14rem] overflow-y-auto">
             <table className="w-full min-w-[40rem] border-collapse text-left">
               <thead className="sticky top-0 z-10 border-b border-[#D8E1E4] bg-[#F6F8F9]">

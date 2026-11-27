@@ -9,7 +9,7 @@ import { parseBlogItem } from '@/lib/blogUtils';
 async function getBlogDetail(slug: string) {
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/blogs/${slug}`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();

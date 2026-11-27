@@ -165,7 +165,7 @@ async function getServiceDetail(slug: string) {
   // 1. Try fetching primary slug from backend API
   try {
     const res = await fetch(`${BACKEND_URL}/api/v1/public/services/${slug}`, {
-      next: { revalidate: 30 },
+      cache: 'no-store',
     });
     if (res.ok) {
       const data = await res.json();
@@ -182,7 +182,7 @@ async function getServiceDetail(slug: string) {
   if (aliasSlug) {
     try {
       const res = await fetch(`${BACKEND_URL}/api/v1/public/services/${aliasSlug}`, {
-        next: { revalidate: 30 },
+        cache: 'no-store',
       });
       if (res.ok) {
         const data = await res.json();

@@ -247,14 +247,14 @@ export default function AdminDashboardPage() {
       )}
 
       <section aria-labelledby="primary-metrics-heading">
-        <div className="mb-3 flex items-center justify-between">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2
             id="primary-metrics-heading"
-            className="text-xs font-bold uppercase tracking-[0.14em] text-[#637C85]"
+            className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.08em] sm:tracking-[0.14em] text-[#637C85]"
           >
             Key Performance Indicators
           </h2>
-          <span className="text-[11px] font-medium text-[#8AA3AD]">
+          <span className="text-[11px] font-medium text-[#8AA3AD] whitespace-nowrap shrink-0">
             Live CMS data
           </span>
         </div>

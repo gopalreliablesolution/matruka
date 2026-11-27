@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 const adminRoutes = require('./src/routes/adminRoutes');
 const publicRoutes = require('./src/routes/publicRoutes');
+const mediaCtrl = require('./src/controllers/mediaController');
 
 const app = express();
 
@@ -60,10 +61,11 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// Serve local uploads and images directly from server filesystem (NO 3rd party!)
+// Serve local uploads from disk first, then fall back to MongoDB Media storage
 const uploadsPath = path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadsPath));
 app.use('/images', express.static(uploadsPath));
+app.get('/uploads/:filename', mediaCtrl.serveByFilename);
 
 // API Routes
 app.use('/api/v1/admin', adminRoutes);

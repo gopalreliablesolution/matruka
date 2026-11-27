@@ -216,12 +216,12 @@ export default function AdminFAQsPage() {
               key={faq._id}
               className="p-5 flex items-start justify-between gap-4 hover:bg-gray-50/60 transition"
             >
-              <div className="space-y-1.5 max-w-3xl">
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-brand-teal-50 text-primary border border-brand-teal-200">
+              <div className="space-y-1.5 min-w-0 flex-1 max-w-3xl">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+                  <span className="self-start text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-brand-teal-50 text-primary border border-brand-teal-200 whitespace-nowrap shrink-0">
                     {faq.category}
                   </span>
-                  <h3 className="font-bold text-gray-900 text-sm font-heading">
+                  <h3 className="font-bold text-gray-900 text-sm font-heading leading-snug">
                     {faq.question}
                   </h3>
                 </div>

@@ -3,46 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, Mail, Loader2, MapPin, Clock, User, Send, MessageSquare } from 'lucide-react';
 import { publicApi } from '@/lib/api';
+import { buildPinnedMapEmbedUrl, sanitizeMapEmbedUrl } from '@/lib/mapUrl';
 
-export function buildPinnedMapEmbedUrl(address?: string): string {
-  const raw = (address || 'Solaris Cure, VIP Road, Vesu, Surat, Gujarat 395007').trim();
-  const cleaned = raw
-    .replace(/^\d+[-–]\d+\s*,\s*/i, '')
-    .replace(/beside[s]?\s+[^,]+,\s*/i, '')
-    .trim();
-  // "Solaris Cure, VIP Road, Vesu, Surat" resolves cleanly as a pinned place in Google Maps
-  const finalQuery =
-    cleaned.toLowerCase().includes('solaris cure') && !cleaned.toLowerCase().includes('vesu')
-      ? cleaned.replace(/vip road/i, 'VIP Road, Vesu')
-      : cleaned || raw;
-  return `https://maps.google.com/maps?q=${encodeURIComponent(finalQuery)}&t=k&z=17&ie=UTF8&output=embed`;
-}
-
-export function sanitizeMapEmbedUrl(raw?: string, addressFallback?: string): string {
-  const pinnedFallback = buildPinnedMapEmbedUrl(addressFallback);
-  if (!raw) return pinnedFallback;
-  const str = raw.trim();
-
-  // Only replace empty or leftover Jogi URLs; otherwise respect the exact URL saved in Admin
-  if (str.includes('<iframe') || str.includes('src=')) {
-    const match = str.match(/src=["']([^"']+)["']/i);
-    if (match && match[1] && (match[1].startsWith('http://') || match[1].startsWith('https://'))) {
-      if (match[1].toLowerCase().includes('jogi')) {
-        return pinnedFallback;
-      }
-      return match[1];
-    }
-  }
-
-  if (str.startsWith('https://') || str.startsWith('http://')) {
-    if (str.toLowerCase().includes('jogi')) {
-      return pinnedFallback;
-    }
-    return str;
-  }
-
-  return pinnedFallback;
-}
+export { buildPinnedMapEmbedUrl, sanitizeMapEmbedUrl };
 
 export interface HospitalLocationData {
   _id?: string;
@@ -195,8 +158,8 @@ export default function HospitalLocationSection({
             <div className="flex-1 p-6 sm:p-8 lg:p-10">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-slate-100">
                 <div>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-2">
-                    <MapPin size={12} />
+                  <span className="inline-flex items-center gap-1.5 max-w-full px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wide sm:tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-2 leading-snug">
+                    <MapPin size={12} className="shrink-0" />
                     <span>CLINIC HEADQUARTERS</span>
                   </span>
                   <h2 className="text-2xl md:text-3xl font-bold font-heading text-[#1A2C30]">
@@ -309,8 +272,8 @@ export default function HospitalLocationSection({
 
           {/* Inquiry Form Column */}
           <div className="lg:col-span-5 bg-gradient-to-br from-white via-slate-50/50 to-white rounded-3xl border border-slate-200/90 shadow-[0_4px_30px_rgba(4,150,172,0.06)] p-6 sm:p-8 flex flex-col justify-center">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3 self-start">
-              <MessageSquare size={12} />
+            <span className="inline-flex items-center gap-1.5 max-w-full px-2.5 sm:px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wide sm:tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3 self-start leading-snug">
+              <MessageSquare size={12} className="shrink-0" />
               <span>{newsletterBadge}</span>
             </span>
             <h3 className="text-xl md:text-2xl font-bold font-heading text-[#1A2C30] mb-1.5">

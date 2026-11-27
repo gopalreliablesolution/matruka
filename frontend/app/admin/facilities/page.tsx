@@ -183,21 +183,21 @@ export default function AdminFacilitiesPage() {
               .map((fac) => (
             <div
               key={fac._id}
-              className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+              className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-brand-teal-50 border border-brand-teal-100 text-primary flex items-center justify-center font-bold">
-                      <Building2 size={22} />
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4">
+                  <div className="flex items-start sm:items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-brand-teal-50 border border-brand-teal-100 text-primary flex items-center justify-center font-bold">
+                      <Building2 size={20} />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-gray-900 text-base">{fac.name}</h3>
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-gray-900 text-sm sm:text-base leading-snug">{fac.name}</h3>
                       <p className="text-xs text-primary font-medium">Display Order: #{fac.sortOrder}</p>
                     </div>
                   </div>
                   <span
-                    className={`text-xs px-2.5 py-1 rounded-full font-semibold border ${
+                    className={`self-start sm:self-auto text-xs px-2.5 py-1 rounded-full font-semibold border whitespace-nowrap shrink-0 ${
                       fac.isPublished
                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                         : 'bg-gray-100 text-gray-600 border-gray-200'

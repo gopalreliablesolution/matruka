@@ -52,8 +52,8 @@ export default function FAQSection({
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12 max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-bold tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3">
-            <HelpCircle size={12} />
+          <span className="inline-flex items-center gap-1.5 max-w-full px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wide sm:tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3 leading-snug">
+            <HelpCircle size={12} className="shrink-0" />
             <span>{badgeText}</span>
           </span>
           <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-[#1A2C30] mt-2 leading-snug">
@@ -157,21 +157,21 @@ export default function FAQSection({
             </div>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto">
             <a
               href="tel:+917984882273"
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-teal-50 px-5 py-3 text-xs sm:text-sm font-bold text-brand-teal-800 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-teal-50 px-5 py-3 text-xs sm:text-sm font-bold text-brand-teal-800 shadow-xs transition-all hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
             >
-              <Phone size={15} className="text-brand-teal-700" />
+              <Phone size={15} className="text-brand-teal-700 shrink-0" />
               <span>Call: 7984882273</span>
             </a>
             {showViewAll && (
               <Link
                 href="/faqs"
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-xl bg-white/15 px-4 py-3 text-xs sm:text-sm font-bold text-white hover:bg-white/25 transition-all border border-white/25"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl bg-white/15 px-4 py-3 text-xs sm:text-sm font-bold text-white hover:bg-white/25 transition-all border border-white/25 whitespace-nowrap"
               >
                 <span>All FAQs</span>
-                <ArrowRight size={14} />
+                <ArrowRight size={14} className="shrink-0" />
               </Link>
             )}
           </div>

@@ -236,7 +236,104 @@ export default function AdminHospitalLocationsPage() {
 
       {/* Table */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile Card Stack (< md) */}
+        <div className="md:hidden divide-y divide-gray-100">
+          {loading ? (
+            <div className="text-center py-12 px-4">
+              <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-2" />
+              <p className="text-xs text-gray-400">Loading hospital locations...</p>
+            </div>
+          ) : locations.length === 0 ? (
+            <div className="text-center py-12 px-4">
+              <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-sm font-medium text-gray-600">No locations found</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Click &quot;Add New Location&quot; to configure your hospital address.
+              </p>
+            </div>
+          ) : (
+            locations.map((loc) => (
+              <div key={`${loc._id}-m`} className="p-4 space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="font-semibold text-gray-900 text-sm">{loc.name}</div>
+                    <span className="inline-block mt-1 text-[11px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-md">
+                      {loc.sectionTitle || 'Visit Our Clinic'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => openEditModal(loc)}
+                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                      title="Edit location"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteModal({ isOpen: true, location: loc, loading: false })}
+                      className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Delete location"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="text-xs text-gray-700 leading-relaxed">
+                  <div>{loc.address}</div>
+                  <div className="text-[11px] text-gray-400 mt-0.5">
+                    {loc.city}, {loc.state} - {loc.pincode}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-1.5 text-xs bg-slate-50 rounded-xl p-3 border border-slate-100">
+                  <div>
+                    <span className="font-semibold text-primary">{loc.days}</span>
+                    <span className="text-gray-500 ml-1.5">{loc.hours}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-gray-700">
+                    <Phone size={13} className="text-primary shrink-0" />
+                    <span>{loc.phone}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-gray-500 break-all">
+                    <Mail size={13} className="text-gray-400 shrink-0" />
+                    <span>{loc.email}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  {loc.mapEmbedUrl ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md">
+                      <Check size={13} />
+                      Embed Connected
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-gray-400">No embed URL</span>
+                  )}
+
+                  <button
+                    onClick={() => handleToggleActive(loc)}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
+                      loc.isActive
+                        ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        loc.isActive ? 'bg-emerald-600' : 'bg-gray-400'
+                      }`}
+                    />
+                    <span>{loc.isActive ? 'Active' : 'Draft'}</span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Desktop Table (>= md) */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50/75 border-b border-gray-100 text-xs font-bold uppercase text-gray-500 tracking-wider">
               <tr>

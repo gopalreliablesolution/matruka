@@ -149,11 +149,11 @@ export default function AdminNewsletterPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
         <div>
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="text-xl sm:text-2xl font-bold font-heading text-gray-900">
               Newsletter Subscribers
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary/10 text-primary whitespace-nowrap shrink-0">
               {entries.length} Total
             </span>
           </div>

@@ -11,6 +11,7 @@ exports.uploadFile = async (req, res) => {
 
     const { altText } = req.body;
     const fileUrl = `/uploads/${req.file.filename}`;
+    const fileBuffer = fs.readFileSync(req.file.path);
 
     const media = await Media.create({
       originalName: req.file.originalname,
@@ -21,7 +22,11 @@ exports.uploadFile = async (req, res) => {
       size: req.file.size,
       altText: altText || req.file.originalname,
       uploadedBy: req.user?.name || 'Admin',
+      data: fileBuffer,
     });
+
+    const safeMedia = media.toObject();
+    delete safeMedia.data;
 
     await ActivityLog.create({
       userId: req.user?._id?.toString() || 'admin',
@@ -33,8 +38,8 @@ exports.uploadFile = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      data: media,
-      message: 'File saved directly to server disk successfully',
+      data: safeMedia,
+      message: 'File saved directly to server & database successfully',
     });
   } catch (error) {
     console.error('File upload error:', error);
@@ -101,6 +106,25 @@ exports.remove = async (req, res) => {
     res.json({ success: true, message: 'Media deleted from server' });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to delete media' });
+  }
+};
+
+exports.serveByFilename = async (req, res) => {
+  try {
+    const filename = path.basename(req.params.filename || '');
+    if (!filename) return res.status(404).end();
+
+    const media = await Media.findOne({ filename }).select('+data mimeType');
+    if (!media || !media.data) {
+      return res.status(404).end();
+    }
+
+    res.set('Content-Type', media.mimeType || 'application/octet-stream');
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    return res.send(media.data);
+  } catch (error) {
+    console.error('Media serve error:', error);
+    return res.status(500).end();
   }
 };
 

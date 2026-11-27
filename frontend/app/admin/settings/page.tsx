@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Settings,
   Save,
@@ -55,6 +55,7 @@ const DEFAULT_POPUP_SETTINGS = {
 };
 
 function AdminSettingsContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -111,6 +112,8 @@ function AdminSettingsContent() {
     const tabParam = searchParams.get('tab');
     if (tabParam && ['general', 'contact', 'timings', 'popup', 'seo', 'social'].includes(tabParam)) {
       setActiveTab(tabParam as any);
+    } else {
+      setActiveTab('general');
     }
   }, [searchParams]);
 
@@ -306,7 +309,7 @@ function AdminSettingsContent() {
       />
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 gap-2 overflow-x-auto">
+      <div className="flex flex-wrap sm:flex-nowrap border-b border-gray-200 gap-1 sm:gap-2 overflow-x-auto pb-0.5">
         {[
           { key: 'general', label: 'General Identity', icon: Globe },
           { key: 'contact', label: 'Contact & Address', icon: MapPin },
@@ -326,8 +329,14 @@ function AdminSettingsContent() {
             <button
               key={tab.key}
               type="button"
-              onClick={() => setActiveTab(tab.key as any)}
-              className={`flex items-center gap-2 px-4 py-3 font-semibold text-xs sm:text-sm border-b-2 transition whitespace-nowrap ${
+              onClick={() => {
+                setActiveTab(tab.key as any);
+                router.replace(
+                  tab.key === 'general' ? '/admin/settings' : `/admin/settings?tab=${tab.key}`,
+                  { scroll: false }
+                );
+              }}
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 font-semibold text-xs sm:text-sm border-b-2 transition whitespace-nowrap shrink-0 ${
                 isActive
                   ? 'border-primary text-primary bg-primary-light/15 rounded-t-lg'
                   : 'border-transparent text-gray-500 hover:text-gray-900'
@@ -609,10 +618,10 @@ function AdminSettingsContent() {
               {/* Master Toggle Card */}
               <div className="p-4 sm:p-5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-slate-50 to-white border-slate-200 shadow-xs">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     <span className="font-bold text-gray-900 text-sm sm:text-base">Website Pop-up Modal Status</span>
                     <span
-                      className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
+                      className={`text-xs font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap shrink-0 ${
                         formData.popup.isActive
                           ? 'bg-emerald-100 text-emerald-800'
                           : 'bg-rose-100 text-rose-800'
@@ -656,9 +665,9 @@ function AdminSettingsContent() {
                 <div className="lg:col-span-7 space-y-6">
                   {/* 1. Header Bar */}
                   <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">1. Header Bar</h3>
-                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer whitespace-nowrap shrink-0">
                         <input
                           type="checkbox"
                           checked={formData.popup.showHeader}
@@ -697,9 +706,9 @@ function AdminSettingsContent() {
 
                   {/* 2. Optional Banner Image */}
                   <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">2. Top Banner Image (Optional)</h3>
-                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer whitespace-nowrap shrink-0">
                         <input
                           type="checkbox"
                           checked={formData.popup.showImage}
@@ -723,9 +732,9 @@ function AdminSettingsContent() {
 
                   {/* 3. Description Message */}
                   <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">3. Body Message</h3>
-                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer whitespace-nowrap shrink-0">
                         <input
                           type="checkbox"
                           checked={formData.popup.showDescription}
@@ -752,9 +761,9 @@ function AdminSettingsContent() {
 
                   {/* 4. Quick Info Box (OPD & Location) */}
                   <div className="border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
                       <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">4. Quick Info Box</h3>
-                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer">
+                      <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer whitespace-nowrap shrink-0">
                         <input
                           type="checkbox"
                           checked={formData.popup.showInfo}

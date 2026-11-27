@@ -161,7 +161,7 @@ export default function ConsultationModal({ settings }: ConsultationModalProps) 
   if (!isOpen || !isPopupActive || !hasAnyVisibleContent) return null;
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
+    <div className="fixed inset-0 z-[150] flex items-start sm:items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn">
       {/* Dimmed Backdrop */}
       <div
         onClick={handleClose}

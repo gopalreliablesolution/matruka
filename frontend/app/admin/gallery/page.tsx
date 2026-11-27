@@ -285,21 +285,21 @@ export default function AdminGalleryPage() {
         icon={ImageIcon}
         breadcrumb={[{ label: 'Photo Gallery & Rooms' }]}
         actions={
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setIsAlbumModalOpen(true)}
-              className="admin-btn-secondary flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 shadow-xs cursor-pointer"
+              className="admin-btn-secondary flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 shadow-xs cursor-pointer whitespace-nowrap"
             >
-              <FolderPlus size={16} className="text-primary" />
+              <FolderPlus size={16} className="text-primary shrink-0" />
               <span>Create Album</span>
             </button>
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
-              className="admin-btn-primary flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-primary hover:bg-primary-dark text-white shadow-sm cursor-pointer"
+              className="admin-btn-primary flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-primary hover:bg-primary-dark text-white shadow-sm cursor-pointer whitespace-nowrap"
             >
-              <Plus size={16} />
+              <Plus size={16} className="shrink-0" />
               <span>Add New Photo</span>
             </button>
           </div>
@@ -373,7 +373,7 @@ export default function AdminGalleryPage() {
       )}
 
       {/* MAIN CONTENT AREA */}
-      <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+      <div className="bg-white p-4 sm:p-6 rounded-3xl border border-gray-100 shadow-sm">
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-2">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -387,7 +387,7 @@ export default function AdminGalleryPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                 {filteredItems
                   .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                   .map((img) => {

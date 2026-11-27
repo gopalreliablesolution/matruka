@@ -54,12 +54,12 @@ export default async function FacilitiesPage() {
                     />
                   </div>
                 )}
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-brand-teal-50 text-brand-teal-700 flex items-center justify-center font-bold shrink-0">
-                    <Building2 className="w-6 h-6" />
+                <div className="flex items-start sm:items-center gap-3">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-brand-teal-50 text-brand-teal-700 flex items-center justify-center font-bold shrink-0">
+                    <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <div>
-                    <h2 className="text-xl font-bold font-heading text-brand-slate-900">{fac.name}</h2>
+                  <div className="min-w-0">
+                    <h2 className="text-base sm:text-xl font-bold font-heading text-brand-slate-900 leading-snug">{fac.name}</h2>
                     <p className="text-xs text-brand-teal-700 font-medium">Matruka Solaris Cure, Surat</p>
                   </div>
                 </div>

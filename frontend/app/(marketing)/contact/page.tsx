@@ -1,7 +1,7 @@
 import React from 'react';
 import { Phone, MapPin, Clock, Mail, ShieldAlert, ExternalLink, MessageCircle } from 'lucide-react';
 import { BACKEND_URL } from '@/lib/api';
-import { sanitizeMapEmbedUrl } from '@/components/HospitalLocationSection';
+import { sanitizeMapEmbedUrl } from '@/lib/mapUrl';
 
 async function getContactSettings() {
   const defaults = {
@@ -178,8 +178,8 @@ export default async function ContactPage() {
 
           {/* Right Column: Google Maps Location */}
           <div className="lg:col-span-7">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="bg-white p-4 sm:p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4">
                 <div>
                   <h3 className="font-bold text-brand-slate-900 font-heading text-base">
                     Interactive Map & Location
@@ -193,14 +193,14 @@ export default async function ContactPage() {
                   }
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-brand-teal-700 hover:text-brand-teal-800"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-teal-700 hover:text-brand-teal-800 whitespace-nowrap shrink-0 self-start sm:self-auto"
                 >
                   <span>Open in Google Maps</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <ExternalLink className="w-3.5 h-3.5 shrink-0" />
                 </a>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 overflow-hidden h-[450px]">
+              <div className="rounded-2xl border border-slate-200 overflow-hidden h-[320px] sm:h-[450px]">
                 <iframe
                   src={sanitizeMapEmbedUrl(settings.googleMapsEmbedUrl, settings.address)}
                   width="100%"

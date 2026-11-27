@@ -260,12 +260,12 @@ export default function AdminMenusPage() {
       />
 
       {/* Scope Filter Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-3">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
             onClick={() => setActiveTab('all')}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition whitespace-nowrap ${
               activeTab === 'all'
                 ? 'bg-primary text-white shadow-xs'
                 : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -276,7 +276,7 @@ export default function AdminMenusPage() {
           <button
             type="button"
             onClick={() => setActiveTab('header')}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition whitespace-nowrap ${
               activeTab === 'header'
                 ? 'bg-primary text-white shadow-xs'
                 : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -287,7 +287,7 @@ export default function AdminMenusPage() {
           <button
             type="button"
             onClick={() => setActiveTab('footer')}
-            className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition ${
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition whitespace-nowrap ${
               activeTab === 'footer'
                 ? 'bg-primary text-white shadow-xs'
                 : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
