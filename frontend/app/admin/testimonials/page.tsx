@@ -272,7 +272,7 @@ export default function AdminTestimonialsPage() {
             </div>
 
             <form onSubmit={handleSave} className="p-6 overflow-y-auto space-y-4 text-sm">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">
                     Patient Name *
@@ -310,7 +310,7 @@ export default function AdminTestimonialsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Doctor Attended</label>
                   <select
@@ -348,8 +348,8 @@ export default function AdminTestimonialsPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-6 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
+                <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={formData.isPublished}
@@ -358,7 +358,7 @@ export default function AdminTestimonialsPage() {
                   />
                   <span className="text-xs font-semibold text-gray-700">Published</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={formData.isFeatured}
@@ -369,17 +369,17 @@ export default function AdminTestimonialsPage() {
                 </label>
               </div>
 
-              <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
+              <div className="pt-4 border-t border-gray-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 font-semibold text-xs"
+                  className="admin-btn-secondary w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-primary text-white rounded-xl hover:opacity-90 font-semibold text-xs transition shadow-sm"
+                  className="admin-btn-primary w-full sm:w-auto"
                 >
                   {editingItem ? 'Save Review' : 'Add Review'}
                 </button>

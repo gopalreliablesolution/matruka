@@ -475,7 +475,7 @@ export default function AdminBannersPage() {
                 <div className="space-y-4 animate-in fade-in duration-150">
                   {/* Banner Image Upload */}
                   <div>
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                       <label className="block text-xs font-bold text-gray-700 uppercase">
                         Banner Graphic Image *
                       </label>
@@ -548,7 +548,7 @@ export default function AdminBannersPage() {
                   </div>
 
                   {/* Slide Sort Order & Active */}
-                  <div className="grid grid-cols-2 gap-4 items-center pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 items-center pt-2">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
                         Slide Sort Order
@@ -637,7 +637,7 @@ export default function AdminBannersPage() {
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
                             Primary CTA Text
@@ -664,7 +664,7 @@ export default function AdminBannersPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-xs font-bold text-gray-700 uppercase mb-1.5">
                             Secondary CTA Text
@@ -695,23 +695,23 @@ export default function AdminBannersPage() {
                 </div>
               )}
 
-              <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
+              <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <span className="text-xs text-gray-500 font-medium">
                   {formData.showContent ? 'Mode: Image + Content' : 'Mode: Banner Graphic Only'}
                 </span>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-50 transition cursor-pointer"
+                    className="admin-btn-secondary w-full sm:w-auto cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-5 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-xl transition shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+                    className="admin-btn-primary w-full sm:w-auto disabled:opacity-50 cursor-pointer"
                   >
                     {submitting ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />}
                     <span>{editingBanner ? 'Update Banner' : 'Create Banner'}</span>

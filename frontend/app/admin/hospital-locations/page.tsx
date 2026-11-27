@@ -634,18 +634,18 @@ export default function AdminHospitalLocationsPage() {
                 </label>
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition"
+                  className="admin-btn-secondary w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary-dark transition shadow-sm disabled:opacity-50"
+                  className="admin-btn-primary w-full sm:w-auto disabled:opacity-50"
                 >
                   {submitting && <Loader2 size={16} className="animate-spin" />}
                   <span>{editingLocation ? 'Update Location' : 'Save Location'}</span>
