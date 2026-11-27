@@ -223,7 +223,7 @@ export default function GalleryPreviewSection({
               <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
               <span>{badgeText}</span>
             </span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 tracking-tight">
+            <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-brand-slate-900 tracking-tight leading-snug">
               {title}
             </h2>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl mx-auto">

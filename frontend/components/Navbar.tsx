@@ -318,14 +318,24 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
     };
   }, []);
 
-  // Lock body scroll when mobile menu is open
+  // Lock html & body scroll when mobile menu is open
   useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    }
+    if (!mobileMenuOpen) return;
+    const prevBodyOverflow = document.body.style.overflow;
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverscroll = document.body.style.overscrollBehavior;
+    const prevHtmlOverscroll = document.documentElement.style.overscrollBehavior;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overscrollBehavior = 'none';
+    document.documentElement.style.overscrollBehavior = 'none';
+
     return () => {
-      document.body.style.overflow = originalOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overscrollBehavior = prevBodyOverscroll;
+      document.documentElement.style.overscrollBehavior = prevHtmlOverscroll;
     };
   }, [mobileMenuOpen]);
 
@@ -512,7 +522,7 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
       {mobileMenuOpen && (
         <button
           type="button"
-          className="fixed inset-0 z-[120] bg-black/40 backdrop-blur-xs transition-opacity lg:hidden"
+          className="fixed inset-0 z-[120] bg-black/40 backdrop-blur-xs transition-opacity overscroll-none touch-none lg:hidden"
           onClick={closeMobileMenu}
           aria-label="Close menu backdrop"
         />
@@ -520,7 +530,7 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
 
       {/* Mobile slide-out drawer */}
       <aside
-        className={`fixed inset-y-0 right-0 z-[130] flex w-[85%] max-w-[20rem] flex-col bg-white shadow-2xl transition-transform duration-300 ease-out lg:hidden ${
+        className={`fixed inset-y-0 right-0 z-[130] flex w-[85%] max-w-[20rem] flex-col bg-white shadow-2xl overscroll-contain transition-transform duration-300 ease-out lg:hidden ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         role="dialog"
@@ -551,7 +561,7 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-4">
           <nav className="flex flex-col gap-1.5" aria-label="Mobile navigation links">
             {processedMenus.map((item) => {
               const itemId = item._id || item.url || item.label;

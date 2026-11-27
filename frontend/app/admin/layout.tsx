@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import Sidebar from '@/components/admin/Sidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import { Loader2 } from 'lucide-react';
 import './admin.css';
 
@@ -94,6 +95,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           <div className="admin-page">{children}</div>
         </main>
       </div>
+      <ScrollToTopButton />
     </div>
   );
 }

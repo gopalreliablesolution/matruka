@@ -17,7 +17,7 @@ function createTransporter() {
     secure: port === 465,
     auth: {
       user,
-      pass,
+      pass: pass.replace(/\s+/g, ''),
     },
   });
 }

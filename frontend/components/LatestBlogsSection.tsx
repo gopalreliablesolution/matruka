@@ -151,7 +151,7 @@ export default function LatestBlogsSection({
                             {b.category}
                           </span>
                         )}
-                        <div className="flex items-center gap-3 text-[11px] text-slate-500">
+                        <div className="flex items-center gap-3 text-xs text-slate-500">
                           <span className="flex items-center gap-1">
                             <User className="w-3.5 h-3.5 text-brand-teal-600" />
                             <span>{b.author || 'Dr. Kairavi Yagnik'}</span>
@@ -204,7 +204,7 @@ export default function LatestBlogsSection({
                       </div>
 
                       <div className="p-5 space-y-2.5">
-                        <div className="flex items-center gap-3 text-[11px] text-slate-500">
+                        <div className="flex items-center gap-3 text-xs text-slate-500">
                           <span className="flex items-center gap-1">
                             <User className="w-3 h-3 text-brand-teal-600" />
                             <span>{b.author || 'Dr. Kairavi Yagnik'}</span>

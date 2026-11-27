@@ -28,10 +28,10 @@ export default async function AboutPage() {
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           About Matruka
         </span>
-        <h1 className="text-3xl sm:text-5xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
           {page?.heroTitle || 'About Matruka — Complete Care for Her'}
         </h1>
-        <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed">
           {page?.heroSubtitle ||
             'Dedicated to women’s health, maternity excellence, and compassionate gynaecological care in Surat.'}
         </p>

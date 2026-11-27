@@ -76,7 +76,7 @@ export default function GalleryLightbox({
             {currentIndex + 1} / {items.length}
           </span>
           {currentItem.category && (
-            <span className="text-[11px] sm:text-xs font-medium text-brand-teal-300 bg-brand-teal-950/80 px-2.5 py-0.5 rounded-full border border-brand-teal-800/60 uppercase tracking-wider">
+            <span className="text-xs sm:text-xs font-medium text-brand-teal-300 bg-brand-teal-950/80 px-2.5 py-0.5 rounded-full border border-brand-teal-800/60 uppercase tracking-wider">
               {currentItem.category}
             </span>
           )}

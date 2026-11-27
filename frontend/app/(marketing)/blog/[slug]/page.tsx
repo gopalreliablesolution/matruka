@@ -54,7 +54,7 @@ export default async function BlogDetailPage({
             {blog.category}
           </span>
         )}
-        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900 leading-tight">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
           {blog.title}
         </h1>
 

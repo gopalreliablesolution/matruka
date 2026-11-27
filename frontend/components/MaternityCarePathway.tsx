@@ -152,14 +152,14 @@ export default function MaternityCarePathway({
               >
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <span
-                    className={`text-[11px] font-bold px-2.5 py-0.5 rounded-md whitespace-nowrap shrink-0 ${
+                    className={`text-xs font-bold px-2.5 py-0.5 rounded-md whitespace-nowrap shrink-0 ${
                       isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     Step {stg.step}
                   </span>
                   <span
-                    className={`text-[11px] font-medium ${
+                    className={`text-xs font-medium ${
                       isActive ? 'text-teal-100' : 'text-slate-500'
                     }`}
                   >
@@ -246,7 +246,7 @@ export default function MaternityCarePathway({
                     <h4 className="font-bold text-brand-slate-900 text-sm">
                       Recommended Diagnostics
                     </h4>
-                    <p className="text-[11px] text-slate-500">In-clinic Ultrasound & Lab</p>
+                    <p className="text-xs text-slate-500">In-clinic Ultrasound & Lab</p>
                   </div>
                 </div>
 

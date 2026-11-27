@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { CalendarDays, CheckCircle2, Clock, Loader2, Phone, ShieldCheck, User } from 'lucide-react';
+import { CalendarDays, Check, CheckCircle2, ChevronDown, Clock, Loader2, Phone, ShieldCheck, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { publicApi } from '@/lib/api';
 
@@ -30,6 +30,8 @@ export default function BookAppointmentPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [doctorOpen, setDoctorOpen] = useState(false);
+  const doctorDropdownRef = useRef<HTMLDivElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     patientName: '',
@@ -41,6 +43,23 @@ export default function BookAppointmentPage() {
     preferredTime: TIME_SLOTS[0],
     message: '',
   });
+
+  useEffect(() => {
+    const handleOutside = (e: MouseEvent) => {
+      if (doctorDropdownRef.current && !doctorDropdownRef.current.contains(e.target as Node)) {
+        setDoctorOpen(false);
+      }
+    };
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setDoctorOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -159,7 +178,7 @@ export default function BookAppointmentPage() {
               <span className="inline-flex items-center rounded-md bg-[#EAF8F8] px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#037B8D]">
                 Book Consultation
               </span>
-              <h1 className="mt-4 text-3xl sm:text-4xl font-bold font-heading text-[#1A2C30]">
+              <h1 className="mt-4 text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-[#1A2C30] leading-tight">
                 Book an Appointment
               </h1>
               <p className="mt-3 text-sm sm:text-base leading-7 text-slate-600">
@@ -283,22 +302,82 @@ export default function BookAppointmentPage() {
                   </div>
                 </div>
 
-                <div>
+                <div ref={doctorDropdownRef} className="relative">
                   <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="doctor">Preferred Doctor</label>
-                  <select
+                  <button
                     id="doctor"
-                    name="doctor"
-                    value={form.doctor}
-                    onChange={onChange}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/15"
+                    type="button"
+                    aria-haspopup="listbox"
+                    aria-expanded={doctorOpen}
+                    onClick={() => setDoctorOpen((v) => !v)}
+                    className="flex w-full items-center justify-between gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-left text-sm outline-none transition focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/15"
                   >
-                    <option value="Any Available Specialist">Any Available Specialist</option>
-                    {doctors.map((d) => (
-                      <option key={d._id || d.name} value={d.name}>
-                        {d.name}{d.specialization ? ` — ${d.specialization}` : ''}
-                      </option>
-                    ))}
-                  </select>
+                    <span className="truncate text-slate-800">{form.doctor}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 shrink-0 text-slate-500 transition-transform duration-200 ${
+                        doctorOpen ? 'rotate-180 text-[#0496AC]' : ''
+                      }`}
+                    />
+                  </button>
+
+                  {doctorOpen && (
+                    <div
+                      role="listbox"
+                      aria-label="Preferred Doctor"
+                      className="absolute left-0 right-0 z-30 mt-1.5 max-h-60 w-full overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
+                    >
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={form.doctor === 'Any Available Specialist'}
+                        onClick={() => {
+                          setForm((prev) => ({ ...prev, doctor: 'Any Available Specialist' }));
+                          setDoctorOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition ${
+                          form.doctor === 'Any Available Specialist'
+                            ? 'bg-[#0496AC]/10 font-semibold text-[#0496AC]'
+                            : 'text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span className="break-words">Any Available Specialist</span>
+                        {form.doctor === 'Any Available Specialist' && <Check className="h-4 w-4 shrink-0 text-[#0496AC]" />}
+                      </button>
+
+                      {doctors.map((d) => {
+                        const isSelected = form.doctor === d.name;
+                        return (
+                          <button
+                            key={d._id || d.name}
+                            type="button"
+                            role="option"
+                            aria-selected={isSelected}
+                            onClick={() => {
+                              setForm((prev) => ({ ...prev, doctor: d.name }));
+                              setDoctorOpen(false);
+                            }}
+                            className={`flex w-full items-start justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm transition ${
+                              isSelected
+                                ? 'bg-[#0496AC]/10 text-[#0496AC]'
+                                : 'text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="min-w-0 flex-1">
+                              <div className={`break-words ${isSelected ? 'font-semibold' : 'font-medium'}`}>
+                                {d.name}
+                              </div>
+                              {d.specialization && (
+                                <div className="text-xs text-slate-500 break-words leading-snug mt-0.5">
+                                  {d.specialization}
+                                </div>
+                              )}
+                            </div>
+                            {isSelected && <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#0496AC]" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

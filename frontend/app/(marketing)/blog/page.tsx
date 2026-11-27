@@ -30,10 +30,10 @@ export default async function BlogPage() {
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3.5 py-1.5 rounded-full border border-brand-teal-100">
           BLOGS
         </span>
-        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
           Pregnancy &amp; Women&apos;s Health Blogs
         </h1>
-        <p className="text-sm text-slate-600 max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Medically reviewed health blogs and clinical guides on antenatal care, nutrition, high-risk pregnancy, minimally invasive laparoscopic surgery, and menstrual wellness.
         </p>
       </section>

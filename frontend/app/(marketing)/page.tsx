@@ -264,7 +264,7 @@ export default async function HomePage() {
                             <h4 className="font-bold text-brand-slate-900 text-xs sm:text-sm group-hover:text-brand-teal-800 transition-colors">
                               {feat.title}
                             </h4>
-                            <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 leading-snug">
+                            <p className="text-xs sm:text-xs text-slate-500 mt-0.5 leading-snug">
                               {feat.desc}
                             </p>
                           </div>
@@ -327,7 +327,7 @@ export default async function HomePage() {
                             <p className="text-xs sm:text-sm font-semibold text-brand-slate-800">
                               {stat.label}
                             </p>
-                            <p className="text-[11px] text-slate-500 leading-tight">
+                            <p className="text-xs text-slate-500 leading-tight">
                               {stat.desc}
                             </p>
                           </div>
@@ -382,7 +382,7 @@ export default async function HomePage() {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-100/80">
+                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-100/80">
                           {svc.category}
                         </span>
                       </div>
@@ -397,12 +397,12 @@ export default async function HomePage() {
 
                       {svc.treatments && svc.treatments.length > 0 && (
                         <div className="pt-3 border-t border-slate-100">
-                          <p className="text-[11px] font-bold text-brand-slate-700 uppercase tracking-wider mb-2">Key Clinical Procedures:</p>
+                          <p className="text-xs font-bold text-brand-slate-700 uppercase tracking-wider mb-2">Key Clinical Procedures:</p>
                           <div className="flex flex-wrap gap-1.5">
                             {svc.treatments.slice(0, 3).map((t: string, i: number) => (
                               <span
                                 key={i}
-                                className="text-[11px] bg-slate-50 border border-slate-200 text-slate-700 px-2.5 py-0.5 rounded-lg font-medium truncate max-w-full"
+                                className="text-xs bg-slate-50 border border-slate-200 text-slate-700 px-2.5 py-0.5 rounded-lg font-medium truncate max-w-full"
                               >
                                 {t}
                               </span>
@@ -570,10 +570,10 @@ export default async function HomePage() {
                           <p className="text-xs font-bold text-amber-800 bg-amber-50 inline-block px-2.5 py-0.5 rounded-md mt-1 border border-amber-200/80">
                             {doc.qualifications}
                           </p>
-                          <p className="text-xs text-brand-teal-700 font-semibold mt-1">
+                          <p className="text-sm text-brand-teal-700 font-semibold mt-1">
                             {doc.designation}
                           </p>
-                          <p className="text-[11px] font-semibold text-slate-500 mt-0.5">
+                          <p className="text-xs font-semibold text-slate-500 mt-0.5">
                             {doc.experienceYears || 10}+ Years Clinical Experience
                           </p>
                         </div>
@@ -586,7 +586,7 @@ export default async function HomePage() {
                       {/* Experience & Journey Timeline Preview */}
                       {Array.isArray(doc.experienceJourney) && doc.experienceJourney.length > 0 && (
                         <div className="p-4 bg-teal-50/40 rounded-2xl border border-teal-100/80 space-y-2.5">
-                          <p className="text-[11px] font-bold text-brand-teal-800 uppercase tracking-wider flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-brand-teal-800 uppercase tracking-wider flex items-center gap-1.5">
                             <Clock className="w-3.5 h-3.5 text-brand-teal-600" />
                             <span>Experience &amp; Journey:</span>
                           </p>
@@ -607,7 +607,7 @@ export default async function HomePage() {
 
                       {/* Fellowships */}
                       <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/60 space-y-2">
-                        <p className="text-[11px] font-bold text-brand-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-brand-slate-800 uppercase tracking-wider flex items-center gap-1.5">
                           <Award className="w-3.5 h-3.5 text-amber-600" />
                           <span>Fellowships &amp; Certifications:</span>
                         </p>
@@ -698,7 +698,7 @@ export default async function HomePage() {
                       <p className="text-xs text-slate-600 leading-relaxed">{fac.shortDescription}</p>
 
                       {fac.features && (
-                        <ul className="text-[11px] text-slate-500 space-y-1.5 pt-3 border-t border-slate-100">
+                        <ul className="text-xs text-slate-500 space-y-1.5 pt-3 border-t border-slate-100">
                           {fac.features.slice(0, 3).map((ft: string, i: number) => (
                             <li key={i} className="flex items-center gap-2">
                               <CheckCircle2 className="w-3.5 h-3.5 text-brand-teal-600 shrink-0" />
@@ -785,7 +785,7 @@ export default async function HomePage() {
 
                     <div className="pt-4 mt-5 border-t border-slate-200/70 relative z-10">
                       <p className="font-bold text-brand-slate-900 text-sm font-heading">{t.patientName}</p>
-                      <p className="text-[11px] text-slate-500">{t.location}</p>
+                      <p className="text-xs text-slate-500">{t.location}</p>
                       <p className="text-xs text-brand-teal-700 font-semibold mt-1">
                         Care: {t.treatmentReceived}
                       </p>

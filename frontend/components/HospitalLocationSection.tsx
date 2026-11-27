@@ -162,7 +162,7 @@ export default function HospitalLocationSection({
                     <MapPin size={12} className="shrink-0" />
                     <span>CLINIC HEADQUARTERS</span>
                   </span>
-                  <h2 className="text-2xl md:text-3xl font-bold font-heading text-[#1A2C30]">
+                  <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold font-heading text-[#1A2C30] leading-snug">
                     {activeLocation.sectionTitle || 'Visit Our Clinic'}
                   </h2>
                 </div>

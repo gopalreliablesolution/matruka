@@ -65,10 +65,10 @@ export default async function ContactPage() {
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           Location & Inquiries
         </span>
-        <h1 className="text-3xl sm:text-5xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
           Contact Matruka Clinic
         </h1>
-        <p className="text-base text-slate-600 max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Visit Dr. Kairavi Yagnik and Dr. Rut Shah at Solaris Cure, VIP Road Surat. We are here to guide your maternity and gynaecological health with warmth and clinical expertise.
         </p>
       </section>
@@ -94,7 +94,7 @@ export default async function ContactPage() {
                     >
                       {phone}
                     </a>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Click to call directly from your phone</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Click to call directly from your phone</p>
                   </div>
                 </div>
 
@@ -164,7 +164,7 @@ export default async function ContactPage() {
                 <ShieldAlert className="w-4 h-4 text-amber-600 flex-shrink-0" />
                 <span>Appointment & Privacy Notice</span>
               </p>
-              <p className="text-[11px] leading-relaxed text-amber-800">
+              <p className="text-xs leading-relaxed text-amber-800">
                 You can submit a basic appointment request online for consultation scheduling. Please avoid sharing sensitive medical records or emergency details in the form. For urgent concerns, call the clinic directly.
               </p>
               <a

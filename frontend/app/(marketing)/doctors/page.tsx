@@ -29,10 +29,10 @@ export default async function DoctorsPage() {
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           Medical Leadership
         </span>
-        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
           Our Expert Doctors
         </h1>
-        <p className="text-sm text-slate-600 max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Meet Dr. Kairavi Yagnik & Dr. Rut Shah — Consultant Obstetricians, Gynaecologists, and Fellowship-trained Laparoscopic Surgeons in Surat.
         </p>
       </section>
@@ -61,10 +61,10 @@ export default async function DoctorsPage() {
                     <p className="text-xs font-bold text-brand-gold-600 bg-brand-gold-50 inline-block px-2 py-0.5 rounded mt-0.5 border border-brand-gold-200">
                       {doc.qualifications}
                     </p>
-                    <p className="text-xs text-brand-teal-700 font-medium mt-1">
+                    <p className="text-sm text-brand-teal-700 font-medium mt-1">
                       {doc.designation}
                     </p>
-                    <p className="text-[11px] font-semibold text-slate-500 mt-0.5">
+                    <p className="text-xs font-semibold text-slate-500 mt-0.5">
                       {doc.experienceYears || 10}+ Years Clinical Experience
                     </p>
                   </div>
@@ -76,7 +76,7 @@ export default async function DoctorsPage() {
 
                 {Array.isArray(doc.experienceJourney) && doc.experienceJourney.length > 0 && (
                   <div className="p-3.5 bg-teal-50/40 rounded-xl border border-teal-100 space-y-2">
-                    <p className="text-[11px] font-bold text-brand-teal-800 uppercase tracking-wider">
+                    <p className="text-xs font-bold text-brand-teal-800 uppercase tracking-wider">
                       Experience &amp; Journey:
                     </p>
                     <div className="relative pl-4 space-y-2 before:content-[''] before:absolute before:left-[5px] before:top-1.5 before:bottom-1.5 before:w-0.5 before:bg-brand-teal-300">
@@ -95,7 +95,7 @@ export default async function DoctorsPage() {
                 )}
 
                 <div className="p-3 bg-slate-50 rounded-xl space-y-1">
-                  <p className="text-[11px] font-bold text-brand-slate-800 uppercase tracking-wider">
+                  <p className="text-xs font-bold text-brand-slate-800 uppercase tracking-wider">
                     Fellowships & Certifications:
                   </p>
                   <ul className="text-xs text-slate-600 space-y-0.5">

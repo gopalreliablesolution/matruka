@@ -93,10 +93,10 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
       {/* SECTION 1: VIDEOS */}
       {(activeTab === 'all' || activeTab === 'videos') && (
         <section className="space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold font-heading text-slate-900 flex items-center gap-2.5">
-                <VideoIcon className="text-[#0496AC] w-5 h-5 sm:w-6 sm:h-6" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-2xl font-bold font-heading text-slate-900 flex items-start sm:items-center gap-2.5">
+                <VideoIcon className="text-[#0496AC] w-5 h-5 sm:w-6 sm:h-6 shrink-0 mt-0.5 sm:mt-0" />
                 <span>Doctor Video Guides &amp; Awareness</span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -178,7 +178,7 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
                             href={v.youtubeUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[11px] text-slate-400 hover:text-slate-700 flex items-center gap-1"
+                            className="text-xs text-slate-400 hover:text-slate-700 flex items-center gap-1"
                           >
                             <span>YouTube</span>
                             <ExternalLink size={11} />
@@ -201,10 +201,10 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
       {/* SECTION 2: PHOTO GALLERY */}
       {(activeTab === 'all' || activeTab === 'gallery') && (
         <section className="space-y-6 pt-4">
-          <div className="flex items-center justify-between border-b border-slate-200/80 pb-4">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold font-heading text-slate-900 flex items-center gap-2.5">
-                <Camera className="text-[#0496AC] w-5 h-5 sm:w-6 sm:h-6" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-4">
+            <div className="min-w-0">
+              <h2 className="text-lg sm:text-2xl font-bold font-heading text-slate-900 flex items-start sm:items-center gap-2.5">
+                <Camera className="text-[#0496AC] w-5 h-5 sm:w-6 sm:h-6 shrink-0 mt-0.5 sm:mt-0" />
                 <span>Hospital Infrastructure Tour</span>
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -213,7 +213,7 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
             </div>
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0496AC] hover:text-[#037A8C] transition group shrink-0"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#0496AC] hover:text-[#037A8C] transition group shrink-0 self-start sm:self-auto whitespace-nowrap"
             >
               <span>Full Gallery</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

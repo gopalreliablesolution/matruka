@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ConsultationModal from '@/components/ConsultationModal';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import { BACKEND_URL } from '@/lib/api';
 
 export const dynamic = 'force-dynamic';
@@ -83,6 +84,7 @@ export default async function MarketingLayout({
       <main className="flex-1 pt-[4.5rem] lg:pt-20">{children}</main>
       <Footer settings={settings} footerMenus={navigation.footer} services={servicesList} />
       <ConsultationModal settings={settings} services={servicesList} doctors={doctorsList} />
+      <ScrollToTopButton aboveActions />
     </div>
   );
 }

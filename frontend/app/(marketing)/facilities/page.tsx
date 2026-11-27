@@ -27,10 +27,10 @@ export default async function FacilitiesPage() {
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           Medical Infrastructure
         </span>
-        <h1 className="text-2xl sm:text-4xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
           Hospital Facilities & Surgical Suites
         </h1>
-        <p className="text-sm text-slate-600 max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Sterile, state-of-the-art medical infrastructure designed specifically for safe childbirth, advanced laparoscopy, and respectful patient healing.
         </p>
       </section>

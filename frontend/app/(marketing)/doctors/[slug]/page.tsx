@@ -135,7 +135,7 @@ export default async function DoctorProfilePage({
                           {step.role}
                         </h4>
                         {step.year && (
-                          <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
+                          <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
                             {step.year}
                           </span>
                         )}

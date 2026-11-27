@@ -197,8 +197,6 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
     { label: 'Hospital Facilities & OT', href: '/facilities' },
     { label: 'Clinic Tour & Gallery', href: '/gallery' },
     { label: 'Pregnancy Health Articles', href: '/blog' },
-    { label: 'Privacy Policy', href: '/privacy-policy' },
-    { label: 'Terms & Conditions', href: '/terms' },
   ];
 
   // Resolve Dynamic Services:
@@ -224,10 +222,17 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
         }))
       : DEFAULT_SERVICES;
 
-  // Resolve Dynamic Quick Links:
+  // Resolve Dynamic Quick Links (excluding legal links already in bottom bar):
+  const isLegalFooterLink = (href?: string) => {
+    const clean = (href || '').trim().toLowerCase();
+    return clean === '/privacy-policy' || clean === '/terms' || clean === '/terms-and-conditions';
+  };
+
   const quickLinks: Array<{ label: string; href: string }> =
     dynamicQuickLinks.length > 0 || dynamicPatientInfo.length > 0
-      ? [...dynamicQuickLinks, ...dynamicPatientInfo].map((q) => ({ label: q.label, href: q.url }))
+      ? [...dynamicQuickLinks, ...dynamicPatientInfo]
+          .filter((q) => !isLegalFooterLink(q.url))
+          .map((q) => ({ label: q.label, href: q.url }))
       : DEFAULT_QUICK_LINKS;
 
   return (
@@ -293,28 +298,8 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
               )}
             </div>
 
-            {/* Column 2: Quick Links (with dividers) */}
+            {/* Column 2: Clinical Services (with dividers) */}
             <div className="lg:col-span-3">
-              <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#F7CE6E]" />
-                <span>Quick Links</span>
-              </h3>
-              <ul className="space-y-1">
-                {quickLinks.map((item) => (
-                  <li key={item.href} className="border-b border-white/15 last:border-b-0">
-                    <Link
-                      href={item.href}
-                      className="block py-2 text-xs sm:text-sm text-white/90 transition-all hover:text-white hover:translate-x-1"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Column 3: Clinical Services (with dividers) */}
-            <div className="lg:col-span-2">
               <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#F7CE6E]" />
                 <span>Services</span>
@@ -327,6 +312,26 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                       className="block py-2 text-xs sm:text-sm text-white/90 transition-all hover:text-white hover:translate-x-1"
                     >
                       {svc.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Column 3: Quick Links (with dividers) */}
+            <div className="lg:col-span-2">
+              <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#F7CE6E]" />
+                <span>Quick Links</span>
+              </h3>
+              <ul className="space-y-1">
+                {quickLinks.map((item) => (
+                  <li key={item.href} className="border-b border-white/15 last:border-b-0">
+                    <Link
+                      href={item.href}
+                      className="block py-2 text-xs sm:text-sm text-white/90 transition-all hover:text-white hover:translate-x-1"
+                    >
+                      {item.label}
                     </Link>
                   </li>
                 ))}
@@ -417,7 +422,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                         href={mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1 flex items-center gap-1 text-[11px] font-bold text-[#F7CE6E] hover:text-[#FBE0A2]"
+                        className="mt-1 flex items-center gap-1 text-xs font-bold text-[#F7CE6E] hover:text-[#FBE0A2]"
                       >
                         <span>Open in Google Maps</span>
                         <ExternalLink size={10} />

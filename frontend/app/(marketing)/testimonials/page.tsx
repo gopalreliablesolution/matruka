@@ -26,10 +26,10 @@ export default async function TestimonialsPage() {
         <span className="text-xs font-bold uppercase tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 rounded-md">
           Patient Stories
         </span>
-        <h1 className="text-3xl sm:text-5xl font-bold font-heading text-brand-slate-900">
+        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold font-heading text-brand-slate-900 leading-tight">
           Patient Experiences & Reviews
         </h1>
-        <p className="text-base text-slate-600 max-w-2xl mx-auto">
+        <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto leading-relaxed">
           Read genuine feedback and experiences shared by mothers and patients treated by Dr. Kairavi Yagnik & Dr. Rut Shah.
         </p>
       </section>
