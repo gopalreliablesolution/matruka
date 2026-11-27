@@ -253,7 +253,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
           {/* Main 4-Column Grid (Jogi Style Layout in MatruKa Theme) */}
           <div className="grid grid-cols-1 gap-10 border-b border-white/20 pb-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
             {/* Column 1: Logo + Social Buttons + Newsletter */}
-            <div className="lg:col-span-4 space-y-5">
+            <div className="lg:col-span-4 space-y-5 flex flex-col items-center text-center sm:items-start sm:text-left">
               <Link href="/" className="inline-flex items-center transition-transform hover:scale-[1.01]">
                 <Image
                   src={footerLogo}
@@ -271,14 +271,14 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
 
               {/* Tagline / About text from backend */}
               {settings?.footerAboutText && (
-                <p className="text-xs text-white/90 leading-relaxed max-w-sm">
+                <p className="text-xs text-white/90 leading-relaxed max-w-sm mx-auto sm:mx-0">
                   {settings.footerAboutText}
                 </p>
               )}
 
               {/* Social Media Circular White Buttons with Gold Hover */}
               {socialList.length > 0 && (
-                <div className="flex items-center gap-3 pt-1">
+                <div className="flex items-center justify-center sm:justify-start gap-3 pt-1">
                   {socialList.map((s) => {
                     const Icon = s.icon;
                     return (
@@ -299,8 +299,8 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
             </div>
 
             {/* Column 2: Clinical Services (with dividers) */}
-            <div className="lg:col-span-3">
-              <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
+            <div className="lg:col-span-3 text-center sm:text-left">
+              <h3 className="text-base font-bold text-white mb-3 flex items-center justify-center sm:justify-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#F7CE6E]" />
                 <span>Services</span>
               </h3>
@@ -309,7 +309,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                   <li key={svc.href} className="border-b border-white/15 last:border-b-0">
                     <Link
                       href={svc.href}
-                      className="block py-2 text-xs sm:text-sm text-white/90 transition-all hover:text-white hover:translate-x-1"
+                      className="block py-2 text-xs sm:text-sm text-white/90 transition-all hover:text-white sm:hover:translate-x-1"
                     >
                       {svc.label}
                     </Link>
@@ -319,8 +319,8 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
             </div>
 
             {/* Column 3: Quick Links (with dividers) */}
-            <div className="lg:col-span-2">
-              <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
+            <div className="lg:col-span-2 text-center sm:text-left">
+              <h3 className="text-base font-bold text-white mb-3 flex items-center justify-center sm:justify-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#F7CE6E]" />
                 <span>Quick Links</span>
               </h3>
@@ -329,7 +329,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                   <li key={item.href} className="border-b border-white/15 last:border-b-0">
                     <Link
                       href={item.href}
-                      className="block py-2 text-xs sm:text-sm text-white/90 transition-all hover:text-white hover:translate-x-1"
+                      className="block py-2 text-xs sm:text-sm text-white/90 transition-all hover:text-white sm:hover:translate-x-1"
                     >
                       {item.label}
                     </Link>
@@ -339,8 +339,8 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
             </div>
 
             {/* Column 4: Contact & Location */}
-            <div className="lg:col-span-3">
-              <h3 className="text-base font-bold text-white mb-3 flex items-center gap-2">
+            <div className="lg:col-span-3 text-center sm:text-left">
+              <h3 className="text-base font-bold text-white mb-3 flex items-center justify-center sm:justify-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#F7CE6E]" />
                 <span>Contact</span>
               </h3>
@@ -351,7 +351,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                   <div className="border-b border-white/15 pb-2.5">
                     <a
                       href={`mailto:${email}`}
-                      className="flex items-start gap-2.5 text-xs sm:text-sm text-white/90 hover:text-white transition-colors group"
+                      className="flex items-start justify-center sm:justify-start gap-2.5 text-xs sm:text-sm text-white/90 hover:text-white transition-colors group"
                     >
                       <Mail size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                       <span className="break-all">{email}</span>
@@ -364,7 +364,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                   <div className="border-b border-white/15 pb-2.5">
                     <a
                       href={`tel:${phone}`}
-                      className="flex items-start gap-2.5 text-xs sm:text-sm text-white/90 hover:text-white transition-colors group"
+                      className="flex items-start justify-center sm:justify-start gap-2.5 text-xs sm:text-sm text-white/90 hover:text-white transition-colors group"
                     >
                       <Phone size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                       <div>
@@ -382,7 +382,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                   <div className="border-b border-white/15 pb-2.5">
                     <a
                       href={`tel:${emergencyPhone}`}
-                      className="flex items-start gap-2.5 text-xs sm:text-sm text-white/90 hover:text-white transition-colors group"
+                      className="flex items-start justify-center sm:justify-start gap-2.5 text-xs sm:text-sm text-white/90 hover:text-white transition-colors group"
                     >
                       <PhoneCall size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                       <div>
@@ -398,7 +398,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                 {/* OPD Timings */}
                 {opdTimings && (
                   <div className="border-b border-white/15 pb-2.5">
-                    <div className="flex items-start gap-2.5 text-xs sm:text-sm text-white/90">
+                    <div className="flex items-start justify-center sm:justify-start gap-2.5 text-xs sm:text-sm text-white/90">
                       <Clock size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                       <div>
                         <span className="font-medium">{opdTimings}</span>
@@ -414,7 +414,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
 
                 {/* Address & Google Maps */}
                 <div className="pb-1">
-                  <div className="flex items-start gap-2.5 text-xs sm:text-sm leading-relaxed text-white/90">
+                  <div className="flex items-start justify-center sm:justify-start gap-2.5 text-xs sm:text-sm leading-relaxed text-white/90">
                     <MapPin size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                     <div>
                       <span>{address}</span>
@@ -422,7 +422,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                         href={mapUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1 flex items-center gap-1 text-xs font-bold text-[#F7CE6E] hover:text-[#FBE0A2]"
+                        className="mt-1 flex items-center justify-center sm:justify-start gap-1 text-xs font-bold text-[#F7CE6E] hover:text-[#FBE0A2]"
                       >
                         <span>Open in Google Maps</span>
                         <ExternalLink size={10} />
