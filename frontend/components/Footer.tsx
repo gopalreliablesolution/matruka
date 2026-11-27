@@ -369,7 +369,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                       <Phone size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                       <div>
                         <span className="font-semibold text-white">+91 {phone}</span>
-                        <span className="block text-[10px] text-white/75 tracking-wider font-semibold uppercase mt-0.5">
+                        <span className="block text-xs text-white/75 tracking-wider font-semibold uppercase mt-0.5">
                           [ONLINE-CONSULTATION]
                         </span>
                       </div>
@@ -387,7 +387,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                       <PhoneCall size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                       <div>
                         <span className="font-semibold text-white">+91 {emergencyPhone}</span>
-                        <span className="block text-[10px] text-white/75 tracking-wider font-semibold uppercase mt-0.5">
+                        <span className="block text-xs text-white/75 tracking-wider font-semibold uppercase mt-0.5">
                           [HOSPITAL & EMERGENCY]
                         </span>
                       </div>
@@ -398,12 +398,12 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
                 {/* OPD Timings */}
                 {opdTimings && (
                   <div className="border-b border-white/15 pb-2.5">
-                    <div className="flex items-start gap-2.5 text-xs text-white/90">
+                    <div className="flex items-start gap-2.5 text-xs sm:text-sm text-white/90">
                       <Clock size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                       <div>
                         <span className="font-medium">{opdTimings}</span>
                         {settings?.sundayTimings && (
-                          <span className="block text-[10px] text-[#F7CE6E] font-semibold mt-0.5">
+                          <span className="block text-xs text-[#F7CE6E] font-semibold mt-0.5">
                             Sunday: {settings.sundayTimings}
                           </span>
                         )}
@@ -414,7 +414,7 @@ export default function Footer({ settings, footerMenus, services }: FooterProps)
 
                 {/* Address & Google Maps */}
                 <div className="pb-1">
-                  <div className="flex items-start gap-2.5 text-xs leading-relaxed text-white/90">
+                  <div className="flex items-start gap-2.5 text-xs sm:text-sm leading-relaxed text-white/90">
                     <MapPin size={16} className="text-[#F7CE6E] mt-0.5 shrink-0" />
                     <div>
                       <span>{address}</span>

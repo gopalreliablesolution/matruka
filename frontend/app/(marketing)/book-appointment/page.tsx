@@ -31,7 +31,9 @@ export default function BookAppointmentPage() {
   const [success, setSuccess] = useState(false);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [doctorOpen, setDoctorOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
   const doctorDropdownRef = useRef<HTMLDivElement>(null);
+  const timeDropdownRef = useRef<HTMLDivElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [form, setForm] = useState({
     patientName: '',
@@ -49,9 +51,15 @@ export default function BookAppointmentPage() {
       if (doctorDropdownRef.current && !doctorDropdownRef.current.contains(e.target as Node)) {
         setDoctorOpen(false);
       }
+      if (timeDropdownRef.current && !timeDropdownRef.current.contains(e.target as Node)) {
+        setTimeOpen(false);
+      }
     };
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setDoctorOpen(false);
+      if (e.key === 'Escape') {
+        setDoctorOpen(false);
+        setTimeOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleOutside);
     document.addEventListener('keydown', handleEsc);
@@ -395,19 +403,55 @@ export default function BookAppointmentPage() {
                     {errors.preferredDate && <p className="mt-1 text-xs text-red-600">{errors.preferredDate}</p>}
                   </div>
 
-                  <div>
+                  <div ref={timeDropdownRef} className="relative">
                     <label className="mb-1.5 block text-sm font-medium text-slate-700" htmlFor="preferredTime">Preferred Time Slot *</label>
-                    <select
+                    <button
                       id="preferredTime"
-                      name="preferredTime"
-                      value={form.preferredTime}
-                      onChange={onChange}
-                      className={`w-full rounded-xl border bg-white px-3 py-2.5 text-sm outline-none transition ${errors.preferredTime ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100' : 'border-slate-300 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/15'}`}
+                      type="button"
+                      aria-haspopup="listbox"
+                      aria-expanded={timeOpen}
+                      onClick={() => setTimeOpen((v) => !v)}
+                      className={`flex w-full items-center justify-between gap-2 rounded-xl border bg-white px-3 py-2.5 text-left text-sm outline-none transition ${errors.preferredTime ? 'border-red-400 focus:border-red-500 focus:ring-2 focus:ring-red-100' : 'border-slate-300 focus:border-[#0496AC] focus:ring-2 focus:ring-[#0496AC]/15'}`}
                     >
-                      {TIME_SLOTS.map((slot) => (
-                        <option key={slot} value={slot}>{slot}</option>
-                      ))}
-                    </select>
+                      <span className="truncate text-slate-800">{form.preferredTime}</span>
+                      <ChevronDown
+                        className={`h-4 w-4 shrink-0 text-slate-500 transition-transform duration-200 ${
+                          timeOpen ? 'rotate-180 text-[#0496AC]' : ''
+                        }`}
+                      />
+                    </button>
+
+                    {timeOpen && (
+                      <div
+                        role="listbox"
+                        aria-label="Preferred Time Slot"
+                        className="absolute left-0 right-0 z-30 mt-1.5 max-h-60 w-full overflow-y-auto overscroll-contain rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
+                      >
+                        {TIME_SLOTS.map((slot) => {
+                          const isSelected = form.preferredTime === slot;
+                          return (
+                            <button
+                              key={slot}
+                              type="button"
+                              role="option"
+                              aria-selected={isSelected}
+                              onClick={() => {
+                                setForm((prev) => ({ ...prev, preferredTime: slot }));
+                                setTimeOpen(false);
+                              }}
+                              className={`flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm transition ${
+                                isSelected
+                                  ? 'bg-[#0496AC]/10 font-semibold text-[#0496AC]'
+                                  : 'text-slate-700 hover:bg-slate-50'
+                              }`}
+                            >
+                              <span className="break-words">{slot}</span>
+                              {isSelected && <Check className="h-4 w-4 shrink-0 text-[#0496AC]" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                     {errors.preferredTime && <p className="mt-1 text-xs text-red-600">{errors.preferredTime}</p>}
                   </div>
                 </div>

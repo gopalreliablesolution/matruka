@@ -221,7 +221,7 @@ export default async function HomePage() {
               <div className="lg:col-span-6 space-y-6">
                 <ScrollReveal animation="fade-right" duration={600}>
                   <div>
-                    <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+                    <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
                       <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
                       <span>{aboutSection?.badgeText || 'Centre of Excellence in Women\'s Health'}</span>
                     </span>
@@ -264,7 +264,7 @@ export default async function HomePage() {
                             <h4 className="font-bold text-brand-slate-900 text-xs sm:text-sm group-hover:text-brand-teal-800 transition-colors">
                               {feat.title}
                             </h4>
-                            <p className="text-xs sm:text-xs text-slate-500 mt-0.5 leading-snug">
+                            <p className="text-xs text-slate-500 mt-0.5 leading-snug">
                               {feat.desc}
                             </p>
                           </div>
@@ -348,7 +348,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal animation="fade-up" duration={600}>
               <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
                   <Stethoscope className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-700 shrink-0" />
                   <span>Clinical Specialities &amp; Surgical Care</span>
                 </span>
@@ -447,7 +447,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal animation="fade-up" duration={600}>
               <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-14">
-                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
                   <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
                   <span>{whyChooseSection?.badgeText || 'Our Clinical Standards'}</span>
                 </span>
@@ -488,7 +488,7 @@ export default async function HomePage() {
                                 <StdIcon className="w-6 h-6" />
                               </div>
                               {std.badge && (
-                                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
+                                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80">
                                   {std.badge}
                                 </span>
                               )}
@@ -535,7 +535,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal animation="fade-up" duration={600}>
               <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
                   <Award className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
                   <span>Our Specialists</span>
                 </span>
@@ -659,7 +659,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal animation="fade-up" duration={600}>
               <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-100/60 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
                   <Building2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-700 shrink-0" />
                   <span>Hospital Infrastructure</span>
                 </span>
@@ -751,7 +751,7 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal animation="fade-up" duration={600}>
               <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+                <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
                   <Heart className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
                   <span>Patient Stories</span>
                 </span>

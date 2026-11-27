@@ -122,7 +122,7 @@ export default function MaternityCarePathway({
         {/* Section Header */}
         <ScrollReveal animation="fade-up" duration={600}>
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-            <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+            <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
               <Baby className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
               <span>{badgeText}</span>
             </span>
@@ -251,7 +251,7 @@ export default function MaternityCarePathway({
                 </div>
 
                 <div className="bg-white rounded-xl p-3.5 border border-slate-200/70">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">
                     Sonography &amp; Tests for this stage:
                   </span>
                   <p className="text-xs font-semibold text-brand-teal-800">

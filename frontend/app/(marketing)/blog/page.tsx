@@ -71,7 +71,7 @@ export default async function BlogPage() {
                     />
 
                     {b.category && (
-                      <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs z-10">
+                      <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-brand-teal-800 text-xs font-bold px-2.5 py-1 rounded-md shadow-xs z-10">
                         {b.category}
                       </span>
                     )}
@@ -93,7 +93,7 @@ export default async function BlogPage() {
                   <div className="space-y-3.5">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                       {b.category && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider bg-brand-teal-50 border border-brand-teal-200/80 text-brand-teal-800 px-2.5 py-1 rounded-md">
+                        <span className="text-xs font-bold uppercase tracking-wider bg-brand-teal-50 border border-brand-teal-200/80 text-brand-teal-800 px-2.5 py-1 rounded-md">
                           {b.category}
                         </span>
                       )}
@@ -146,7 +146,7 @@ export default async function BlogPage() {
                         fallbackClassName="w-full h-full object-contain p-6 bg-slate-50"
                       />
                       {b.category && (
-                        <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider bg-white/90 text-brand-teal-800 px-2.5 py-1 rounded-md backdrop-blur-xs">
+                        <span className="absolute top-3 left-3 text-xs font-bold uppercase tracking-wider bg-white/90 text-brand-teal-800 px-2.5 py-1 rounded-md backdrop-blur-xs">
                           {b.category}
                         </span>
                       )}

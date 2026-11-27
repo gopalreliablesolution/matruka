@@ -239,7 +239,7 @@ export default function HeroSlider({
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-teal-400 opacity-75" />
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-teal-600" />
                     </span>
-                    <span className="text-[10px] sm:text-xs font-semibold tracking-wide sm:tracking-wider uppercase text-brand-teal-700 leading-snug">
+                    <span className="text-xs font-semibold tracking-wide sm:tracking-wider uppercase text-brand-teal-700 leading-snug">
                       {current.badgeText}
                     </span>
                   </div>

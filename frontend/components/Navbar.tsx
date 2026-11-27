@@ -183,6 +183,11 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
         }
       }
 
+      // Keep Media as a direct link to /media on both desktop & mobile
+      if (parent.url === '/media' || labelLower === 'media') {
+        children = [];
+      }
+
       return {
         ...parent,
         children,
@@ -441,7 +446,7 @@ export default function Navbar({ settings, menus, services }: NavbarProps) {
                             if (childHasNested) {
                               return (
                                 <div key={child._id || child.url || child.label} className="px-1 py-1">
-                                  <div className="px-3 pb-1.5 pt-2 text-[10px] font-bold uppercase tracking-wider text-[#0496AC]">
+                                  <div className="px-3 pb-1.5 pt-2 text-xs font-bold uppercase tracking-wider text-[#0496AC]">
                                     {child.label}
                                   </div>
                                   <div className="space-y-0.5">

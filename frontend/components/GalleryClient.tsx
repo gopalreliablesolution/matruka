@@ -73,7 +73,7 @@ function GalleryClientCard({
       <div className="group rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-brand-teal-300 hover:shadow-md transition-all duration-300 p-5 flex flex-col justify-between h-full min-h-[160px]">
         <div>
           {hasCategory && (
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-200/80 px-2.5 py-1 rounded-md mb-2.5">
+            <span className="inline-block text-xs font-bold uppercase tracking-wider bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-200/80 px-2.5 py-1 rounded-md mb-2.5">
               {item.category}
             </span>
           )}
@@ -126,7 +126,7 @@ function GalleryClientCard({
 
         {/* Category Badge on photo */}
         {hasCategory && (
-          <span className="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-black/65 text-white px-2.5 py-1 rounded-md backdrop-blur-xs z-10 border border-white/10">
+          <span className="absolute top-2.5 left-2.5 text-xs font-bold uppercase tracking-wider bg-black/65 text-white px-2.5 py-1 rounded-md backdrop-blur-xs z-10 border border-white/10">
             {item.category}
           </span>
         )}
@@ -204,7 +204,7 @@ export default function GalleryClient({ items = [] }: GalleryClientProps) {
               >
                 <span>{cat}</span>
                 <span
-                  className={`text-[10px] sm:text-xs px-1.5 py-0.2 rounded-full font-bold ${
+                  className={`text-xs px-1.5 py-0.2 rounded-full font-bold ${
                     isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'
                   }`}
                 >

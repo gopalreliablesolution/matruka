@@ -108,7 +108,7 @@ function GalleryPreviewCard({
       <div className="group rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-brand-teal-300 hover:shadow-md transition-all duration-300 p-5 flex flex-col justify-between h-full min-h-[160px]">
         <div>
           {hasCategory && (
-            <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-200/80 px-2.5 py-1 rounded-md mb-2.5">
+            <span className="inline-block text-xs font-bold uppercase tracking-wider bg-brand-teal-50 text-brand-teal-800 border border-brand-teal-200/80 px-2.5 py-1 rounded-md mb-2.5">
               {item.category}
             </span>
           )}
@@ -159,7 +159,7 @@ function GalleryPreviewCard({
         </div>
 
         {hasCategory && (
-          <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs z-10">
+          <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-brand-teal-800 text-xs font-bold px-2.5 py-1 rounded-md shadow-xs z-10">
             {item.category}
           </span>
         )}
@@ -219,7 +219,7 @@ export default function GalleryPreviewSection({
         {/* Section Header */}
         <ScrollReveal animation="fade-up" duration={600}>
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full border border-brand-teal-100 leading-snug">
+            <span className="inline-flex items-center gap-1.5 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full border border-brand-teal-100 leading-snug">
               <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
               <span>{badgeText}</span>
             </span>

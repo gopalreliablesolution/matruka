@@ -129,7 +129,7 @@ export default async function BlogDetailPage({
                 href={`/blog/${rel.slug}`}
                 className="p-4 bg-white rounded-2xl border border-slate-200 hover:border-brand-teal-300 transition space-y-1 group"
               >
-                <span className="text-[10px] font-bold uppercase text-brand-teal-700">
+                <span className="text-xs font-bold uppercase text-brand-teal-700">
                   {rel.category}
                 </span>
                 <h4 className="font-bold text-sm text-brand-slate-900 group-hover:text-brand-teal-600 transition-colors line-clamp-1">

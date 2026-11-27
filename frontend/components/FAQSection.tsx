@@ -52,7 +52,7 @@ export default function FAQSection({
       <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-8 sm:mb-12 max-w-3xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 max-w-full px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold tracking-wide sm:tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3 leading-snug">
+          <span className="inline-flex items-center gap-1.5 max-w-full px-3 py-1 rounded-full text-xs font-bold tracking-wide sm:tracking-wider uppercase bg-[#0496AC]/10 text-[#0496AC] border border-[#0496AC]/20 mb-3 leading-snug">
             <HelpCircle size={12} className="shrink-0" />
             <span>{badgeText}</span>
           </span>

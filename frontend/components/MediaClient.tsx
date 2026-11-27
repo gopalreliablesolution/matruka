@@ -145,7 +145,7 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
                         </div>
                       </div>
                       {v.category && (
-                        <span className="absolute top-3 left-3 text-[10px] font-bold uppercase tracking-wider bg-black/70 text-white px-2.5 py-1 rounded-md backdrop-blur-xs">
+                        <span className="absolute top-3 left-3 text-xs font-bold uppercase tracking-wider bg-black/70 text-white px-2.5 py-1 rounded-md backdrop-blur-xs">
                           {v.category}
                         </span>
                       )}
@@ -239,7 +239,7 @@ export default function MediaClient({ videos = [], galleryItems = [] }: MediaCli
                     }}
                   />
                   {img.category && (
-                    <span className="absolute top-2.5 left-2.5 text-[10px] font-bold uppercase tracking-wider bg-black/60 text-white px-2 py-0.5 rounded-md backdrop-blur-xs">
+                    <span className="absolute top-2.5 left-2.5 text-xs font-bold uppercase tracking-wider bg-black/60 text-white px-2 py-0.5 rounded-md backdrop-blur-xs">
                       {img.category}
                     </span>
                   )}

@@ -88,7 +88,7 @@ export default function LatestBlogsSection({
         {/* Header */}
         <ScrollReveal animation="fade-up" duration={600}>
           <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-            <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-[10px] sm:text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
+            <span className="inline-flex items-center gap-1.5 sm:gap-2 max-w-full text-xs font-bold uppercase tracking-wide sm:tracking-wider text-brand-teal-700 bg-brand-teal-50 px-2.5 sm:px-3 py-1 rounded-md leading-snug">
               <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-brand-teal-600 shrink-0" />
               <span>{badgeText}</span>
             </span>
@@ -128,7 +128,7 @@ export default function LatestBlogsSection({
                       />
 
                       {b.category && (
-                        <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs z-10">
+                        <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs text-brand-teal-800 text-xs font-bold px-2.5 py-1 rounded-md shadow-xs z-10">
                           {b.category}
                         </span>
                       )}
@@ -147,7 +147,7 @@ export default function LatestBlogsSection({
                     <div className="space-y-3.5">
                       <div className="flex items-center justify-between gap-2 flex-wrap">
                         {b.category && (
-                          <span className="bg-brand-teal-50 border border-brand-teal-200/80 text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md">
+                          <span className="bg-brand-teal-50 border border-brand-teal-200/80 text-brand-teal-800 text-xs font-bold px-2.5 py-1 rounded-md">
                             {b.category}
                           </span>
                         )}
@@ -197,7 +197,7 @@ export default function LatestBlogsSection({
                           fallbackClassName="w-full h-full object-contain p-6 bg-slate-50"
                         />
                         {b.category && (
-                          <span className="absolute top-3 left-3 bg-white/95 text-brand-teal-800 text-[10px] font-bold px-2.5 py-1 rounded-md shadow-xs">
+                          <span className="absolute top-3 left-3 bg-white/95 text-brand-teal-800 text-xs font-bold px-2.5 py-1 rounded-md shadow-xs">
                             {b.category}
                           </span>
                         )}

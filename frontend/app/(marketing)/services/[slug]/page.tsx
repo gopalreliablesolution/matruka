@@ -331,7 +331,7 @@ export default async function ServiceDetailPage({
           {/* Sidebar / Consultation Details */}
           <div className="lg:col-span-4 space-y-6">
             <div className="bg-gradient-to-br from-[#0496AC] via-[#037A8C] to-[#025E6C] text-white p-6 sm:p-7 rounded-3xl shadow-xl space-y-4">
-              <span className="inline-block text-[10px] font-bold uppercase tracking-wider bg-[#F7CE6E] text-slate-900 px-2.5 py-0.5 rounded-full shadow-xs">
+              <span className="inline-block text-xs font-bold uppercase tracking-wider bg-[#F7CE6E] text-slate-900 px-2.5 py-0.5 rounded-full shadow-xs">
                 Direct OPD Desk
               </span>
               <h3 className="text-lg sm:text-xl font-bold font-heading text-white">
