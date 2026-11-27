@@ -671,17 +671,17 @@ export default function AdminGalleryPage() {
                 />
               </div>
 
-              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-3">
+              <div className="pt-3 border-t border-gray-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-50 transition cursor-pointer"
+                  className="admin-btn-secondary w-full sm:w-auto cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+                  className="admin-btn-primary w-full sm:w-auto cursor-pointer"
                 >
                   Upload & Save Photo
                 </button>
@@ -779,20 +779,20 @@ export default function AdminGalleryPage() {
                 />
               </div>
 
-              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-3">
+              <div className="pt-3 border-t border-gray-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => {
                     setIsEditModalOpen(false);
                     setEditingItem(null);
                   }}
-                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-50 transition cursor-pointer"
+                  className="admin-btn-secondary w-full sm:w-auto cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+                  className="admin-btn-primary w-full sm:w-auto cursor-pointer"
                 >
                   Save Changes
                 </button>
@@ -872,17 +872,17 @@ export default function AdminGalleryPage() {
                 />
               </div>
 
-              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-3">
+              <div className="pt-3 border-t border-gray-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setIsAlbumModalOpen(false)}
-                  className="px-4 py-2 bg-white border border-gray-200 text-gray-700 text-xs font-bold rounded-xl hover:bg-gray-50 transition cursor-pointer"
+                  className="admin-btn-secondary w-full sm:w-auto cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+                  className="admin-btn-primary w-full sm:w-auto cursor-pointer"
                 >
                   Create Album
                 </button>

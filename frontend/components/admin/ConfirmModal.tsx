@@ -137,13 +137,13 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
           </p>
         </div>
 
-        <div className="flex gap-3 border-t border-[#E7EDEF] bg-[#F8FAFB] p-4">
+        <div className="flex flex-col-reverse sm:flex-row gap-2.5 border-t border-[#E7EDEF] bg-[#F8FAFB] p-4">
           <button
             ref={cancelButtonRef}
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="flex-1 rounded-lg border border-[#D8E1E4] bg-white px-4 py-2.5 text-sm font-semibold text-[#4D636B] shadow-sm transition hover:bg-[#F6F8F9] disabled:opacity-50"
+            className="w-full sm:flex-1 inline-flex items-center justify-center rounded-lg border border-[#D8E1E4] bg-white px-4 py-2 text-[13px] sm:text-sm font-semibold text-[#4D636B] shadow-sm transition hover:bg-[#F6F8F9] disabled:opacity-50 whitespace-nowrap min-h-[2.375rem]"
           >
             {cancelLabel}
           </button>
@@ -151,10 +151,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             type="button"
             onClick={onConfirm}
             disabled={loading}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold shadow-sm transition disabled:opacity-50 ${variantColors[variant]}`}
+            className={`w-full sm:flex-1 inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-[13px] sm:text-sm font-semibold shadow-sm transition disabled:opacity-50 whitespace-nowrap min-h-[2.375rem] ${variantColors[variant]}`}
           >
-            {loading && <Loader2 size={16} className="animate-spin" />}
-            {confirmLabel}
+            {loading && <Loader2 size={15} className="animate-spin shrink-0" />}
+            <span>{confirmLabel}</span>
           </button>
         </div>
       </div>

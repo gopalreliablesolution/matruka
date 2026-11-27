@@ -111,14 +111,26 @@ div[class*="fixed"][class*="inset-0"] {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  border-radius: 0.625rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.25rem;
   white-space: nowrap;
   outline: none;
   transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease,
     box-shadow 160ms ease, opacity 160ms ease;
+}
+
+@media (min-width: 640px) {
+  .admin-btn-primary,
+  .admin-btn-secondary {
+    font-size: 0.875rem;
+  }
+}
+
+.admin-btn-primary,
+.admin-btn-secondary {
+  min-height: 2.5rem;
 }
 
 .admin-btn-primary {

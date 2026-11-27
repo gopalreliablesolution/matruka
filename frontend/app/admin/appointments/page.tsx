@@ -428,34 +428,34 @@ export default function AdminAppointmentsPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100">
                   <p className="text-[11px] font-bold text-gray-400 uppercase">Contact Phone</p>
                   <a
                     href={`tel:${selectedAppointment.phone}`}
-                    className="text-sm font-bold text-primary flex items-center gap-1.5 mt-0.5 hover:underline"
+                    className="text-sm font-bold text-primary flex items-center gap-1.5 mt-0.5 hover:underline whitespace-nowrap"
                   >
-                    <Phone size={14} />
+                    <Phone size={14} className="shrink-0" />
                     <span>+91 {selectedAppointment.phone}</span>
                   </a>
                 </div>
 
                 <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100">
                   <p className="text-[11px] font-bold text-gray-400 uppercase">Email Address</p>
-                  <p className="text-sm font-semibold text-gray-800 mt-0.5 truncate">
+                  <p className="text-sm font-semibold text-gray-800 mt-0.5 break-all">
                     {selectedAppointment.email || 'None Provided'}
                   </p>
                 </div>
               </div>
 
-              <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-100 space-y-2">
-                <div className="flex items-center justify-between">
+              <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-100 space-y-2.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                   <div>
                     <p className="text-[11px] font-bold text-gray-400 uppercase">Clinical Speciality</p>
                     <p className="text-sm font-bold text-gray-900 mt-0.5">{selectedAppointment.department}</p>
                   </div>
-                  <div className="text-right">
+                  <div className="sm:text-right">
                     <p className="text-[11px] font-bold text-gray-400 uppercase">Assigned Doctor</p>
                     <p className="text-sm font-bold text-primary mt-0.5">
                       {selectedAppointment.doctor || 'Any Specialist'}
@@ -463,7 +463,7 @@ export default function AdminAppointmentsPage() {
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200/60 pt-2 flex items-center justify-between text-xs text-gray-600">
+                <div className="border-t border-gray-200/60 pt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-600">
                   <span className="flex items-center gap-1">
                     <Calendar size={13} className="text-gray-400" />
                     <span>Date: {selectedAppointment.preferredDate || 'Flexible'}</span>
@@ -502,25 +502,25 @@ export default function AdminAppointmentsPage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-3">
+            <div className="p-4 bg-gray-50 border-t border-gray-100 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+              <button
+                type="button"
+                onClick={() => setIsViewModalOpen(false)}
+                className="admin-btn-secondary w-full sm:w-auto sm:order-2"
+              >
+                Close
+              </button>
+
               <button
                 type="button"
                 onClick={() => {
                   setIsViewModalOpen(false);
                   handleOpenEdit(selectedAppointment);
                 }}
-                className="px-4 py-2 bg-primary hover:bg-primary-dark text-white text-xs font-bold rounded-xl transition shadow-sm flex items-center gap-1.5"
+                className="admin-btn-primary w-full sm:w-auto sm:order-1"
               >
-                <Edit2 size={14} />
+                <Edit2 size={15} />
                 <span>Update Status / Notes</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsViewModalOpen(false)}
-                className="px-4 py-2 bg-white border border-gray-200 hover:bg-gray-100 text-gray-700 text-xs font-bold rounded-xl transition"
-              >
-                Close
               </button>
             </div>
           </div>
